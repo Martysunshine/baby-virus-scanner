@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 76" width="400" height="76" role="img" aria-label="Baby Virus Scanner">
+  <title>Baby Virus Scanner</title>
+  <defs>
+    <linearGradient id="bvsf-body" x1="10" y1="6" x2="54" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.52" stop-color="#5a9cff"/>
+      <stop offset="1" stop-color="#9b84ff"/>
+    </linearGradient>
+    <linearGradient id="bvsf-word" x1="84" y1="0" x2="166" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.55" stop-color="#5a9cff"/>
+      <stop offset="1" stop-color="#9b84ff"/>
+    </linearGradient>
+    <linearGradient id="bvsf-shade" x1="32" y1="26" x2="32" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0b1020" stop-opacity="0"/>
+      <stop offset="1" stop-color="#0b1020" stop-opacity="0.42"/>
+    </linearGradient>
+    <linearGradient id="bvsf-rim" x1="32" y1="5" x2="32" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="bvsf-gloss" x1="32" y1="8" x2="32" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="bvsf-eye" cx="29.5" cy="28.5" r="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.75" stop-color="#eaf6ff"/>
+      <stop offset="1" stop-color="#c9defc"/>
+    </radialGradient>
+    <radialGradient id="bvsf-iris" cx="30.5" cy="30.5" r="7" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#243a7a"/>
+      <stop offset="0.7" stop-color="#0f1834"/>
+      <stop offset="1" stop-color="#0b1020"/>
+    </radialGradient>
+  </defs>
+  <g transform="translate(4 6)">
+    <path d="M31.2 7.4c-2.9-3.1 0.4-6.6 3.1-4.6 1.9 1.4 0.6 4.1-1.5 3.3" fill="none" stroke="url(#bvsf-body)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M32 6.2c6.4 4.1 13.2 6.2 20.3 7 2.7 0.3 4.6 2.5 4.6 5.2v11.3c0 14.6-9.7 24.4-23.2 29.2-1.1 0.4-2.3 0.4-3.4 0C16.8 54.1 7.1 44.3 7.1 29.7V18.4c0-2.7 1.9-4.9 4.6-5.2 7.1-0.8 13.9-2.9 20.3-7z" fill="url(#bvsf-body)"/>
+    <path d="M32 6.2c6.4 4.1 13.2 6.2 20.3 7 2.7 0.3 4.6 2.5 4.6 5.2v11.3c0 14.6-9.7 24.4-23.2 29.2-1.1 0.4-2.3 0.4-3.4 0C16.8 54.1 7.1 44.3 7.1 29.7V18.4c0-2.7 1.9-4.9 4.6-5.2 7.1-0.8 13.9-2.9 20.3-7z" fill="url(#bvsf-shade)"/>
+    <path d="M32 8.6c6.1 3.8 12.6 5.8 19.4 6.6 1.6 0.2 2.8 1.5 2.8 3.2v11.3c0 13.1-8.6 22-21 26.6-0.8 0.3-1.6 0.3-2.4 0C18.4 51.7 9.8 42.8 9.8 29.7V18.4c0-1.7 1.2-3 2.8-3.2 6.8-0.8 13.3-2.8 19.4-6.6z" fill="none" stroke="url(#bvsf-rim)" stroke-width="1.3"/>
+    <path d="M32 9.4c5.6 3.5 11.6 5.4 17.8 6.2 1.2 0.2 2 1.1 2 2.3v3.6c-6.2 3.6-13 5.4-19.8 5.4s-13.6-1.8-19.8-5.4v-3.6c0-1.2 0.8-2.1 2-2.3 6.2-0.8 12.2-2.7 17.8-6.2z" fill="url(#bvsf-gloss)"/>
+    <path d="M19.3 39.5A14.8 14.8 0 1 1 44.7 39.5" fill="none" stroke="#ffffff" stroke-opacity="0.92" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="44.7" cy="39.5" r="3.6" fill="#ffffff" fill-opacity="0.28"/>
+    <circle cx="44.7" cy="39.5" r="2.1" fill="#ffffff"/>
+    <circle cx="32" cy="31" r="10.2" fill="url(#bvsf-eye)"/>
+    <circle cx="32" cy="31" r="10.2" fill="none" stroke="#0b1020" stroke-opacity="0.18" stroke-width="1"/>
+    <circle cx="32.6" cy="31.6" r="6" fill="url(#bvsf-iris)"/>
+    <circle cx="32.6" cy="31.6" r="6" fill="none" stroke="#22d3ee" stroke-opacity="0.85" stroke-width="1.1"/>
+    <circle cx="34.6" cy="29.3" r="2" fill="#ffffff"/>
+    <circle cx="30.6" cy="33.9" r="0.9" fill="#ffffff" fill-opacity="0.85"/>
+  </g>
+  <text x="84" y="47" font-family="'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif" font-size="31" letter-spacing="-0.4">
+    <tspan font-weight="800" fill="url(#bvsf-word)">Baby</tspan><tspan font-weight="650" fill="#eef1f8" dx="9">Virus Scanner</tspan>
+  </text>
+  <rect x="86" y="58" width="56" height="3" rx="1.5" fill="url(#bvsf-word)" fill-opacity="0.85"/>
+  <rect x="148" y="58" width="12" height="3" rx="1.5" fill="#9b84ff" fill-opacity="0.55"/>
+  <rect x="166" y="58" width="5" height="3" rx="1.5" fill="#9b84ff" fill-opacity="0.35"/>
+</svg>

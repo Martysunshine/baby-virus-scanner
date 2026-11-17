@@ -1,0 +1,526 @@
+/* baby-virus-scanner dashboard v3: Agent map (agent M). Everything is scoped under .agents-view
+ * (the view root, its tooltip and its side-panel content all carry that class).
+ * Difficulty colours are fixed by docs/ui-contract-v3.md: green Easy, yellow Medium, red Hard,
+ * dark purple #4B1D6B Extra high. Each grade also shows a letter, so colour is never alone.
+ * Palette checked with the dataviz validator: adjacent CVD separation passes in light and dark;
+ * low-contrast steps (yellow on light, purple on dark) get an edge ring plus the letter. */
+
+.agents-view {
+  --ag-easy: #2e9e5b; --ag-easy-ink: #04210f;
+  --ag-medium: #e8b400; --ag-medium-ink: #2a1f00;
+  --ag-hard: #d63a3a; --ag-hard-ink: #ffffff;
+  --ag-xhigh: #4b1d6b; --ag-xhigh-ink: #ffffff; --ag-xhigh-edge: #4b1d6b;
+  --ag-none: #d3d8e3; --ag-none-ink: #2b3245;
+  --ag-medium-edge: #b48a00;
+  --ag-surface: var(--surface, #ffffff);
+  --ag-surface-2: var(--surface-2, #f2f4f9);
+  --ag-ink: var(--ink, #121829);
+  --ag-ink-2: var(--ink-2, #3f4862);
+  --ag-muted: var(--muted, #5f6882);
+  --ag-border: var(--border, rgba(20, 28, 51, 0.10));
+  --ag-border-strong: var(--border-strong, rgba(20, 28, 51, 0.2));
+  --ag-accent: var(--accent, #3656d6);
+  --ag-accent-ink: var(--accent-ink, #ffffff);
+  --ag-focus: var(--focus, #3656d6);
+  --ag-edge: rgba(20, 28, 51, 0.30);
+  --ag-edge-soft: rgba(20, 28, 51, 0.16);
+  --ag-wedge-a: rgba(124, 77, 219, 0.06);
+  --ag-wedge-b: rgba(20, 28, 51, 0.035);
+  --ag-other: #9aa3b8;
+  --ag-view: #7c4ddb;
+  --ag-radius: var(--radius, 16px);
+  --ag-shadow: var(--shadow, 0 1px 2px rgba(18, 24, 41, 0.05), 0 6px 20px rgba(18, 24, 41, 0.06));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .agents-view {
+    --ag-easy: #3cc37a; --ag-easy-ink: #04210f;
+    --ag-medium: #f2c94c; --ag-medium-ink: #2a1f00; --ag-medium-edge: #f2c94c;
+    --ag-hard: #f06060; --ag-hard-ink: #240505;
+    --ag-xhigh: #4b1d6b; --ag-xhigh-ink: #ffffff; --ag-xhigh-edge: #c9a6ea;
+    --ag-none: #4a536b; --ag-none-ink: #eef1f8;
+    --ag-edge: rgba(255, 255, 255, 0.30);
+    --ag-edge-soft: rgba(255, 255, 255, 0.14);
+    --ag-wedge-a: rgba(162, 131, 240, 0.09);
+    --ag-wedge-b: rgba(255, 255, 255, 0.04);
+    --ag-other: #6b7590;
+    --ag-view: #a283f0;
+  }
+}
+:root[data-theme="dark"] .agents-view {
+  --ag-easy: #3cc37a; --ag-easy-ink: #04210f;
+  --ag-medium: #f2c94c; --ag-medium-ink: #2a1f00; --ag-medium-edge: #f2c94c;
+  --ag-hard: #f06060; --ag-hard-ink: #240505;
+  --ag-xhigh: #4b1d6b; --ag-xhigh-ink: #ffffff; --ag-xhigh-edge: #c9a6ea;
+  --ag-none: #4a536b; --ag-none-ink: #eef1f8;
+  --ag-edge: rgba(255, 255, 255, 0.30);
+  --ag-edge-soft: rgba(255, 255, 255, 0.14);
+  --ag-wedge-a: rgba(162, 131, 240, 0.09);
+  --ag-wedge-b: rgba(255, 255, 255, 0.04);
+  --ag-other: #6b7590;
+  --ag-view: #a283f0;
+}
+
+/* grade tokens -> one pair of variables per element */
+.agents-view .g-easy { --g: var(--ag-easy); --g-ink: var(--ag-easy-ink); --g-edge: var(--ag-easy); }
+.agents-view .g-medium { --g: var(--ag-medium); --g-ink: var(--ag-medium-ink); --g-edge: var(--ag-medium-edge); }
+.agents-view .g-hard { --g: var(--ag-hard); --g-ink: var(--ag-hard-ink); --g-edge: var(--ag-hard); }
+.agents-view .g-xhigh { --g: var(--ag-xhigh); --g-ink: var(--ag-xhigh-ink); --g-edge: var(--ag-xhigh-edge); }
+.agents-view .g-none { --g: var(--ag-none); --g-ink: var(--ag-none-ink); --g-edge: var(--ag-other); }
+
+.agents-view .ag-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.agents-view .ag-muted { color: var(--ag-muted); }
+.agents-view .ag-p { margin: 6px 0 10px; line-height: 1.5; color: var(--ag-ink-2); }
+.agents-view .ag-ico { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.agents-view button { font: inherit; color: inherit; }
+.agents-view button:focus-visible, .agents-view [tabindex]:focus-visible, .agents-view summary:focus-visible { outline: 3px solid var(--ag-focus); outline-offset: 2px; border-radius: 8px; }
+
+/* ------------------------------------------------------------------ header + tiles */
+.agents-view .ag-head { display: flex; align-items: flex-start; gap: 16px; }
+.agents-view .ag-head-icon {
+  display: inline-flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 16px; flex: none;
+  background: color-mix(in srgb, var(--ag-view) 15%, var(--ag-surface)); color: var(--ag-view); border: 1px solid color-mix(in srgb, var(--ag-view) 25%, transparent);
+}
+.agents-view .ag-head-icon .ag-ico { width: 28px; height: 28px; }
+.agents-view .ag-head h1 { font-size: 28px; line-height: 1.2; margin: 0; }
+.agents-view .ag-intro { font-size: 17px; color: var(--ag-ink); margin: 6px 0 2px; max-width: 70ch; }
+.agents-view .ag-intro2 { color: var(--ag-muted); margin: 0; max-width: 80ch; }
+
+.agents-view .ag-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.agents-view .ag-tile {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left; cursor: pointer;
+  background: var(--ag-surface); border: 1px solid var(--ag-border); border-radius: var(--ag-radius); padding: 16px 18px; box-shadow: var(--ag-shadow);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+.agents-view .ag-tile:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--ag-view) 40%, transparent); }
+.agents-view .ag-tile-value { font-size: 30px; font-weight: 700; line-height: 1.15; color: var(--ag-ink); }
+.agents-view .ag-tile-unit { font-size: 17px; font-weight: 600; color: var(--ag-ink-2); }
+.agents-view .ag-tile-label { font-weight: 650; color: var(--ag-ink); }
+.agents-view .ag-tile-sub { font-size: 13.5px; color: var(--ag-muted); line-height: 1.35; }
+
+/* ------------------------------------------------------------------ legend (always visible: sticky) */
+.agents-view .ag-legend {
+  position: sticky; top: var(--topbar-h, 67px); z-index: 12;
+  background: color-mix(in srgb, var(--ag-surface) 97%, transparent); /* no backdrop blur on a sticky bar: it re-blurs on every scroll frame */
+  border: 1px solid var(--ag-border); border-radius: 14px; padding: 10px 12px; box-shadow: var(--ag-shadow);
+}
+.agents-view .ag-legend-chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; }
+.agents-view .ag-lchip {
+  display: flex; align-items: center; gap: 9px; padding: 6px 10px 6px 7px; border-radius: 14px; cursor: pointer; text-align: left; min-width: 0;
+  border: 1px solid var(--ag-border); background: var(--ag-surface-2); transition: border-color 0.15s, background 0.15s;
+}
+.agents-view .ag-lchip:hover { border-color: var(--g-edge); background: color-mix(in srgb, var(--g) 12%, var(--ag-surface)); }
+.agents-view .ag-lchip-text { display: flex; flex-direction: column; line-height: 1.2; flex: 1; min-width: 0; }
+.agents-view .ag-lchip-text strong { font-size: 14.5px; }
+.agents-view .ag-lchip-text span { font-size: 12.5px; color: var(--ag-muted); }
+.agents-view .ag-lchip .ag-disc { width: 28px; height: 28px; font-size: 14.5px; }
+.agents-view .ag-lchip-n { font-size: 12.5px; font-weight: 700; min-width: 24px; text-align: center; padding: 2px 7px; border-radius: 999px; background: var(--ag-surface); border: 1px solid var(--ag-border); }
+.agents-view .ag-legend-rule { margin: 8px 4px 0; font-size: 13.5px; color: var(--ag-ink-2); line-height: 1.45; }
+.agents-view .ag-dash-key { display: inline-block; width: 14px; height: 14px; border-radius: 50%; border: 2px dashed var(--ag-ink-2); vertical-align: -2px; }
+
+/* grade disc + chip */
+.agents-view .ag-disc {
+  display: inline-flex; align-items: center; justify-content: center; flex: none; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--g); color: var(--g-ink); font-weight: 800; font-size: 13px; line-height: 1; box-shadow: inset 0 0 0 2px var(--g-edge);
+}
+.agents-view .ag-disc.is-est { box-shadow: none; outline: 2px dashed var(--ag-ink-2); outline-offset: 1px; }
+.agents-view .ag-disc.big { width: 46px; height: 46px; font-size: 22px; }
+.agents-view .ag-chip { display: inline-flex; align-items: center; gap: 7px; font-weight: 650; font-size: 14px; white-space: nowrap; }
+.agents-view .ag-chip .ag-disc { width: 20px; height: 20px; font-size: 11.5px; }
+.agents-view .ag-basis { font-size: 11.5px; font-weight: 650; padding: 1px 7px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.03em; }
+.agents-view .ag-basis.is-measured { background: color-mix(in srgb, var(--ag-accent) 12%, var(--ag-surface)); color: var(--ag-ink-2); border: 1px solid color-mix(in srgb, var(--ag-accent) 30%, transparent); }
+.agents-view .ag-basis.is-estimated { background: var(--ag-surface-2); color: var(--ag-ink-2); border: 1px dashed var(--ag-ink-2); }
+
+/* status badge */
+.agents-view .ag-status { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--ag-ink-2); white-space: nowrap; }
+.agents-view .ag-status .ag-ico { width: 18px; height: 18px; padding: 2px; border-radius: 50%; border: 1.5px solid var(--ag-border-strong); background: var(--ag-surface); }
+.agents-view .ag-status.st-stopped-limit .ag-ico, .agents-view .ag-status.st-replaced .ag-ico { border-style: dashed; }
+
+/* ------------------------------------------------------------------ toolbar / toggle */
+.agents-view .ag-body { display: flex; flex-direction: column; gap: 14px; }
+.agents-view .ag-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; scroll-margin-top: 150px; }
+.agents-view .ag-toggle { display: inline-flex; padding: 4px; border-radius: 12px; background: var(--ag-surface-2); border: 1px solid var(--ag-border); }
+.agents-view .ag-tbtn { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 6px 14px; border: 0; border-radius: 9px; background: transparent; cursor: pointer; font-weight: 600; color: var(--ag-ink-2); }
+.agents-view .ag-tbtn.is-on { background: var(--ag-surface); color: var(--ag-ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+.agents-view .ag-toolbar-hint { color: var(--ag-muted); font-size: 14px; }
+
+/* ------------------------------------------------------------------ cards (shared look) */
+.agents-view .ag-card { background: var(--ag-surface); border: 1px solid var(--ag-border); border-radius: var(--ag-radius); padding: 18px 20px; box-shadow: var(--ag-shadow); }
+.agents-view .ag-card-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.agents-view .ag-card-ico { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 11px; flex: none; background: color-mix(in srgb, var(--ag-view) 14%, var(--ag-surface)); color: var(--ag-view); }
+.agents-view .ag-card-ico.live { background: color-mix(in srgb, var(--ag-easy) 16%, var(--ag-surface)); color: var(--ag-easy); }
+.agents-view .ag-card-title { font-size: 18px; margin: 0; }
+.agents-view .ag-card-sub { color: var(--ag-muted); font-size: 14px; margin: 2px 0 0; }
+.agents-view .ag-two { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; }
+
+/* ------------------------------------------------------------------ the map */
+.agents-view .ag-map-card { padding: 10px 12px 14px; }
+.agents-view .ag-map-wrap { position: relative; }
+/* the box has exactly the map's aspect ratio (viewBox 1340 x 1060), so the reactor layer can sit on it by percentages */
+.agents-view .ag-map-box { position: relative; width: min(100%, calc(86vh * 1340 / 1060)); aspect-ratio: 1340 / 1060; margin: 0 auto; }
+.agents-view .ag-map { position: relative; z-index: 1; display: block; width: 100%; height: 100%; font-family: inherit; overflow: visible; }
+.agents-view .ag-wedge.w-a { fill: var(--ag-wedge-a); }
+.agents-view .ag-wedge.w-b { fill: var(--ag-wedge-b); }
+.agents-view .ag-spoke { stroke: var(--ag-edge); stroke-width: 3; stroke-linecap: round; }
+.agents-view .ag-edge { fill: none; stroke: var(--ag-edge-soft); stroke-width: 1.6; }
+.agents-view .ag-fedge { stroke: var(--ag-edge-soft); stroke-width: 1.2; }
+.agents-view .ag-map.has-focus .ag-edge, .agents-view .ag-map.has-focus .ag-fedge { opacity: 0.45; }
+.agents-view .ag-edge.is-hot, .agents-view .ag-fedge.is-hot { stroke: var(--ag-ink-2); stroke-width: 2.4; opacity: 1 !important; }
+
+.agents-view .ag-hub { cursor: pointer; }
+.agents-view .ag-hub-c { fill: var(--ag-surface); stroke: var(--ag-ink-2); stroke-width: 2.5; }
+.agents-view .ag-hub-t { fill: var(--ag-ink); font-size: 19px; font-weight: 800; }
+.agents-view .ag-hub:hover .ag-hub-c, .agents-view .ag-hub:focus .ag-hub-c { fill: var(--ag-surface-2); stroke: var(--ag-ink); stroke-width: 3.5; }
+.agents-view .ag-hub:focus, .agents-view .ag-node:focus, .agents-view .ag-orch:focus { outline: none; }
+.agents-view .ag-plabel { cursor: pointer; }
+.agents-view .ag-plabel-t { fill: var(--ag-ink); font-size: 20px; font-weight: 750; }
+.agents-view .ag-plabel-s { fill: var(--ag-muted); font-size: 15.5px; }
+.agents-view .ag-plabel:hover .ag-plabel-t { text-decoration: underline; }
+
+.agents-view .ag-orch { cursor: pointer; }
+.agents-view .ag-orch-halo { fill: none; stroke: color-mix(in srgb, var(--ag-accent) 35%, transparent); stroke-width: 6; }
+.agents-view .ag-orch-c { fill: var(--ag-accent); }
+.agents-view .ag-orch-t { fill: var(--ag-accent-ink); font-size: 22px; font-weight: 800; }
+.agents-view .ag-orch-s { fill: var(--ag-accent-ink); font-size: 14px; opacity: 0.92; }
+.agents-view .ag-orch:hover .ag-orch-halo, .agents-view .ag-orch:focus .ag-orch-halo { stroke: var(--ag-focus); }
+
+.agents-view .ag-node { cursor: pointer; }
+.agents-view .ag-node-ring { fill: transparent; stroke: transparent; stroke-width: 3; }
+.agents-view .ag-node-c { fill: var(--g); stroke: var(--g-edge); stroke-width: 2; }
+.agents-view .ag-node.is-est .ag-node-c, .agents-view .ag-node.is-unmeasured .ag-node-c { stroke: var(--ag-ink-2); stroke-dasharray: 4 3; stroke-width: 2; }
+.agents-view .ag-node-t { fill: var(--g-ink); font-size: 16px; font-weight: 800; pointer-events: none; }
+.agents-view .ag-node-t.sm { font-size: 13px; }
+.agents-view .ag-node:hover .ag-node-ring, .agents-view .ag-node:focus .ag-node-ring, .agents-view .ag-node.is-hot .ag-node-ring { stroke: var(--ag-ink); }
+.agents-view .ag-node.is-selected .ag-node-ring { stroke: var(--ag-focus); stroke-width: 4; }
+.agents-view .ag-node:focus-visible .ag-node-ring { stroke: var(--ag-focus); stroke-width: 4; }
+.agents-view .ag-smark circle { fill: var(--ag-surface); stroke: var(--ag-ink-2); stroke-width: 1.4; }
+.agents-view .ag-smark path { fill: none; stroke: var(--ag-ink); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.agents-view .ag-smark.st-stopped-limit circle, .agents-view .ag-smark.st-replaced circle { stroke-dasharray: 2.5 2; }
+.agents-view .ag-nlabel {
+  fill: var(--ag-ink); font-size: 16px; font-weight: 650; pointer-events: none;
+  paint-order: stroke; stroke: var(--ag-surface); stroke-width: 5px; stroke-linejoin: round;
+}
+.agents-view .ag-fbar { fill: var(--g); stroke: transparent; stroke-width: 6px; cursor: pointer; }
+.agents-view .ag-fbar.is-other { fill: var(--ag-surface); stroke: var(--ag-other); stroke-width: 1.5px; }
+.agents-view .ag-fbar.is-missing { stroke-dasharray: 2 2; }
+.agents-view .ag-fbar.g-medium { stroke: transparent; }
+.agents-view .ag-fbar.is-hot { filter: drop-shadow(0 0 2px var(--ag-ink)); }
+
+.agents-view .ag-key { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 6px 6px 0; padding: 10px 4px 0; border-top: 1px solid var(--ag-border); font-size: 13.5px; color: var(--ag-ink-2); }
+.agents-view .ag-key li { display: inline-flex; align-items: center; gap: 7px; }
+.agents-view .ag-key-svg { width: 24px; height: 24px; flex: none; }
+.agents-view .ag-key-dot { fill: var(--ag-other); }
+.agents-view .ag-key-dash { fill: var(--ag-surface-2); stroke: var(--ag-ink-2); stroke-width: 2; stroke-dasharray: 3.5 2.5; }
+.agents-view .ag-key-bar { fill: var(--ag-other); }
+.agents-view .ag-key .ag-smark circle { stroke-width: 1.4; }
+.agents-view .ag-key .ag-smark path { stroke-width: 2.6; }
+
+/* tooltip (appended to <body>, so it carries .agents-view itself) */
+.agents-view.ag-tip {
+  position: fixed; z-index: 80; pointer-events: none; max-width: 320px; padding: 10px 12px; border-radius: 12px; font-size: 13.5px;
+  background: var(--ag-surface); color: var(--ag-ink); border: 1px solid var(--ag-border-strong); box-shadow: var(--shadow-lift, 0 12px 32px rgba(0, 0, 0, 0.18));
+}
+.agents-view.ag-tip .ag-tip-title { font-weight: 700; font-size: 14.5px; margin-bottom: 4px; }
+.agents-view.ag-tip .ag-tip-grade { margin: 2px 0 6px; }
+.agents-view.ag-tip .ag-tip-row { color: var(--ag-ink-2); line-height: 1.45; }
+.agents-view.ag-tip .ag-tip-hint { color: var(--ag-muted); font-size: 12.5px; margin-top: 6px; }
+
+/* ------------------------------------------------------------------ cards view */
+.agents-view .ag-cards-wrap { display: flex; flex-direction: column; gap: 10px; }
+.agents-view .ag-round-h { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; font-size: 19px; margin: 10px 0 2px; }
+.agents-view .ag-round-n { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid var(--ag-ink-2); font-weight: 800; font-size: 15px; align-self: center; flex: none; }
+.agents-view .ag-round-n.sm { width: 22px; height: 22px; font-size: 12.5px; border-width: 2px; }
+.agents-view .ag-round-sub { font-size: 14px; font-weight: 400; color: var(--ag-muted); }
+.agents-view .ag-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.agents-view .ag-acard {
+  display: flex; flex-direction: column; gap: 8px; text-align: left; cursor: pointer; padding: 14px; border-radius: 14px;
+  background: var(--ag-surface); border: 1px solid var(--ag-border); border-top: 5px solid var(--g); box-shadow: var(--ag-shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.agents-view .ag-acard.is-est { border-top-style: dashed; }
+.agents-view .ag-acard:hover { transform: translateY(-2px); }
+.agents-view .ag-acard.is-selected { outline: 3px solid var(--ag-focus); outline-offset: 1px; }
+.agents-view .ag-acard-top { display: flex; align-items: center; gap: 8px; }
+.agents-view .ag-acard-name { flex: 1; font-weight: 700; line-height: 1.25; }
+.agents-view .ag-acard-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 12px; }
+.agents-view .ag-m { display: flex; flex-direction: column; }
+.agents-view .ag-m-l { font-size: 12px; color: var(--ag-muted); }
+.agents-view .ag-m-v { font-weight: 650; font-variant-numeric: tabular-nums; }
+.agents-view .ag-m-v.is-none, .agents-view .ag-fact-v.is-none { font-weight: 500; color: var(--ag-muted); font-style: italic; }
+.agents-view .ag-acard-status { font-size: 13px; color: var(--ag-ink-2); }
+
+/* ------------------------------------------------------------------ table view */
+.agents-view .ag-table-card { padding: 6px 0 0; overflow: hidden; }
+.agents-view .ag-table-scroll { overflow-x: auto; }
+.agents-view .ag-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.agents-view .ag-table th { position: sticky; top: 0; background: var(--ag-surface); text-align: left; padding: 0; border-bottom: 1px solid var(--ag-border-strong); white-space: nowrap; }
+.agents-view .ag-table th.is-num { text-align: right; }
+.agents-view .ag-sort { width: 100%; border: 0; background: transparent; padding: 11px 12px; text-align: inherit; font-weight: 650; color: var(--ag-ink-2); cursor: pointer; }
+.agents-view .ag-sort.is-on { color: var(--ag-ink); }
+.agents-view .ag-table td { padding: 9px 12px; border-bottom: 1px solid var(--ag-border); vertical-align: middle; }
+.agents-view .ag-table td.is-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.agents-view .ag-table td.is-none { color: var(--ag-muted); font-style: italic; }
+.agents-view .ag-table tbody tr { cursor: pointer; }
+.agents-view .ag-table tbody tr:hover { background: var(--row-hover, var(--ag-surface-2)); }
+.agents-view .ag-table tbody tr.is-selected { background: color-mix(in srgb, var(--ag-focus) 10%, var(--ag-surface)); }
+.agents-view .ag-td-name { min-width: 200px; }
+.agents-view .ag-td-name-in { display: flex; align-items: center; gap: 9px; font-weight: 650; }
+.agents-view .ag-td-round { min-width: 130px; font-size: 13.5px; }
+.agents-view .ag-td-round-in { display: flex; align-items: center; gap: 7px; }
+.agents-view .ag-table .ag-status { font-size: 13px; }
+.agents-view .ag-table th, .agents-view .ag-table td { padding-left: 9px; padding-right: 9px; }
+.agents-view .ag-table .ag-sort { padding: 11px 9px; }
+
+/* ------------------------------------------------------------------ charts */
+.agents-view .ag-hbars { display: flex; flex-direction: column; gap: 12px; }
+.agents-view .ag-hrow { display: grid; grid-template-columns: 170px minmax(0, 1fr) 170px; align-items: center; gap: 12px; }
+.agents-view .ag-hrow-label { display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; padding: 2px; cursor: pointer; text-align: left; font-weight: 600; }
+.agents-view .ag-hrow-label:hover span:last-child { text-decoration: underline; }
+.agents-view .ag-track { position: relative; height: 22px; display: flex; align-items: center; border-left: 1px solid var(--ag-border-strong); }
+.agents-view .ag-track-none { font-size: 13px; color: var(--ag-muted); font-style: italic; padding-left: 8px; }
+.agents-view .ag-stack { display: flex; gap: 2px; height: 20px; min-width: 6px; }
+.agents-view .ag-seg { flex: 1 1 0; min-width: 4px; border: 0; padding: 0; background: var(--g); cursor: pointer; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-edge) 60%, transparent); }
+.agents-view .ag-seg:last-child { border-radius: 0 4px 4px 0; }
+.agents-view .ag-seg:hover, .agents-view .ag-seg:focus-visible { filter: brightness(1.1); outline: 2px solid var(--ag-ink); outline-offset: 1px; }
+.agents-view .ag-hrow-val { font-size: 13.5px; color: var(--ag-muted); font-variant-numeric: tabular-nums; }
+.agents-view .ag-hrow-val strong { color: var(--ag-ink); font-size: 15px; }
+
+.agents-view .ag-heavy { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.agents-view .ag-heavy-row { display: grid; grid-template-columns: 22px 24px minmax(0, 1fr) auto; align-items: center; gap: 10px; width: 100%; border: 0; background: transparent; padding: 6px 4px; border-radius: 10px; cursor: pointer; text-align: left; }
+.agents-view .ag-heavy-row:hover { background: var(--ag-surface-2); }
+.agents-view .ag-heavy-rank { font-weight: 800; color: var(--ag-muted); text-align: center; }
+.agents-view .ag-heavy-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.agents-view .ag-heavy-name { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agents-view .ag-heavy-track { display: block; height: 8px; }
+.agents-view .ag-heavy-bar { display: block; height: 8px; background: var(--g); border-radius: 0 4px 4px 0; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-edge) 60%, transparent); }
+.agents-view .ag-heavy-val { display: flex; flex-direction: column; align-items: flex-end; font-size: 13px; color: var(--ag-muted); font-variant-numeric: tabular-nums; }
+.agents-view .ag-heavy-val strong { color: var(--ag-ink); font-size: 15px; }
+
+.agents-view .ag-lgroup { position: relative; display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; --label-w: 270px; --val-w: 64px; }
+.agents-view .ag-lgroup-h { font-size: 14.5px; color: var(--ag-ink-2); margin: 0 0 4px; font-weight: 650; }
+.agents-view .ag-lrow { display: grid; grid-template-columns: var(--label-w) minmax(0, 1fr) var(--val-w); align-items: center; gap: 10px; width: 100%; border: 0; background: transparent; padding: 3px 4px; border-radius: 8px; cursor: pointer; text-align: left; }
+.agents-view .ag-lrow:hover { background: var(--ag-surface-2); }
+.agents-view .ag-lrow-label { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 14px; }
+.agents-view .ag-lrow-label span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agents-view .ag-lrow-label .ag-disc { width: 20px; height: 20px; font-size: 11px; }
+.agents-view .ag-ltrack { position: relative; display: block; height: 16px; border-left: 1px solid var(--ag-border-strong); }
+.agents-view .ag-lbar { display: block; height: 16px; background: var(--g); border-radius: 0 4px 4px 0; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-edge) 60%, transparent); }
+.agents-view .ag-lbar.is-est { background-image: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--ag-surface) 35%, transparent) 5px 7px); }
+.agents-view .ag-lrow-val { text-align: right; font-weight: 650; font-variant-numeric: tabular-nums; font-size: 14px; }
+.agents-view .ag-typical {
+  position: absolute; top: 26px; bottom: 0; pointer-events: none; width: 0; border-left: 2px dashed var(--ag-ink-2);
+  left: calc(var(--label-w) + 14px + (100% - var(--label-w) - var(--val-w) - 28px) * var(--pos-n, 0));
+}
+.agents-view .ag-typical-l { position: absolute; top: -20px; left: 4px; white-space: nowrap; font-size: 12.5px; font-weight: 650; color: var(--ag-ink-2); background: var(--ag-surface); padding: 0 4px; border-radius: 4px; }
+
+/* ------------------------------------------------------------------ live */
+.agents-view .ag-live-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.agents-view .ag-live-item { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; cursor: pointer; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--ag-border); background: var(--ag-surface-2); }
+.agents-view .ag-live-item:hover { border-color: var(--ag-border-strong); }
+.agents-view .ag-live-dot { position: relative; width: 12px; height: 12px; border-radius: 50%; background: var(--ag-easy); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ag-easy) 22%, transparent); flex: none; }
+/* the pulse is a ring that scales and fades (compositor), not an animated box-shadow (a repaint every frame) */
+.agents-view .ag-live-dot::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; background: color-mix(in srgb, var(--ag-easy) 30%, transparent); animation: ag-pulse 2s ease-in-out infinite; }
+@keyframes ag-pulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.55); opacity: 0; } }
+.agents-view .ag-live-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.agents-view .ag-live-name { font-weight: 700; }
+.agents-view .ag-live-meta { font-size: 13.5px; color: var(--ag-muted); }
+.agents-view .ag-live-cmd { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; color: var(--ag-ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agents-view .ag-live-cmd.block { display: block; white-space: pre-wrap; overflow-wrap: anywhere; padding: 10px; border-radius: 10px; background: var(--ag-surface-2); }
+.agents-view .ag-live-pid { font-size: 12.5px; color: var(--ag-muted); white-space: nowrap; }
+.agents-view .ag-live-empty { display: flex; align-items: center; gap: 8px; margin: 0; color: var(--ag-ink-2); }
+.agents-view .ag-live-foot { margin: 10px 0 0; font-size: 12.5px; color: var(--ag-muted); }
+
+/* ------------------------------------------------------------------ notes, empty, panel */
+.agents-view .ag-note { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; background: color-mix(in srgb, var(--ag-accent) 8%, var(--ag-surface)); border: 1px solid color-mix(in srgb, var(--ag-accent) 22%, transparent); color: var(--ag-ink-2); line-height: 1.5; margin: 10px 0; }
+.agents-view .ag-note.warn { background: color-mix(in srgb, var(--ag-medium) 12%, var(--ag-surface)); border-color: color-mix(in srgb, var(--ag-medium) 40%, transparent); }
+.agents-view .ag-note .ag-ico { margin-top: 2px; color: var(--ag-accent); }
+.agents-view .ag-note .ag-muted { margin-top: 6px; font-size: 13px; }
+.agents-view .ag-notes summary { cursor: pointer; font-weight: 650; font-size: 16px; }
+.agents-view .ag-plain-list { margin: 8px 0; padding-left: 20px; color: var(--ag-ink-2); line-height: 1.55; }
+.agents-view .ag-code code { display: block; }
+.agents-view .ag-code { margin: 8px 0 0; padding: 12px 14px; border-radius: 10px; background: var(--ag-surface-2); border: 1px solid var(--ag-border); overflow-x: auto; font-family: ui-monospace, Consolas, monospace; font-size: 13.5px; }
+
+.agents-view.ag-panel { display: flex; flex-direction: column; }
+.agents-view .ag-pbanner { display: flex; gap: 14px; align-items: center; padding: 14px; border-radius: 14px; background: color-mix(in srgb, var(--g) 13%, var(--ag-surface)); border: 1px solid color-mix(in srgb, var(--g-edge) 45%, transparent); }
+.agents-view .ag-pbanner-title { display: flex; align-items: center; gap: 8px; font-weight: 750; font-size: 18px; }
+.agents-view .ag-pbanner p { margin: 4px 0 0; color: var(--ag-ink-2); line-height: 1.45; }
+.agents-view .ag-ph { font-size: 15px; margin: 18px 0 6px; color: var(--ag-ink); }
+.agents-view .ag-pstatus { display: flex; flex-direction: column; gap: 4px; }
+.agents-view .ag-pstatus .ag-muted { font-size: 14px; }
+.agents-view .ag-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.agents-view .ag-fact { padding: 10px 12px; border-radius: 12px; background: var(--ag-surface-2); border: 1px solid var(--ag-border); min-width: 0; }
+.agents-view .ag-fact dt { font-size: 12.5px; color: var(--ag-muted); }
+.agents-view .ag-fact dd { margin: 2px 0 0; display: flex; flex-direction: column; }
+.agents-view .ag-fact-v { font-weight: 700; font-size: 16px; overflow-wrap: anywhere; }
+.agents-view .ag-fact-sub { font-size: 12.5px; color: var(--ag-muted); overflow-wrap: anywhere; }
+.agents-view .ag-files, .agents-view .ag-alist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.agents-view .ag-file, .agents-view .ag-arow { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; cursor: pointer; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--ag-border); background: var(--ag-surface-2); }
+.agents-view .ag-file:hover, .agents-view .ag-arow:hover { border-color: var(--ag-border-strong); }
+.agents-view .ag-file-path { flex: 1; min-width: 0; font-family: ui-monospace, Consolas, monospace; font-size: 13px; overflow-wrap: anywhere; }
+.agents-view .ag-file-lines { font-size: 13px; color: var(--ag-muted); white-space: nowrap; }
+.agents-view .ag-arow-name { flex: 1; min-width: 0; font-weight: 600; }
+.agents-view .ag-arow-val { font-size: 13px; color: var(--ag-muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* ------------------------------------------------------------------ responsive, motion */
+@media (max-width: 1100px) {
+  .agents-view .ag-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .agents-view .ag-two { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 700px) {
+  .agents-view .ag-tiles { grid-template-columns: minmax(0, 1fr); }
+  .agents-view .ag-hrow { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .agents-view .ag-lgroup { --label-w: 150px; }
+  .agents-view .ag-legend { position: static; }
+  .agents-view .ag-facts { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .agents-view *, .agents-view.ag-tip { transition: none !important; animation: none !important; }
+  .agents-view .ag-tile:hover, .agents-view .ag-acard:hover { transform: none; }
+}
+@media (forced-colors: active) {
+  .agents-view .ag-node-c, .agents-view .ag-disc { forced-color-adjust: none; }
+}
+
+/* ================================================================== UI-D: 3D agent map (docs/playbooks/D-visual-design.md)
+ * Glossy spheres (radial gradients from agents-view.js fxDefs, stop colours from the grade variables here),
+ * a soft bloom in the grade's edge colour, orbit rings, a gentle float, flowing data streams on the edges and
+ * a reactor orb for the main session. Grade letters and dashed "estimated" edges stay, so colour is never alone.
+ * Loops pause while the map is off screen (.fx-paused) and stop under prefers-reduced-motion. */
+.agents-view .agfx-sph stop:nth-child(1) { stop-color: color-mix(in srgb, var(--g) 42%, #ffffff); }
+.agents-view .agfx-sph stop:nth-child(2) { stop-color: var(--g); }
+.agents-view .agfx-sph stop:nth-child(3) { stop-color: color-mix(in srgb, var(--g) 52%, #000000); }
+.agents-view .agfx-bloom stop:nth-child(1) { stop-color: var(--g-edge); stop-opacity: 0.5; }
+.agents-view .agfx-bloom stop:nth-child(2) { stop-color: var(--g-edge); stop-opacity: 0; }
+.agents-view .agfx-spec stop:nth-child(1) { stop-color: #ffffff; stop-opacity: 0.85; }
+.agents-view .agfx-spec stop:nth-child(2) { stop-color: #ffffff; stop-opacity: 0; }
+.agents-view .agfx-orch stop:nth-child(1) { stop-color: color-mix(in srgb, var(--ag-accent) 35%, #ffffff); }
+.agents-view .agfx-orch stop:nth-child(2) { stop-color: var(--ag-accent); }
+.agents-view .agfx-orch stop:nth-child(3) { stop-color: color-mix(in srgb, var(--ag-accent) 45%, #000000); }
+
+/* spheres */
+.agents-view .ag-node.g-easy .ag-node-c { fill: url(#agfx-sph-easy); }
+.agents-view .ag-node.g-medium .ag-node-c { fill: url(#agfx-sph-medium); }
+.agents-view .ag-node.g-hard .ag-node-c { fill: url(#agfx-sph-hard); }
+.agents-view .ag-node.g-xhigh .ag-node-c { fill: url(#agfx-sph-xhigh); }
+.agents-view .ag-node.g-none .ag-node-c { fill: url(#agfx-sph-none); }
+.agents-view .ag-node-c { stroke: color-mix(in srgb, var(--g-edge) 70%, #ffffff 0%); stroke-width: 1.2; }
+.agents-view .ag-node.g-easy .ag-node-bloom { fill: url(#agfx-bloom-easy); }
+.agents-view .ag-node.g-medium .ag-node-bloom { fill: url(#agfx-bloom-medium); }
+.agents-view .ag-node.g-hard .ag-node-bloom { fill: url(#agfx-bloom-hard); }
+.agents-view .ag-node.g-xhigh .ag-node-bloom { fill: url(#agfx-bloom-xhigh); }
+.agents-view .ag-node.g-none .ag-node-bloom { fill: url(#agfx-bloom-none); }
+.agents-view .ag-node-bloom, .agents-view .ag-node-spec, .agents-view .ag-node-orbit, .agents-view .ag-edge-flow,
+.agents-view .ag-orch-spec { pointer-events: none; }
+.agents-view .ag-node-spec { fill: url(#agfx-spec); }
+.agents-view .ag-node-t { paint-order: stroke; stroke: color-mix(in srgb, var(--g) 70%, #000000); stroke-width: 0.6px; }
+.agents-view .ag-node.g-medium .ag-node-t, .agents-view .ag-node.g-easy .ag-node-t, .agents-view .ag-node.g-none .ag-node-t { stroke: none; }
+.agents-view .ag-node-orbit { fill: none; stroke: color-mix(in srgb, var(--g-edge) 70%, transparent); stroke-width: 1.3; stroke-dasharray: 3 4; }
+.agents-view .ag-node-orbit.is-back { opacity: 0.45; }
+.agents-view .ag-node:hover .ag-node-orbit, .agents-view .ag-node.is-hot .ag-node-orbit, .agents-view .ag-node.is-selected .ag-node-orbit {
+  stroke: var(--g-edge); stroke-width: 1.8; opacity: 1; animation: ag-orbit-flow 1.4s linear infinite;
+}
+.agents-view .ag-node:hover .ag-node-c, .agents-view .ag-node:focus-visible .ag-node-c { stroke: #ffffff; stroke-width: 2; }
+
+/* data streams on the edges (hub -> helper): a still dotted stream at rest; it flows only for the helper or round
+ * you point at or select (an always-moving stream inside the map SVG would repaint the whole map every frame) */
+.agents-view .ag-edge { stroke: color-mix(in srgb, var(--ag-view) 30%, var(--ag-edge-soft)); }
+.agents-view .ag-edge-flow {
+  fill: none; stroke: color-mix(in srgb, #22d3ee 55%, var(--ag-view)); stroke-width: 2.2; stroke-linecap: round;
+  stroke-dasharray: 1.5 16; opacity: 0.6;
+}
+.agents-view .ag-edge-flow.is-hot { opacity: 1; stroke-width: 3.2; stroke: #22d3ee; animation: ag-flow 2.4s linear infinite; }
+.agents-view .ag-map.has-focus .ag-edge-flow:not(.is-hot) { opacity: 0.12; }
+.agents-view .ag-spoke { stroke: url(#fx-grad-brand); stroke-width: 3; opacity: 0.75; }
+
+/* round hubs: glass discs with a gradient rim */
+.agents-view .ag-hub-c { fill: var(--ag-surface); stroke: url(#fx-grad-brand); stroke-width: 2.6; }
+.agents-view .ag-hub:hover .ag-hub-c, .agents-view .ag-hub:focus .ag-hub-c { stroke: url(#fx-grad-brand); stroke-width: 4; }
+
+/* the main session: a reactor orb */
+.agents-view .ag-orch-c { fill: url(#agfx-orch); stroke: color-mix(in srgb, var(--ag-accent) 50%, #ffffff); stroke-width: 1.5; }
+.agents-view .ag-orch-halo { stroke: color-mix(in srgb, #22d3ee 45%, transparent); stroke-width: 3; }
+.agents-view .ag-orch-spec { fill: url(#agfx-spec); opacity: 0.8; }
+.agents-view .ag-orch-t, .agents-view .ag-orch-s { paint-order: stroke; stroke: color-mix(in srgb, var(--ag-accent) 55%, #000000); stroke-width: 0.8px; }
+/* the reactor: HTML layers under the map, centred on the Claude core (agents-view.js reactorLayer). Sizes are
+ * percentages of its 300-unit square: bloom 98%, outer ring 64%, inner ring and sweep arc 56.7%, art 96%. */
+.agents-view .ag-orch-layer { position: absolute; z-index: 0; aspect-ratio: 1; pointer-events: none; }
+.agents-view .ag-orch-deco, .agents-view .ag-orch-art { position: absolute; inset: 0; }
+.agents-view .ag-orch-deco > span { position: absolute; border-radius: 50%; will-change: transform; }
+.agents-view .ag-orch-bloom { inset: 1%; background: radial-gradient(circle, color-mix(in srgb, var(--ag-accent) 42%, transparent), color-mix(in srgb, #22d3ee 12%, transparent) 50%, transparent 70%); animation: ag-breathe 4.4s ease-in-out infinite; }
+.agents-view .ag-orch-ring2 { inset: 18%; border: 1.5px dotted color-mix(in srgb, #22d3ee 60%, transparent); animation: ag-spin 38s linear infinite reverse; }
+.agents-view .ag-orch-ring1 { inset: 21.67%; border: 2px dashed color-mix(in srgb, var(--ag-accent) 65%, transparent); animation: ag-spin 26s linear infinite; }
+.agents-view .ag-orch-arc { inset: 21.67%; border: 3px solid transparent; border-top-color: #22d3ee; animation: ag-spin 9s linear infinite; }
+/* optional agent-core art (plasma reactor with difficulty-coloured spheres) replaces the code-built reactor
+ * rings; the Claude core and its label stay on top, slightly translucent so the plasma glows through */
+.agents-view .ag-orch-layer.has-slot .fx-fallback { display: none; }
+.agents-view .ag-map-box:has(.ag-orch-layer.has-slot) .ag-orch-c { opacity: 0.86; }
+.agents-view .ag-map-box:has(.ag-orch-layer.has-slot) .ag-orch-halo { stroke: color-mix(in srgb, #22d3ee 30%, transparent); }
+.agents-view .ag-orch-art .fx-slot-img {
+  position: absolute; inset: 2%; width: 96%; height: 96%; object-fit: contain; will-change: transform, opacity;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--ag-accent) 45%, transparent));
+  animation: fx-fade-in 0.6s ease both, ag-breathe 6s ease-in-out 0.6s infinite;
+}
+
+/* map card: deep-space bay */
+.agents-view .ag-map-card {
+  border: 1px solid transparent; border-radius: 26px 8px; corner-shape: bevel round;
+  background:
+    radial-gradient(48% 52% at 50% 50%, color-mix(in srgb, var(--ag-view) 14%, transparent), transparent 72%) padding-box,
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, #22d3ee 6%, transparent), transparent 40%) padding-box,
+    var(--panel) padding-box, var(--rim) border-box;
+  box-shadow: var(--e1);
+}
+
+/* header, tiles, legend, toggle, cards */
+.agents-view .ag-head-icon {
+  width: 60px; height: 54px; border: 0; border-radius: 15px / 50%; corner-shape: bevel; color: #ffffff;
+  background: linear-gradient(155deg, color-mix(in srgb, var(--ag-view) 55%, #ffffff), var(--ag-view) 55%, color-mix(in srgb, var(--ag-view) 60%, #000000));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 10px 24px -10px var(--ag-view);
+}
+.agents-view .ag-tile {
+  position: relative; border: 1px solid transparent; border-radius: var(--bv, 16px) var(--bv-r, 6px); corner-shape: bevel round;
+  background:
+    linear-gradient(90deg, transparent, var(--ag-view) 18%, #22d3ee 82%, transparent) top / 100% 2px no-repeat border-box,
+    radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--ag-view) 15%, transparent), transparent 65%) padding-box,
+    var(--panel) padding-box, var(--rim) border-box;
+  box-shadow: var(--e1);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s;
+}
+.agents-view .ag-tile:hover { transform: translateY(-4px); box-shadow: var(--e2), 0 20px 40px -24px var(--ag-view); border-color: transparent; }
+.agents-view .ag-tile-value { text-shadow: 0 0 22px color-mix(in srgb, var(--ag-view) 50%, transparent); }
+.agents-view .ag-card { border: 1px solid transparent; border-radius: var(--bv, 16px) var(--bv-r, 6px); corner-shape: bevel round; background: var(--panel) padding-box, var(--rim) border-box; box-shadow: var(--e1); }
+.agents-view .ag-legend {
+  border: 1px solid transparent; border-radius: 18px 6px; corner-shape: bevel round;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ag-surface) 92%, transparent), color-mix(in srgb, var(--ag-surface) 86%, transparent)) padding-box, var(--rim) border-box;
+  box-shadow: var(--e1);
+}
+.agents-view .ag-lchip {
+  border-radius: 13px / 50%; corner-shape: bevel; padding: 6px 15px 6px 13px; border-color: color-mix(in srgb, var(--g-edge) 50%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--g) 18%, var(--ag-surface-2)), color-mix(in srgb, var(--g) 5%, var(--ag-surface-2)));
+  box-shadow: inset 0 1px 0 var(--hi, rgba(255, 255, 255, 0.08)), 0 6px 14px -8px rgba(0, 0, 0, 0.55);
+  transition: border-color 0.15s, background 0.15s, transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s;
+}
+.agents-view .ag-lchip:hover { transform: translateY(-2px); box-shadow: inset 0 1px 0 var(--hi, rgba(255, 255, 255, 0.08)), 0 10px 22px -10px color-mix(in srgb, var(--g-edge) 70%, transparent); }
+.agents-view .ag-lchip .ag-disc { width: 32px; height: 28px; border-radius: 8px / 50%; corner-shape: bevel; }
+.agents-view .ag-lchip-n { border-radius: 8px / 50%; corner-shape: bevel; padding: 2px 9px; }
+.agents-view .ag-disc { background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--g) 45%, #ffffff), var(--g) 55%, color-mix(in srgb, var(--g) 60%, #000000)); }
+.agents-view .ag-toggle { border-radius: 999px; padding: 4px; box-shadow: var(--well); }
+.agents-view .ag-tbtn { border-radius: 999px; }
+.agents-view .ag-tbtn.is-on {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ag-view) 34%, var(--ag-surface)), color-mix(in srgb, var(--ag-view) 14%, var(--ag-surface)));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 0 0 1px color-mix(in srgb, var(--ag-view) 50%, transparent), 0 4px 14px -4px var(--ag-view);
+}
+.agents-view .ag-acard { border-radius: 14px 5px; corner-shape: bevel round; box-shadow: var(--e1); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s; }
+.agents-view .ag-acard:hover { transform: translateY(-3px); box-shadow: var(--e2); }
+.agents-view .ag-live-item, .agents-view .ag-file, .agents-view .ag-arow, .agents-view .ag-fact, .agents-view .ag-note, .agents-view .ag-pbanner {
+  border-radius: 12px 4px; corner-shape: bevel round; box-shadow: inset 0 1px 0 var(--hi, rgba(255, 255, 255, 0.06));
+}
+.agents-view .ag-live-dot { box-shadow: 0 0 0 4px color-mix(in srgb, var(--ag-easy) 22%, transparent), 0 0 12px 2px color-mix(in srgb, var(--ag-easy) 60%, transparent); }
+
+@keyframes ag-flow { to { stroke-dashoffset: -35; } }
+@keyframes ag-orbit-flow { to { stroke-dashoffset: -14; } }
+@keyframes ag-spin { to { transform: rotate(360deg); } }
+@keyframes ag-breathe { 0%, 100% { opacity: 0.7; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1.04); } }
+.agents-view .fx-paused *, .agents-view.fx-paused * { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .agents-view .ag-lchip:hover { transform: none; }
+}
