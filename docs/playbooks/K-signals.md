@@ -5,15 +5,15 @@ that runs the listener below works the same). Deletion needs TWO confirmations t
 the dashboard, then `I confirm <CODE>` in the agent chat. The agent must never complete a deletion on its own.
 Contract: `docs/ui-contract-v3.md` sections 1 and 4.
 
-**Files:** `core/signals.py` (schema, code, store), `core/agents_live.py`, `core/ai_bridge.py` (Redactor),
-`server/serve.py` (routes), `tools/windows/BVS.Signals.psm1` (read-only helpers), `watch-signals.ps1`,
+**Files:** `src/core/signals.py` (schema, code, store), `src/core/agents_live.py`, `src/core/ai_bridge.py` (Redactor),
+`src/server/serve.py` (routes), `src/tools/windows/BVS.Signals.psm1` (read-only helpers), `watch-signals.ps1`,
 `signal-status.ps1`, `validate-delete.ps1`, `execute-delete.ps1` (the ONLY script that deletes).
 
 ## The agent's loop
 1. Start the listener in the background (it wakes you by exiting):
-   `pwsh -NoProfile -ExecutionPolicy Bypass -File tools\windows\watch-signals.ps1`
+   `pwsh -NoProfile -ExecutionPolicy Bypass -File src\tools\windows\watch-signals.ps1`
 2. On `SIGNAL <id> <type> <summary>`: handle it, report progress with
-   `pwsh -NoProfile -File tools\windows\signal-status.ps1 -Id <id> -State running|done|error -Message "..."`, then
+   `pwsh -NoProfile -File src\tools\windows\signal-status.ps1 -Id <id> -State running|done|error -Message "..."`, then
    start the watcher again. `NO-SIGNAL` = timeout (600 min): just restart it.
    - `run-admin`: if the Safety Scanner is missing or older than 10 days, ask the user, then
      `bvs.ps1 get-tools -Msert`. Show the admin script hash and launch `bvs.ps1 admin` (one Windows admin prompt
@@ -26,10 +26,10 @@ Contract: `docs/ui-contract-v3.md` sections 1 and 4.
    - `refresh-report`: `bvs.ps1 report`.
    - `fix-request`: explain the fix in chat as steps the user carries out. The agent does not change the system.
 3. `delete-request`:
-   - `pwsh -NoProfile -ExecutionPolicy Bypass -File tools\windows\validate-delete.ps1 -SignalId <id>`
+   - `pwsh -NoProfile -ExecutionPolicy Bypass -File src\tools\windows\validate-delete.ps1 -SignalId <id>`
      (read-only), then post the printed table + its `ref` and WAIT.
    - Only after the user types `I confirm <CODE>`:
-     `pwsh -NoProfile -ExecutionPolicy Bypass -File tools\windows\execute-delete.ps1 -SignalId <id> -Code <CODE as typed>`
+     `pwsh -NoProfile -ExecutionPolicy Bypass -File src\tools\windows\execute-delete.ps1 -SignalId <id> -Code <CODE as typed>`
    - Exit 0 done, 1 refused (nothing deleted), 2 wrong code (5 wrong = locked), 3 some actions failed.
      Never type, guess or reuse a code.
 

@@ -20,8 +20,8 @@ always comes first; technical detail goes in the side panel.
 |---|---|
 | **UI-A** (shell + views) | `dashboard/index.html`, `dashboard/style.css`, `dashboard/app.js` (rewrite; reuse `util.js`, `vtable.js`, `basket.js`, `loader.js` unchanged) |
 | **UI-B** (storage map) | `dashboard/storage-view.js`, `dashboard/storage.css` (may reuse/extend `treemap.js` via its own copy `storage-treemap.js` if needed) |
-| **UI-C** (intelligence) | `dashboard/infosec.js`, `dashboard/infosec.css`, `dashboard/scanner.js`, `dashboard/scanner.css`, `dashboard/glossary.js`, `core/ai_bridge.py`, AI routes in `server/serve.py`, `tests/test_server.py` (extend) |
-| **main agent** | `data/<scan>/guide.json` (curated plain-English content), `core/build_datajs.py` (exports `guide` dataset) |
+| **UI-C** (intelligence) | `dashboard/infosec.js`, `dashboard/infosec.css`, `dashboard/scanner.js`, `dashboard/scanner.css`, `dashboard/glossary.js`, `src/core/ai_bridge.py`, AI routes in `src/server/serve.py`, `tests/test_server.py` (extend) |
+| **main agent** | `data/<scan>/guide.json` (curated plain-English content), `src/core/build_datajs.py` (exports `guide` dataset) |
 
 `index.html` (UI-A) MUST include, in this order:
 1. `loader.js`, `util.js`, `vtable.js`, `treemap.js`, `basket.js`;
@@ -31,7 +31,7 @@ always comes first; technical detail goes in the side panel.
 
 Data scripts are loaded by the existing loader mechanism.
 
-## Datasets (`window.BVS.get(name)`, already built by `core/build_datajs.py`)
+## Datasets (`window.BVS.get(name)`, already built by `src/core/build_datajs.py`)
 `summary`, `findings`, `coverage`, `storage`, `duplicates`, `programs`, `startup`, `registry`, `health`,
 `treemap` (+ lazy chunks), `manifest`, and NEW: `guide`. Shapes are in `docs/schema.md`. For examples, run
 `pwsh -File .\bvs.ps1 demo` and inspect `data/demo-scan/js/*.js` (synthetic data).

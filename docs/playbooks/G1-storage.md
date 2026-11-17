@@ -3,7 +3,7 @@
 ## (a) Brief (condensed)
 - Read-only. Use G0 aggregates (`inventory\dirs.tsv`, `files.tsv`, `inventory-meta.json`); never re-walk the disk (small targeted folders only).
 - Output `data\<scanId>\storage\G1.json`, inventory keys `junkItems`, `bigFiles`, `oldFolders`, `storageSummary` (bvs.items/1, ids `st-...`).
-- `junkItems` from `config\category-rules.json`: temp (%TEMP% older than 7 d, Windows\Temp: use_tool); browser caches (use_tool, clear in browser); editor caches; package caches (npm, pip, pnpm, NuGet, gradle, cargo, HuggingFace); node_modules/venv/.next/dist/build/__pycache__ in projects idle >90 d (safe_after_check); crash dumps/WER; Windows.old, SoftwareDistribution\Download, DeliveryOptimization (use_tool); WinSxS/Installer/pagefile/hiberfil (do_not_touch); Docker/WSL vhdx and Ollama (use_tool); Downloads installers older than 30 d; inactive nvm versions and the shadowed Program Files\nodejs; remnants of uninstalled antivirus products; PC-maker folders such as C:\eSupport, C:\Intel, C:\Drivers (review). Also: project copies (`*-copy`, `* - Copy`, `*-merge`) and `.claude\worktrees` (review), standalone venv (safe_after_check), `~\.claude.json.tmp.*`, Desktop `~$` lock files.
+- `junkItems` from `src\config\category-rules.json`: temp (%TEMP% older than 7 d, Windows\Temp: use_tool); browser caches (use_tool, clear in browser); editor caches; package caches (npm, pip, pnpm, NuGet, gradle, cargo, HuggingFace); node_modules/venv/.next/dist/build/__pycache__ in projects idle >90 d (safe_after_check); crash dumps/WER; Windows.old, SoftwareDistribution\Download, DeliveryOptimization (use_tool); WinSxS/Installer/pagefile/hiberfil (do_not_touch); Docker/WSL vhdx and Ollama (use_tool); Downloads installers older than 30 d; inactive nvm versions and the shadowed Program Files\nodejs; remnants of uninstalled antivirus products; PC-maker folders such as C:\eSupport, C:\Intel, C:\Drivers (review). Also: project copies (`*-copy`, `* - Copy`, `*-merge`) and `.claude\worktrees` (review), standalone venv (safe_after_check), `~\.claude.json.tmp.*`, Desktop `~$` lock files.
 - `bigFiles`: top 200 files of 100 MB+ with a category guess. `oldFolders`: 200 MB+ with 80%+ of bytes cold for 2 years; personal data always review. `storageSummary`: reclaimable bytes per safety level, cloud-only bytes, unaccounted bytes.
 
 ## (b) Implementation
@@ -33,6 +33,6 @@
 
 ## (c) Run
 ```
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\storage\windows\G1-storage.ps1 [-ScanId <id>]
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\storage\windows\G1-storage.ps1 [-ScanId <id>]
 ```
 - Needs G0 first; runtime about 8 s. Output: `data\<scanId>\storage\G1.json`.

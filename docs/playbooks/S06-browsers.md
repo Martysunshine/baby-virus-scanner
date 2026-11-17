@@ -2,7 +2,7 @@
 
 ## (a) Brief (condensed)
 
-- Build `collectors\security\windows\S06-browsers.ps1` (read-only; follow `docs\agent-rules.md`; never open Login Data,
+- Build `src\collectors\security\windows\S06-browsers.ps1` (read-only; follow `docs\agent-rules.md`; never open Login Data,
   Cookies, History, Web Data, Local Storage, IndexedDB, Local Extension Settings or Sessions; use Test-BvsNeverRead).
 - Discover Chrome/Edge profiles dynamically (Local State `profile.info_cache` + folders); open prefs files with sharing.
 - **Extensions** per profile: manifest name (resolve `__MSG_x__`), version, manifest_version, permissions,
@@ -15,7 +15,7 @@
   clipboardRead/history/downloads, or content scripts on every site.
 - Intel: public malicious-ID lists via Invoke-BvsIntel (palant, toborrm9); exact match enabled = critical,
   disabled = high. Store existence with soft-404 check; removed from store = medium.
-- Wallet extensions = info (high-value target). Expected items from `config\local\expected.json`.
+- Wallet extensions = info (high-value target). Expected items from `src\config\local\expected.json`.
 - **Hijacks**: search provider, homepage, startup pages, extension URL/settings overrides, DoH, chrome://flags.
 - **Site permissions**: notifications/popups/automatic_downloads allowed; output only flagged origins (raw IP,
   captcha/verify/allow/robot/human words, random labels, .top/.xyz/.click/.online/.icu/.cyou/.rest/.shop) + totals.
@@ -43,7 +43,7 @@
 | browser.extensions.wallets | wallet ID map, wallet-named PWA shortcuts, brand-name impersonation | presence = info; impersonation medium/high |
 
 - Vendor knowledge (browser paths, wallet IDs, store hosts, enum maps, flag rules, known hosts, intel sources) lives in
-  `collectors\security\windows\S06-browsers-reference.json`; machine-specific items only in expected.json.
+  `src\collectors\security\windows\S06-browsers-reference.json`; machine-specific items only in expected.json.
 - Privacy: Local State `os_crypt` and Preferences account fields are never copied; URLs lose query strings.
 - Expected false positives: AV/password-manager/AI extensions in the top tier; dev tools (Puppeteer, VS Code) using
   remote debugging; legitimate .shop/.online sites; bundled Adobe/McAfee registrations.
@@ -58,8 +58,8 @@
 ## (c) Run
 
 ```
-pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\security\windows\S06-browsers.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\security\windows\S06-browsers.ps1 [-Offline] [-NoStoreCheck]
+pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\security\windows\S06-browsers.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\security\windows\S06-browsers.ps1 [-Offline] [-NoStoreCheck]
 ```
 
 - Runtime about 10 to 30 s, depending on the number of browser profiles and extensions.

@@ -1,7 +1,7 @@
 # Data contracts
 
 Every collector produces the same shapes on every platform. All of this data is consumed by the
-aggregator (`core\aggregate.py`) and the dashboard.
+aggregator (`src\core\aggregate.py`) and the dashboard.
 
 **Conventions**
 - Timestamps are ISO-8601 UTC (`2026-01-01T10:11:12.123Z`).
@@ -16,12 +16,12 @@ aggregator (`core\aggregate.py`) and the dashboard.
 data\latest.txt                 current scanId (yyyyMMdd-HHmmss)
 data\<scanId>\scan-meta.json    bvs.scan/1: scanId, auditStartUtc, host, user, userSid, os, elevated
 data\<scanId>\security\<ID>.json   security module envelopes (S01..S13)
-data\<scanId>\admin\*.json         elevated read-only checks: raw sections (admin\windows\admin-checks.ps1) + X1.json (see below)
+data\<scanId>\admin\*.json         elevated read-only checks: raw sections (src\admin\windows\admin-checks.ps1) + X1.json (see below)
 data\<scanId>\inventory\...        G0 file-system metadata (see below)
 data\<scanId>\verify\*.json        verification records (see below)
 data\<scanId>\storage\<ID>.json    storage/performance/health envelopes (G1, G2, H1, H2)
-data\<scanId>\summary.json         aggregate + verdict (core\aggregate.py)
-data\<scanId>\js\*.js              dashboard data (core\build_datajs.py)
+data\<scanId>\summary.json         aggregate + verdict (src\core\aggregate.py)
+data\<scanId>\js\*.js              dashboard data (src\core\build_datajs.py)
 data\<scanId>\scan-status.json     progress of `bvs.ps1 scan` (state, step, verdict, failed collectors)
 data\<scanId>\snapshot-*.json      system state before/after; snapshot-diff.txt is the comparison
 data\<scanId>\requests\            delete requests / confirmed tables
@@ -92,7 +92,7 @@ data\<scanId>\requests\            delete requests / confirmed tables
 
 ## Verdict (`summary.json`)
 
-Computed by `core\aggregate.py` (`compute_verdict`). The first matching row wins.
+Computed by `src\core\aggregate.py` (`compute_verdict`). The first matching row wins.
 
 | Verdict | Condition |
 |---|---|
@@ -140,19 +140,19 @@ result. Any JSON file in `verify\` is read. The simplest accepted shape is a lis
   records last and redo them for any module you re-run.
 - Do not add `explained` or `benign` to a record. The aggregator honours them (they take a
   finding out of the verdict), so they are reserved for a known-good item the user confirmed; use
-  `config\local\expected.json` for that.
+  `src\config\local\expected.json` for that.
 
 ## Admin summary (`data\<scanId>\admin\X1.json`)
 
-`admin\windows\admin-checks.ps1` writes raw section files (`bvs.admin/1`), which the aggregator
+`src\admin\windows\admin-checks.ps1` writes raw section files (`bvs.admin/1`), which the aggregator
 does not read. The admin area counts as covered once `admin\X1.json` exists: a normal
 `bvs.module/1` envelope with `"module": "X1"`, `"area": "admin"`, one check per section and any
 findings. Every check needs an explicit `status` (a missing one is read as `ok`). Brief:
 `docs\agent\admin-triage.md`.
 
-## Machine profile (`config\local\expected.json`)
+## Machine profile (`src\config\local\expected.json`)
 
-Known-good items of one PC. Git-ignored. Template: `config\expected.example.json`. Without the
+Known-good items of one PC. Git-ignored. Template: `src\config\expected.example.json`. Without the
 file the scanner works and simply explains nothing away.
 
 ```json
@@ -206,7 +206,7 @@ Used by the G1/G2/H1/H2 envelopes under `inventory`.
   "flags": ["work_at_risk", "cloud_only"], "gitRisk": { "uncommitted": 0, "unpushed": 0, "stashes": 0 } }
 ```
 
-## Collector API (`lib\windows\BVS.Common.psm1`)
+## Collector API (`src\lib\windows\BVS.Common.psm1`)
 
 | Function | Purpose |
 |---|---|

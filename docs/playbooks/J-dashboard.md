@@ -2,12 +2,12 @@
 
 ## (a) Brief (condensed)
 Build a cross-platform (Python 3 stdlib + vanilla HTML/CSS/JS, no external scripts or fonts), read-only
-dashboard for baby-virus-scanner. `core/aggregate.py` merges all envelopes into `summary.json`: findings,
+dashboard for baby-virus-scanner. `src/core/aggregate.py` merges all envelopes into `summary.json`: findings,
 verification records (verify files or on the finding), reason scores, per-module/severity counts, coverage
 (every check + `logCoverage`), the schema.md verdict rubric, `verdict-override.json` and the honest limits.
-`core/build_datajs.py` writes `js/*.js` as `window.BVS.register(name, json)` (escape `<`, U+2028/2029),
+`src/core/build_datajs.py` writes `js/*.js` as `window.BVS.register(name, json)` (escape `<`, U+2028/2029),
 a manifest and a pruned treemap (>=0.1% of used bytes, top 200 children, rest collapsed) split per
-top-level folder. `server/serve.py`: 127.0.0.1:8777 (fallback 8778-8800), BaseHTTPRequestHandler, static routes
+top-level folder. `src/server/serve.py`: 127.0.0.1:8777 (fallback 8778-8800), BaseHTTPRequestHandler, static routes
 GET/HEAD only, Host must be 127.0.0.1/localhost:<port> (else 403), fixed whitelisted routes, realpath
 containment, no symlinks, strict CSP and hardening headers, no CORS, logs/server.log. UI tabs: Verdict,
 Security, Storage map, Big/Old files, Duplicates, Junk & caches, Programs, Startup & speed, Registry &
@@ -17,10 +17,10 @@ Fixture with every envelope type and a hostile name; `tests/test_server.py`.
 ## (b) Architecture and data flow
 ```
 data/<scan>/{security,admin,verify,storage}/*.json + inventory/{dirs.tsv,files.tsv,inventory-meta.json}
-  -> core/aggregate.py   -> summary.json  (merge, verification, score, coverage, verdict, limits)
-  -> core/build_datajs.py -> js/{manifest,summary,findings,coverage,storage,duplicates,programs,
+  -> src/core/aggregate.py   -> summary.json  (merge, verification, score, coverage, verdict, limits)
+  -> src/core/build_datajs.py -> js/{manifest,summary,findings,coverage,storage,duplicates,programs,
                              startup,registry,health,treemap,treemap-NNNN}.js  + data/latest.js
-  -> server/serve.py (or file://) -> dashboard/index.html + loader/util/vtable/treemap/basket/app.js
+  -> src/server/serve.py (or file://) -> dashboard/index.html + loader/util/vtable/treemap/basket/app.js
 ```
 - **Verdict**: COMPROMISED = confirmed critical compromise; SUSPICIOUS = unrefuted, unexplained high/critical
   compromise/suspicious finding; high hardening/hygiene or medium -> HARDENING_NEEDED; else OK. Refuted,
@@ -42,10 +42,10 @@ data/<scan>/{security,admin,verify,storage}/*.json + inventory/{dirs.tsv,files.t
 
 ## (c) Run
 ```
-python -I -B core/aggregate.py   --scan data/<scanId>     # summary.json only
-python -I -B core/build_datajs.py --scan data/<scanId>    # also re-aggregates
+python -I -B src/core/aggregate.py   --scan data/<scanId>     # summary.json only
+python -I -B src/core/build_datajs.py --scan data/<scanId>    # also re-aggregates
 start-dashboard.cmd   [-Scan <id>] [-Rebuild] [-NoBrowser]       # build if needed, serve, open browser
-python -I -B server/serve.py [--scan <id|dir>] [--port 8777] [--open]
+python -I -B src/server/serve.py [--scan <id|dir>] [--port 8777] [--open]
 python -I -B tests/test_server.py                                # own server on a free port, synthetic data
 python -I -B tests/fixtures/make_demo_scan.py                    # regenerate the synthetic fixture
 ```

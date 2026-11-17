@@ -2,8 +2,8 @@
 
 ## (a) Brief (condensed)
 Scan agent S01 for baby-virus-scanner (read-only audit, future Windows + Linux AV). Follow `docs\agent-rules.md`,
-`docs\schema.md`, `config\local\expected.json`; use `lib\windows\BVS.Common.psm1`; lint must pass before running.
-Build `collectors\security\windows\S01-persistence.ps1` covering every way code starts automatically or hijacks
+`docs\schema.md`, `src\config\local\expected.json`; use `src\lib\windows\BVS.Common.psm1`; lint must pass before running.
+Build `src\collectors\security\windows\S01-persistence.ps1` covering every way code starts automatically or hijacks
 execution, one `Invoke-BvsCheck` per area, HKLM + HKCU, 64- and 32-bit views:
 1. Run keys (Run, RunOnce(Ex), RunServices(Once), Policies\Explorer\Run, TS Install), StartupApproved (02 on / 03 off),
    key LastWriteTime, resolved command, target signer / user-writable / exists.
@@ -57,7 +57,7 @@ expected.json matches: set `-Expected`, cap at info unless an invalidIf holds. F
   ~/.config/autostart, shell rc files, LD_PRELOAD, kernel modules (same engine, same shapes).
 
 ## (c) Run
-`pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\security\windows\S01-persistence.ps1 [-NoIntel] [-IntelMaxAgeHours 24]`
-- Lint first: `pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\security\windows\S01-persistence.ps1` (1 expected WARN: read-only WScript.Shell).
+`pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\security\windows\S01-persistence.ps1 [-NoIntel] [-IntelMaxAgeHours 24]`
+- Lint first: `pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\security\windows\S01-persistence.ps1` (1 expected WARN: read-only WScript.Shell).
 - Runtime about 45 s to 2 minutes, not elevated (drivers, services and tasks take the longest).
 - Outputs: `data\<scanId>\security\S01.json`, `logs\S01.log`, LOLDrivers cache `intel\www.loldrivers.io\*-loldrivers.json`.

@@ -2,7 +2,7 @@
 
 ```
             ┌─────────────────────── platform layer ────────────────────────┐
-            │ Windows: PowerShell 7 collectors + lib/windows/BVS.Common.psm1 │
+            │ Windows: PowerShell 7 collectors + src/lib/windows/BVS.Common.psm1 │
             │ Linux (planned): Python 3 collectors, same output contract     │
             └───────────────┬───────────────────────────────┬───────────────┘
                             │ bvs.module/1 envelopes         │ inventory TSV
@@ -10,15 +10,15 @@
    data/<scanId>/{security,admin,verify,storage,inventory}/  ─────────────────┐
                             │                                                 │
                             ▼                                                 │
-               core/aggregate.py  (cross-platform, stdlib)                    │
+               src/core/aggregate.py  (cross-platform, stdlib)                    │
                merge · verification · score · coverage · verdict              │
                             │ summary.json                                     │
                             ▼                                                 │
-               core/build_datajs.py  ◄────────────────────────────────────────┘
+               src/core/build_datajs.py  ◄────────────────────────────────────────┘
                window.BVS.register(...) data files, lazy treemap subtrees
                             │
                             ▼
-   server/serve.py (127.0.0.1 only, Host/Origin/token checks, CSP)  →  dashboard/ (static UI, cannot delete)
+   src/server/serve.py (127.0.0.1 only, Host/Origin/token checks, CSP)  →  dashboard/ (static UI, cannot delete)
                             │
                             ▼
    Basket → request + "I confirm" in the dashboard → validate-delete → "I confirm <CODE>" in the agent chat
@@ -41,7 +41,7 @@
    - a project-folder write guard;
    - before/after state snapshots.
 4. **Machine profiles are separate from logic.** Known-good items live in
-   `config/local/expected.json`, each with `invalidIf` conditions. Collectors stay portable.
+   `src/config/local/expected.json`, each with `invalidIf` conditions. Collectors stay portable.
 5. **Zero third-party runtime dependencies.** PowerShell 7 and the Python standard library only.
    No CDN scripts in the UI. A security tool should have a tiny supply chain itself.
 6. **Humans own destructive actions.** The UI can only *compose* a delete request. Execution is a
@@ -51,19 +51,19 @@
 
 | Component | Language | Notes |
 |---|---|---|
-| `lib/windows/BVS.Common.psm1` | PowerShell 7 | run lifecycle, masking, safe enumeration (reparse points skipped, cloud-only never opened), Authenticode, MOTW, magic bytes, ACL writability, registry (raw + LastWrite), command-line resolution, intel fetch |
+| `src/lib/windows/BVS.Common.psm1` | PowerShell 7 | run lifecycle, masking, safe enumeration (reparse points skipped, cloud-only never opened), Authenticode, MOTW, magic bytes, ACL writability, registry (raw + LastWrite), command-line resolution, intel fetch |
 | `collectors/*/windows/*.ps1` | PowerShell 7 | one module per file, re-runnable, documented in a playbook |
-| `admin/windows/admin-checks.ps1` | PowerShell 7 | standalone; run elevated through `launch-elevated.ps1` (hash-pinned) |
+| `src/admin/windows/admin-checks.ps1` | PowerShell 7 | standalone; run elevated through `launch-elevated.ps1` (hash-pinned) |
 | `core/*.py` | Python 3 stdlib | aggregation, verdict, dashboard data. Cross-platform. |
-| `server/serve.py` | Python 3 stdlib | hardened localhost server: static files plus a small token-protected API (AI explainer, signals, saved chats) |
-| `core/ai_bridge.py`, `core/signals.py`, `core/chat_store.py` | Python 3 stdlib | opt-in AI explainer with redaction; dashboard-to-agent signals and the delete-code check; saved chats |
+| `src/server/serve.py` | Python 3 stdlib | hardened localhost server: static files plus a small token-protected API (AI explainer, signals, saved chats) |
+| `src/core/ai_bridge.py`, `src/core/signals.py`, `src/core/chat_store.py` | Python 3 stdlib | opt-in AI explainer with redaction; dashboard-to-agent signals and the delete-code check; saved chats |
 | `dashboard/` | HTML/CSS/vanilla JS | `textContent`-only rendering, CSP-compatible (no inline code) |
-| `tools/windows/` | PowerShell 7 | linter, scan sessions, snapshots, privacy check, verified tool downloads, delete validation/execution |
+| `src/tools/windows/` | PowerShell 7 | linter, scan sessions, snapshots, privacy check, verified tool downloads, delete validation/execution |
 
 ## Who does what: code and agents
 
 Detection and judgement are code. The collectors apply fixed rules, and the verdict comes from a
-fixed rubric in `core/aggregate.py`. `bvs.ps1 scan` runs all of it without any AI.
+fixed rubric in `src/core/aggregate.py`. `bvs.ps1 scan` runs all of it without any AI.
 
 An AI agent is the *operator*: it runs the commands in [AGENTS.md](../AGENTS.md), asks for
 consent, explains the result, and can add two kinds of evidence that the rubric then uses:

@@ -335,12 +335,12 @@ async function main() {
       let scan = o.scan;
       if (!scan) {
         // Default: the latest scan, or the synthetic demo scan on a fresh clone (build it first with
-        // `python -I -B core/build_datajs.py --scan tests/fixtures/demo-scan`).
+        // `python -I -B src/core/build_datajs.py --scan tests/fixtures/demo-scan`).
         const latest = path.join(ROOT, 'data', 'latest.txt');
         scan = fs.existsSync(latest) ? fs.readFileSync(latest, 'utf8').trim() : path.join('tests', 'fixtures', 'demo-scan');
       }
       const stateRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'bvs-perf-state-'));
-      const args = ['-I', '-B', path.join(ROOT, 'server', 'serve.py'), '--port', String(o.port), '--no-ai', '--state-root', stateRoot];
+      const args = ['-I', '-B', path.join(ROOT, 'src', 'server', 'serve.py'), '--port', String(o.port), '--no-ai', '--state-root', stateRoot];
       if (scan) { args.push('--scan', scan); }
       server = spawn(o.python, args, { cwd: ROOT, stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true });
       let serr = '';

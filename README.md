@@ -109,9 +109,9 @@ Each module's method is written down in [docs/playbooks/](docs/playbooks/).
 
 | Guarantee | How it is enforced |
 |---|---|
-| **Read-only.** Scanning never deletes, quarantines or changes anything. | Every collector must pass an AST linter (`tools/windows/check-collector.ps1`) that blocks file, registry, service, task, firewall and antivirus changes, installs, elevation and raw network calls. System state is recorded before and after, and the comparison is saved with the scan. |
-| **Secrets never leak.** | Masking is built into the writer and fails closed. Browser password, cookie and history databases, AI-tool credential files and private keys are on a never-open list (`config/never-read.json`). |
-| **Minimal network.** | Collectors reach only the hosts in `config/intel-hosts.json`. What may leave: package `name@version`, extension IDs, your GitHub user name and npm package names, DNS test names. Never file contents, paths or hashes. Two programs can be downloaded, only when you ask: see [Optional extras](#optional-extras). |
+| **Read-only.** Scanning never deletes, quarantines or changes anything. | Every collector must pass an AST linter (`src/tools/windows/check-collector.ps1`) that blocks file, registry, service, task, firewall and antivirus changes, installs, elevation and raw network calls. System state is recorded before and after, and the comparison is saved with the scan. |
+| **Secrets never leak.** | Masking is built into the writer and fails closed. Browser password, cookie and history databases, AI-tool credential files and private keys are on a never-open list (`src/config/never-read.json`). |
+| **Minimal network.** | Collectors reach only the hosts in `src/config/intel-hosts.json`. What may leave: package `name@version`, extension IDs, your GitHub user name and npm package names, DNS test names. Never file contents, paths or hashes. Two programs can be downloaded, only when you ask: see [Optional extras](#optional-extras). |
 | **Local only.** | Results stay in `data/` in this folder. The dashboard binds to `127.0.0.1` and checks Host, Origin and a per-start token. No accounts, no telemetry. |
 | **AI is opt-in.** | Your agent asks before it reads findings. The dashboard's explainer asks in the browser before its first AI request, hides personal file names first, and can be switched off completely (`--no-ai`). |
 | **You decide every deletion.** | The dashboard cannot delete. It can only send a request, which needs two confirmations typed by you: one in the dashboard, then a one-time code in the agent chat. Items go to the Recycle Bin or a holding folder. The scanner never edits the registry. |
@@ -186,21 +186,21 @@ A read-only scan still leaves traces. None of them is a change made by the scann
 ## Project layout
 
 ```
-bvs.ps1                         command-line entry point
-AGENTS.md                       runbook for AI agents
-collectors/security/windows/    S01..S13 security modules, each with its indicator lists
-collectors/inventory/windows/   G0 file-system inventory
-collectors/storage/windows/     G1/G2/H1/H2 storage, duplicates, programs, health
-lib/windows/BVS.Common.psm1     shared collector library (masking, safe enumeration, signatures, intel)
-admin/windows/                  elevated read-only checks and their launcher
-core/                           Python: aggregator and verdict, dashboard data, AI bridge, signals
-server/serve.py                 hardened localhost dashboard server
-dashboard/                      the dashboard (plain HTML, CSS and JavaScript)
-tools/windows/                  linter, scan session, snapshots, privacy check, delete validation
-config/                         masking rules, never-read list, host allowlist, storage rules
-docs/                           rules, data contract, architecture, methodology, playbooks, agent briefs
-tests/                          self-tests, server tests, synthetic demo scan
-data/ intel/ logs/              your scan output (never committed)
+AGENTS.md              runbook for AI agents
+bvs.ps1                command-line entry point
+start-dashboard.cmd    double-click to open the dashboard
+src/
+  collectors/          S01..S13 security modules, G0 inventory, G1/G2/H1/H2 storage and health
+  lib/                 shared collector library (masking, safe enumeration, signatures, intel)
+  admin/               elevated read-only checks and their launcher
+  core/                Python: aggregator and verdict, dashboard data, AI bridge, signals
+  server/              hardened localhost dashboard server
+  dashboard/           the dashboard (plain HTML, CSS and JavaScript)
+  tools/               linter, scan session, snapshots, privacy check, delete protocol
+  config/              masking rules, never-read list, host allowlist, storage rules
+docs/                  rules, data contract, methodology, playbooks, agent briefs, policies
+tests/                 self-tests, server tests, synthetic demo scan
+data/ intel/ logs/     your scan output (created on first run, never committed)
 ```
 
 ## Documentation
@@ -213,11 +213,11 @@ data/ intel/ logs/              your scan output (never committed)
 
 ## Contributing and security
 
-Contributions are welcome: see [CONTRIBUTING.md](CONTRIBUTING.md). Run the privacy check before
+Contributions are welcome: see [CONTRIBUTING.md](docs/CONTRIBUTING.md). Run the privacy check before
 every commit, and never attach scan output to an issue. To report a vulnerability, see
-[SECURITY.md](SECURITY.md).
+[SECURITY.md](docs/SECURITY.md).
 
 ## License
 
 [Apache License 2.0](LICENSE). Copyright 2026 Martysunshine. Third-party data and programs:
-[THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+[THIRD-PARTY-NOTICES.md](docs/THIRD-PARTY-NOTICES.md).

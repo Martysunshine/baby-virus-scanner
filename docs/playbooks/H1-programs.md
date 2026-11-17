@@ -7,7 +7,7 @@ Output `data\<scanId>\storage\H1.json`. Inventory keys, unchanged: `programs`, `
 `crashes`, `battery`, `powerPlan` (+ `summary`). Items use the `bvs.items/1` shape from `docs\schema.md`.
 Admin-only sources (StartupInfo, BAM, Prefetch) are `needs_admin`, pending the elevated run.
 
-## (b) Implementation (`collectors\storage\windows\H1-programs.ps1`)
+## (b) Implementation (`src\collectors\storage\windows\H1-programs.ps1`)
 - **programs** (`H1.programs`): uninstall keys from HKLM, HKLM WOW64 (`-View 32`) and HKCU, skipping
   `SystemComponent`, updates and duplicates, plus `Get-AppxPackage`. The AppX list drops framework, resource,
   non-removable and System-signed packages, and anything provisioned for all users (`AppxAllUserStore`).
@@ -39,8 +39,8 @@ Admin-only sources (StartupInfo, BAM, Prefetch) are `needs_admin`, pending the e
 
 ## (c) How to run
 ```powershell
-pwsh -NoProfile -File <root>\tools\windows\check-collector.ps1 -Path <root>\collectors\storage\windows\H1-programs.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File <root>\collectors\storage\windows\H1-programs.ps1
+pwsh -NoProfile -File <root>\src\tools\windows\check-collector.ps1 -Path <root>\src\collectors\storage\windows\H1-programs.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File <root>\src\collectors\storage\windows\H1-programs.ps1
 ```
 Needs S01 (`security\S01.json`) and G0 (`inventory\dirs.tsv`) from the same scan. It takes about 30 s
 (10 s of that is the perf window). Run it elevated later to fill in StartupInfo, BAM and Prefetch.

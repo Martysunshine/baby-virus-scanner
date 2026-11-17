@@ -10,28 +10,17 @@
 !/.claude/
 !/AGENTS.md
 !/CLAUDE.md
-!/CHANGELOG.md
-!/CONTRIBUTING.md
 !/LICENSE
 !/NOTICE
 !/README.md
-!/SECURITY.md
-!/THIRD-PARTY-NOTICES.md
 !/bvs.ps1
 !/start-dashboard.cmd
-!/admin/
-!/collectors/
-!/config/
-!/core/
-!/dashboard/
 !/docs/
-!/lib/
-!/server/
+!/src/
 !/tests/
-!/tools/
 
 # Inside the published folders: machine-specific or generated, never commit.
-/config/local/
+/src/config/local/
 /.claude/settings.local.json
 /.claude/worktrees/
 /tests/ui/shots/

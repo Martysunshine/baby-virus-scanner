@@ -1,7 +1,7 @@
 # S03 - Accounts, remote access & security posture
 
 ## (a) Brief (condensed)
-Build `collectors\security\windows\S03-accounts-posture.ps1` (read-only, `BVS.Common.psm1`, lint before run).
+Build `src\collectors\security\windows\S03-accounts-posture.ps1` (read-only, `BVS.Common.psm1`, lint before run).
 1. **Accounts**: Get-LocalUser (Name, Enabled, SID, LastLogon, PasswordLastSet, PasswordRequired, Description);
    group members by SID (Administrators -544, Remote Desktop Users -555, Remote Management Users -580,
    Backup Operators -551, Hyper-V Administrators -578); hidden users (Winlogon\SpecialAccounts\UserList);
@@ -62,8 +62,8 @@ Inventory: accounts, posture table, RMM inventory, roots, hosts/proxy. Output `d
 
 ## (c) Run
 ```
-pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\security\windows\S03-accounts-posture.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\security\windows\S03-accounts-posture.ps1 [-Offline] [-RecentDays 90] [-SweepDepth 3]
+pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\security\windows\S03-accounts-posture.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\security\windows\S03-accounts-posture.ps1 [-Offline] [-RecentDays 90] [-SweepDepth 3]
 ```
 - Lint: 0 fail, 6 warn (read-only COM: Microsoft.Update.Session, Shell.Application; `expand.exe`; catalog helper).
 - Runtime about 30 s to 1.5 minutes, non-elevated. Output `data\<scanId>\security\S03.json`, log `logs\S03.log`,

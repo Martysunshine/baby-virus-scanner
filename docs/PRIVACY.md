@@ -7,7 +7,7 @@ not legal advice.
 
 ## 1. What is never read
 - **Browsers:** history, cookies, saved passwords, autofill, Local Storage/IndexedDB, extension data
-  (`config/never-read.json` is enforced by the collector linter and the library).
+  (`src/config/never-read.json` is enforced by the collector linter and the library).
 - **Contents of your documents, photos, videos, music or e-mails.** File names and sizes are used for
   the storage map. Privacy mode hides them on screen and from the AI.
 - **Credential stores and secret material:**

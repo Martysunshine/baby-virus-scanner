@@ -1,7 +1,7 @@
 # G0-inventory
 
-> Generated from the collector's own code by `tools/windows/gen-playbook.ps1`. After changing the collector,
-> regenerate it: `pwsh -File tools\windows\gen-playbook.ps1 -Path collectors\inventory\windows\G0-inventory.ps1 -Force`. See `docs/METHODOLOGY.md` for the overall method.
+> Generated from the collector's own code by `src/tools/windows/gen-playbook.ps1`. After changing the collector,
+> regenerate it: `pwsh -File src\tools\windows\gen-playbook.ps1 -Path src\collectors\inventory\windows\G0-inventory.ps1 -Force`. See `docs/METHODOLOGY.md` for the overall method.
 
 ## (a) Purpose
 
@@ -36,7 +36,7 @@ Safety
 
 ## (b) Implementation
 
-Collector: `collectors\inventory\windows\G0-inventory.ps1`. Library: `lib\windows\BVS.Common.psm1`.
+Collector: `src\collectors\inventory\windows\G0-inventory.ps1`. Library: `src\lib\windows\BVS.Common.psm1`.
 
 | Check | What it does |
 |---|---|
@@ -56,8 +56,8 @@ Parameters: `-Path`, `-ScanId`, `-ProgressSeconds`.
 ## (c) Run
 
 ```powershell
-pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\inventory\windows\G0-inventory.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\inventory\windows\G0-inventory.ps1
+pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\inventory\windows\G0-inventory.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\inventory\windows\G0-inventory.ps1
 ```
 
 Output: `data\<scanId>\inventory\G0.json` (`bvs.module/1`). Log: `logs\G0.log`.

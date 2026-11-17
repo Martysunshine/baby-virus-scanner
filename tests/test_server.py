@@ -33,7 +33,7 @@ def setUpModule():
     # summary.json and js/ of the demo fixture are generated, not tracked. Build them once before any test
     # class runs: unittest runs the classes in alphabetical order, and several of them read the findings.
     if not ((FIXTURE / "js" / "manifest.js").is_file() and (FIXTURE / "summary.json").is_file()):
-        subprocess.run([sys.executable, "-I", "-B", str(ROOT / "core" / "build_datajs.py"), "--scan", str(FIXTURE),
+        subprocess.run([sys.executable, "-I", "-B", str(ROOT / "src" / "core" / "build_datajs.py"), "--scan", str(FIXTURE),
                         "--quiet"], check=True)
 
 
@@ -42,7 +42,7 @@ class ServerTests(unittest.TestCase):
     def setUpClass(cls):
         cls.state = tempfile.TemporaryDirectory(prefix="bvs-test-state-")
         cls.state_root = Path(cls.state.name)
-        cls.proc = subprocess.Popen([sys.executable, "-I", "-B", str(ROOT / "server" / "serve.py"), "--scan", str(FIXTURE),
+        cls.proc = subprocess.Popen([sys.executable, "-I", "-B", str(ROOT / "src" / "server" / "serve.py"), "--scan", str(FIXTURE),
                                      "--port", "0", "--no-ai", "--state-root", cls.state.name],
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         line = cls.proc.stdout.readline()
@@ -439,7 +439,7 @@ class ServerTests(unittest.TestCase):
         self.assertIn("agents.css", serve.DASHBOARD_FILES)
         for name in ("agents-view.js", "agents.css"):
             resp, _ = self.request("GET", f"/dashboard/{name}")
-            self.assertEqual(resp.status, 200 if (ROOT / "dashboard" / name).is_file() else 404)
+            self.assertEqual(resp.status, 200 if (ROOT / "src" / "dashboard" / name).is_file() else 404)
 
     def test_assets_route(self):
         """dashboard/assets: images only, one flat folder, same security headers as everything else."""
@@ -460,7 +460,7 @@ class ServerTests(unittest.TestCase):
         for name in ("logo-mark.png", "hero-shield.png", "storage-core.png", "agent-core.png", "bg-nebula.png"):
             with self.subTest(name=name):
                 resp, data = self.request("GET", f"/dashboard/assets/{name}")
-                if (ROOT / "dashboard" / "assets" / name).is_file():
+                if (ROOT / "src" / "dashboard" / "assets" / name).is_file():
                     self.assertEqual(resp.status, 200)
                     self.assertEqual(resp.getheader("Content-Type"), "image/png")
                     self.assertEqual(resp.getheader("Content-Security-Policy"), CSP)
@@ -532,7 +532,7 @@ def raw_request(port, method, path, host=None, body=None, headers=()):
 
 
 def load_serve_module():
-    spec = importlib.util.spec_from_file_location("bvs_serve_under_test", ROOT / "server" / "serve.py")
+    spec = importlib.util.spec_from_file_location("bvs_serve_under_test", ROOT / "src" / "server" / "serve.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -1023,7 +1023,7 @@ class ChatHistoryTests(unittest.TestCase):
 
 
 class PrivacyTests(unittest.TestCase):
-    """core/ai_bridge.py redaction: user name, personal file names, evidence keys."""
+    """src/core/ai_bridge.py redaction: user name, personal file names, evidence keys."""
 
     @classmethod
     def setUpClass(cls):

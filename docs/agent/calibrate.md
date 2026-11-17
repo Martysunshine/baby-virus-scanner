@@ -1,7 +1,7 @@
 # Brief: record known-good items of this PC
 
 **Goal.** Teach the scanner what is normal on *this* PC, so the next report is not cluttered with
-things the user installed on purpose. The place for that is `config\local\expected.json`, the
+things the user installed on purpose. The place for that is `src\config\local\expected.json`, the
 machine profile. It is git-ignored and never leaves the PC.
 
 **Why this needs care.** Every item in the profile takes a finding out of the verdict. An item
@@ -16,8 +16,8 @@ affected collectors must be re-run for the profile to take effect.
 1. **Create the profile if it does not exist.**
 
    ```powershell
-   New-Item -ItemType Directory -Force config\local | Out-Null
-   Copy-Item config\expected.example.json config\local\expected.json
+   New-Item -ItemType Directory -Force src\config\local | Out-Null
+   Copy-Item src\config\expected.example.json src\config\local\expected.json
    ```
 
    The template's `items` list is empty, so nothing changes yet. Its `examples` list shows one

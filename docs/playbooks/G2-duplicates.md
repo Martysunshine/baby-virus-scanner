@@ -31,6 +31,6 @@
 
 ## (c) Run
 ```
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\storage\windows\G2-duplicates.ps1 [-ScanId <id>] [-MinBytes 1MB] [-TopGroups 300]
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\storage\windows\G2-duplicates.ps1 [-ScanId <id>] [-MinBytes 1MB] [-TopGroups 300]
 ```
 - Runtime about 20 s to a few minutes (it hashes candidate files); needs G0 dirs.tsv for projectCopies. Output: `data\<scanId>\storage\G2.json`.

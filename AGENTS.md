@@ -34,7 +34,7 @@ Below, `bvs <command>` is shorthand for exactly that line.
    fails, say so (section 6).
 9. **Never write `verdict-override.json` or `guide.json`.** They change what the report shows as
    the verdict and its explanation. The verdict comes from the fixed rubric in
-   `core\aggregate.py`, not from you.
+   `src\core\aggregate.py`, not from you.
 
 The full contract for people who write collectors is `docs\agent-rules.md`.
 
@@ -110,7 +110,7 @@ Exit code 0 = finished, 1 = something failed, 2 = stopped because the verdict is
 `bvs status` gives you the verdict, the number of open findings per severity and the check
 coverage. With a yes to C, read `data\<scanId>\summary.json` for the detail: `verdictReasons`,
 `findings[]`, `questions[]`, `hardening[]`, `coverage.gaps`, `honestLimits`. A compact view of
-one module: `pwsh -NoProfile -ExecutionPolicy Bypass -File tools\windows\summarize-findings.ps1 -Modules S07 -MinSeverity high`.
+one module: `pwsh -NoProfile -ExecutionPolicy Bypass -File src\tools\windows\summarize-findings.ps1 -Modules S07 -MinSeverity high`.
 
 Say, in this order and in plain language:
 
@@ -196,7 +196,7 @@ request). To receive them, start the listener in the background and follow
 `docs\playbooks\K-signals.md`:
 
 ```powershell
-pwsh -NoProfile -ExecutionPolicy Bypass -File tools\windows\watch-signals.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\tools\windows\watch-signals.ps1
 ```
 
 Deletion exists only as this protocol, and only when the user starts it from the dashboard's
@@ -222,5 +222,5 @@ intruder. Tell the user plainly:
 
 ## Working on the code instead?
 
-Read `CONTRIBUTING.md` and `docs\agent-rules.md`. Before any commit: `bvs check-publish`.
-Never commit `data\`, `intel\`, `logs\`, `vendor\` or `config\local\`.
+Read `docs\CONTRIBUTING.md` and `docs\agent-rules.md`. Before any commit: `bvs check-publish`.
+Never commit `data\`, `intel\`, `logs\`, `vendor\` or `src\config\local\`.

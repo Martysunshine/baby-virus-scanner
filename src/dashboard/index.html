@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="light dark">
+<title>Baby Virus Scanner</title>
+<link rel="icon" href="../dashboard/favicon.svg" type="image/svg+xml">
+<!-- All paths start with "../" so they resolve both at http://127.0.0.1:<port>/ and from file://.../dashboard/ -->
+<link rel="stylesheet" href="../dashboard/style.css">
+<link rel="stylesheet" href="../dashboard/storage.css">
+<link rel="stylesheet" href="../dashboard/infosec.css">
+<link rel="stylesheet" href="../dashboard/scanner.css">
+<link rel="stylesheet" href="../dashboard/agents.css">
+<script src="../dashboard/loader.js"></script>
+<script src="../../data/latest.js"></script>
+<!-- 1. shared helpers (unchanged) -->
+<script src="../dashboard/util.js" defer></script>
+<script src="../dashboard/vtable.js" defer></script>
+<script src="../dashboard/treemap.js" defer></script>
+<script src="../dashboard/basket.js" defer></script>
+<!-- 2. shell: creates window.BVSApp synchronously -->
+<script src="../dashboard/app.js" defer></script>
+<!-- 3. optional views that attach to BVSApp (the shell works without them) -->
+<script src="../dashboard/storage-view.js" defer></script>
+<script src="../dashboard/glossary.js" defer></script>
+<script src="../dashboard/infosec.js" defer></script>
+<script src="../dashboard/scanner.js" defer></script>
+<!-- 4. v3 (docs/ui-contract-v3.md): Agent map by agent M (optional; the shell shows a placeholder without it) -->
+<script src="../dashboard/agents-view.js" defer></script>
+</head>
+<body>
+<!-- UI-D: decorative backdrop (grid + glow). The optional image slot bg-nebula (.png/.webp) only adds depth. -->
+<div class="fx-bg" aria-hidden="true">
+  <span class="fx-bg-grid"></span>
+  <span class="fx-slot fx-bg-slot" data-fx-slot="bg-nebula"></span>
+</div>
+<!-- UI-D: shared SVG paint servers (gauges, glow). Zero-size but rendered, so url(#id) references work. -->
+<svg class="fx-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="fx-grad-brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="0.5" stop-color="#5a9cff"/>
+      <stop offset="1" stop-color="#9b84ff"/>
+    </linearGradient>
+    <linearGradient id="fx-grad-disk" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9b84ff"/>
+      <stop offset="0.55" stop-color="#7c6cf0"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+</svg>
+<div class="app" id="bvs-app">
+  <aside class="sidebar" id="bvs-sidebar" aria-label="Main menu">
+    <a class="side-brand" href="#/overview" data-bvs-type="section" data-bvs-id="brand" data-bvs-label="Baby Virus Scanner">
+      <img class="side-brand-logo" src="../dashboard/assets/logo-mark.svg" data-fx-slot="logo-mark" alt="" width="38" height="38">
+      <span class="side-brand-text"><span class="side-brand-name">Baby Virus Scanner</span><span class="side-brand-sub">Security &amp; storage check</span></span>
+    </a>
+    <nav class="side-nav" id="bvs-nav" aria-label="Sections"></nav>
+    <div class="side-foot">
+      <p class="side-note" title="Buttons only send requests to your Claude session. Fixes and deletions always wait for your own typed confirmation in the Claude chat.">This page never changes your PC by itself. Claude asks you in the chat first.</p>
+      <button type="button" class="side-collapse" id="bvs-collapse" aria-controls="bvs-sidebar" aria-expanded="true">Collapse menu</button>
+    </div>
+  </aside>
+  <div class="side-scrim" id="bvs-scrim" hidden></div>
+  <div class="main-col">
+    <header class="topbar" id="bvs-topbar" data-bvs-section="topbar">
+      <button type="button" class="icon-btn menu-btn" id="bvs-menu" aria-label="Open menu" aria-controls="bvs-sidebar" aria-expanded="false"></button>
+      <div class="top-titles">
+        <div class="top-page" id="bvs-page-title">Overview</div>
+        <div class="scan-info" id="scan-info">Loading scan data&hellip;</div>
+      </div>
+      <div class="top-actions">
+        <div id="bvs-scanner-slot" class="scanner-slot"></div>
+        <button type="button" class="session-pill st-checking" id="bvs-session-pill" hidden data-bvs-type="tile" data-bvs-id="session-pill" data-bvs-label="Claude connection"></button>
+        <button type="button" class="btn ghost small privacy-btn" id="bvs-privacy-toggle" aria-pressed="true" data-bvs-type="tile" data-bvs-id="privacy-toggle" data-bvs-label="Privacy mode"></button>
+        <span class="readonly-badge" title="This page never changes or deletes anything by itself. Its buttons only send requests to your Claude session, and Claude asks you in the chat before any change.">Asks before changes</span>
+        <button id="theme-toggle" class="btn ghost small theme-btn" type="button">Theme: auto</button>
+      </div>
+    </header>
+    <main id="main" tabindex="-1">
+      <div id="bvs-view" class="view-host"></div>
+      <div class="boot-message" id="boot-message">
+        <div class="boot-card">
+          <img class="boot-logo boot-logo-dark" src="../dashboard/assets/logo.svg" alt="Baby Virus Scanner" width="300" height="57">
+          <img class="boot-logo boot-logo-light" src="../dashboard/assets/logo-light.svg" alt="Baby Virus Scanner" width="300" height="57">
+          <span class="spinner" aria-hidden="true"></span><p>Loading your scan&hellip;</p>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+<div class="drawer-backdrop" id="bvs-panel-backdrop" hidden></div>
+<aside class="drawer" id="bvs-panel" role="dialog" aria-modal="true" aria-labelledby="bvs-panel-title" hidden>
+  <div class="drawer-head">
+    <button type="button" class="icon-btn drawer-back" id="bvs-panel-back" aria-label="Back to the previous panel" hidden></button>
+    <div class="drawer-titles">
+      <p class="drawer-kicker" id="bvs-panel-kicker"></p>
+      <h2 class="drawer-title" id="bvs-panel-title" tabindex="-1"></h2>
+      <p class="drawer-sub" id="bvs-panel-subtitle" hidden></p>
+    </div>
+    <button type="button" class="icon-btn" id="bvs-panel-close" aria-label="Close panel (Esc)"></button>
+  </div>
+  <div class="drawer-body" id="bvs-panel-body"></div>
+  <div class="drawer-foot" id="bvs-panel-actions"></div>
+</aside>
+<div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+<noscript><p class="noscript">This dashboard needs JavaScript. It only reads local files and never contacts the network.</p></noscript>
+</body>
+</html>

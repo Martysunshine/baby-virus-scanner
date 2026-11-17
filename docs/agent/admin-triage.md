@@ -5,7 +5,7 @@
 **Goal.** Turn the raw output of the elevated read-only checks into findings the report can show.
 
 **Background.** `bvs.ps1 admin` (one Windows admin prompt, clicked by the user) runs
-`admin\windows\admin-checks.ps1` and then Microsoft Safety Scanner in report-only mode. It writes
+`src\admin\windows\admin-checks.ps1` and then Microsoft Safety Scanner in report-only mode. It writes
 into `data\<scanId>\admin\`:
 
 | File | Content |

@@ -19,8 +19,8 @@
 #>
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
-Import-Module (Join-Path $root 'lib\windows\BVS.Common.psm1') -Force
-Import-Module (Join-Path $root 'tools\windows\BVS.Signals.psm1') -Force
+Import-Module (Join-Path $root 'src\lib\windows\BVS.Common.psm1') -Force
+Import-Module (Join-Path $root 'src\tools\windows\BVS.Signals.psm1') -Force
 $pass = 0; $fail = 0
 function Assert([string]$Name, [bool]$Cond, [string]$Detail = '') {
     if ($Cond) { $script:pass++; "  PASS $Name" } else { $script:fail++; "  FAIL $Name $Detail" }
@@ -32,7 +32,7 @@ $files = Join-Path $run 'files'
 $state = Join-Path $run 'state'
 [void][IO.Directory]::CreateDirectory($files)
 [void][IO.Directory]::CreateDirectory($state)
-$tools = Join-Path $root 'tools\windows'
+$tools = Join-Path $root 'src\tools\windows'
 $server = $null
 
 function Invoke-Tool([string]$Script, [string[]]$ToolArgs) {
@@ -48,7 +48,7 @@ function New-Fixture([string]$Rel, [int]$Size) {
 }
 
 function New-TestSignal([object[]]$Items, [datetime]$Created = [datetime]::UtcNow, [bool]$Typed = $true, [string]$Folder = 'archive') {
-    # Same format as core/signals.py. The code is returned to the TEST only (in real use only the browser sees it).
+    # Same format as src/core/signals.py. The code is returned to the TEST only (in real use only the browser sees it).
     $alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
     $code = -join (1..8 | ForEach-Object { $alphabet[[Security.Cryptography.RandomNumberGenerator]::GetInt32($alphabet.Length)] })
     $salt = [Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(16)).ToLowerInvariant()
@@ -85,7 +85,7 @@ try {
     $r = Invoke-Tool 'validate-delete.ps1' @('-SignalId', '20261020-000000-delete-request-aaaaaa', '-StateRoot', $env:TEMP)
     Assert 'validate with a foreign StateRoot fails' ($r.Code -ne 0)
 
-    'hash agreement with core/signals.py'
+    'hash agreement with src/core/signals.py'
     $py = (Get-Command python -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source
     if ($py) {
         $pyHash = & $py -I -B -c "import sys; sys.path.append(r'$root\core'); import signals; print(signals.hash_code('00ff', 'K7Q2M9XP'))"

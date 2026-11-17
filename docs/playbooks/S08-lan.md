@@ -1,6 +1,6 @@
 # S08 - LAN device discovery
 
-Collector: `collectors\security\windows\S08-lan.ps1` - Output: `data\<scanId>\security\S08.json` (`bvs.module/1`)
+Collector: `src\collectors\security\windows\S08-lan.ps1` - Output: `data\<scanId>\security\S08.json` (`bvs.module/1`)
 
 ## (a) Brief
 
@@ -126,7 +126,7 @@ alone. The winning reasons are stored in `typeReason`. The signal table lives in
 | This PC, non-sensitive port, unknown application | low / hardening (with the owning process) |
 | Mapping disabled | high and medium are capped at low |
 
-**Machine-specific items** come only from `config\local\expected.json`, through `Get-BvsExpected`:
+**Machine-specific items** come only from `src\config\local\expected.json`, through `Get-BvsExpected`:
 - category `hosts` annotates devices whose name matches, for example the Tailscale peer list
   (`confirmWithUser` is kept, so the user is still asked);
 - category `network` can mark a port-forward to this PC as expected.
@@ -199,7 +199,7 @@ Unknown devices alone never create a finding above info. They go into `devices` 
 ### Ideas for v2
 
 - Baseline and diff between scans ("new device since last scan"), plus user-confirmed devices kept
-  in `config\local\expected.json` (category `lanDevice`, keyed by MAC) so that questions are not
+  in `src\config\local\expected.json` (category `lanDevice`, keyed by MAC) so that questions are not
   repeated.
 - Native NBSTAT over UDP 137 (one packet, short timeout) to replace `nbtstat`.
 - IPv6 neighbour discovery (`Get-NetNeighbor -AddressFamily IPv6`, an echo to ff02::1).
@@ -233,8 +233,8 @@ The Linux collector should emit the same `bvs.module/1` shapes, check IDs and in
 
 | | |
 |---|---|
-| Lint | `pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\security\windows\S08-lan.ps1`: OK (0 fail, 1 warn: COM object `HNetCfg.NATUPnP`, read-only enumeration only) |
-| Command (passive, the default) | `pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\security\windows\S08-lan.ps1` |
+| Lint | `pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\security\windows\S08-lan.ps1`: OK (0 fail, 1 warn: COM object `HNetCfg.NATUPnP`, read-only enumeration only) |
+| Command (passive, the default) | `pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\security\windows\S08-lan.ps1` |
 | Command (active, after the user agreed) | the same with `-Active`, or `pwsh -File .\bvs.ps1 scan -Lan` |
 | Other options | `-OuiMaxAgeDays`, `-PingTimeoutMs`, `-PingAttempts`, `-ThrottleLimit`; `-PassiveOnly` is kept for older commands |
 | Runtime | About 6 s passive. About 35 s active on a /24 network (ping sweep, NetBIOS, SSDP, mDNS, and a one-time download of the IEEE list). |

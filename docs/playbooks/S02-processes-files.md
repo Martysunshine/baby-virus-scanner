@@ -1,7 +1,7 @@
 # S02-processes-files
 
-> Generated from the collector's own code by `tools/windows/gen-playbook.ps1`. After changing the collector,
-> regenerate it: `pwsh -File tools\windows\gen-playbook.ps1 -Path collectors\security\windows\S02-processes-files.ps1 -Force`. See `docs/METHODOLOGY.md` for the overall method.
+> Generated from the collector's own code by `src/tools/windows/gen-playbook.ps1`. After changing the collector,
+> regenerate it: `pwsh -File src\tools\windows\gen-playbook.ps1 -Path src\collectors\security\windows\S02-processes-files.ps1 -Force`. See `docs/METHODOLOGY.md` for the overall method.
 
 ## (a) Purpose
 
@@ -27,13 +27,13 @@ Cross-check G0 inventory\files.tsv 'exec-recent' rows that the targeted sweep mi
 
 Read-only: never modifies, moves, kills or executes anything. File contents are read only for
 headers, shortcut / URL parsing and script indicators (pattern ids are stored, never content).
-Tunable lists: S02-iocs.json (same folder). Known-good items: config\local\expected.json.
+Tunable lists: S02-iocs.json (same folder). Known-good items: src\config\local\expected.json.
 Contract: docs\schema.md   Rules: docs\agent-rules.md   Playbook: docs\playbooks\S02-processes-files.md
 ```
 
 ## (b) Implementation
 
-Collector: `collectors\security\windows\S02-processes-files.ps1`. Library: `lib\windows\BVS.Common.psm1`.
+Collector: `src\collectors\security\windows\S02-processes-files.ps1`. Library: `src\lib\windows\BVS.Common.psm1`.
 
 Sidecar data (IoC lists and reference tables): `S02-iocs.json`.
 
@@ -72,8 +72,8 @@ Parameters: `-RecentDays`, `-CpuSampleSeconds`, `-CpuThresholdPct`, `-MaxHashMB`
 ## (c) Run
 
 ```powershell
-pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\security\windows\S02-processes-files.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\security\windows\S02-processes-files.ps1
+pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\security\windows\S02-processes-files.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\security\windows\S02-processes-files.ps1
 ```
 
 Output: `data\<scanId>\security\S02.json` (`bvs.module/1`). Log: `logs\S02.log`.

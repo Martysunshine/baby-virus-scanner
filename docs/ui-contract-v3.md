@@ -17,7 +17,7 @@ chat. Claude never types either.
 | `data/signals/inbox/<id>.json` | new signal, written by the server |
 | `data/signals/status/<id>.json` | status updates, written by session tools / Claude: `{id, state, message, updatedAt}` |
 | `data/signals/archive/<id>.json` | handled signals (moved by the watcher) |
-| `data/session/heartbeat.json` | `{pid, startedAt, beatAt}`, written every 5 s by `tools/windows/watch-signals.ps1` while a Claude session listens |
+| `data/session/heartbeat.json` | `{pid, startedAt, beatAt}`, written every 5 s by `src/tools/windows/watch-signals.ps1` while a Claude session listens |
 
 `<id>` is `yyyyMMdd-HHmmss-<type>-<6 random>`.
 
@@ -39,8 +39,8 @@ chat. Claude never types either.
 1. In the Basket the user clicks "Request deletion". A modal shows the exact list. The user must type exactly `I confirm` (case-sensitive) before the Send button enables.
 2. `POST /api/signal` with `{type:'delete-request', payload, typedConfirmation:'I confirm'}`. The server re-checks the phrase (400 otherwise) and generates an 8-character code (alphabet `ABCDEFGHJKMNPQRSTUVWXYZ23456789`). It stores ONLY `codeSalt` + `codeHash` = PBKDF2-HMAC-SHA256(code, salt, 600,000 iterations) in the signal file and returns `{id, code}` to the browser **once**. The code is never logged or written.
 3. The dashboard shows big: **"Now type this in your Claude chat: I confirm K7Q2-M9XP"**, with a copy button and a warning ("Claude will never type this for you").
-4. Claude runs `tools/windows/validate-delete.ps1 -SignalId <id>`. This re-validates every item live and writes `data/signals/tables/<id>.json` with a `tableHash`. Claude then posts the final table in chat and waits.
-5. The user types `I confirm <CODE>` in chat. Claude runs `tools/windows/execute-delete.ps1 -SignalId <id> -Code <CODE as typed>`. The script verifies codeHash, the local confirmation, tableHash and expiry (60 min), then executes. It uses the Recycle Bin when the item fits; otherwise it moves items to the same-drive `holding/<id>/`. Program items run the program's own interactive uninstaller. It logs every action to `logs/deletions.jsonl` and updates the status.
+4. Claude runs `src/tools/windows/validate-delete.ps1 -SignalId <id>`. This re-validates every item live and writes `data/signals/tables/<id>.json` with a `tableHash`. Claude then posts the final table in chat and waits.
+5. The user types `I confirm <CODE>` in chat. Claude runs `src/tools/windows/execute-delete.ps1 -SignalId <id> -Code <CODE as typed>`. The script verifies codeHash, the local confirmation, tableHash and expiry (60 min), then executes. It uses the Recycle Bin when the item fits; otherwise it moves items to the same-drive `holding/<id>/`. Program items run the program's own interactive uninstaller. It logs every action to `logs/deletions.jsonl` and updates the status.
 
 **Hard refusals** (validate and execute both): `C:\Windows`, Program Files (both), `ProgramData\Microsoft`, WindowsApps, `\.ssh\`, credential files (never-read list), the profile root, the roots of Documents/Desktop/Downloads/OneDrive, the project's active `data\` folder, reparse points, cloud-only placeholders, and anything outside `%USERPROFILE%` for file operations.
 
@@ -52,7 +52,7 @@ chat. Claude never types either.
 | `GET /api/session` | `{connected: beatAt < 15 s ago, beatAt, pid}` |
 | `GET /api/agents/live` | running agentic tools on this PC, read-only: claude, codex, gemini, aider, cursor-agent, Cursor, Windsurf, Copilot CLI. Fields: name, pid, started, kind, masked short command, never full command lines with secrets. |
 
-**Session watcher (K):** `tools/windows/watch-signals.ps1` is run by Claude in the background. It writes a heartbeat every 5 s, and when a new inbox file appears it prints a one-line masked summary (`SIGNAL <id> <type> ...`), moves the file to archive, writes status `picked-up` and EXITS. That exit is what wakes Claude. Claude handles the signal, then restarts the watcher. Re-running is safe: queued signals are picked up oldest first.
+**Session watcher (K):** `src/tools/windows/watch-signals.ps1` is run by Claude in the background. It writes a heartbeat every 5 s, and when a new inbox file appears it prints a one-line masked summary (`SIGNAL <id> <type> ...`), moves the file to archive, writes status `picked-up` and EXITS. That exit is what wakes Claude. Claude handles the signal, then restarts the watcher. Re-running is safe: queued signals are picked up oldest first.
 
 ## 2. Security tab additions (owner L: `app.js` / `style.css` / `index.html` / `basket.js` / `infosec.js`)
 - **New "Checks" section/page (`#/checks`, also reachable from Security).** It groups every check from the `coverage` dataset into: **Ran fully** (ok), **Partly** (partial), **Needs your admin rights** (needs_admin), **Needs your login** (needs_consent, e.g. GitHub), **Not applicable**, **Skipped/errors**. Each group shows counts and plain names by module, and every check is clickable (panel: what it checks, status, reason).
@@ -68,8 +68,8 @@ chat. Claude never types either.
 - **AI consent gate (in `infosec.js` + `scanner.js`):** before the first AI request, a modal: "INFOSEC sends the question, the text you selected and the related findings to Claude (Anthropic) using your Claude Code login. Personal file names are hidden first. Allow?" with Allow / Only offline answers. Store the choice in localStorage. Send the header `X-BVS-AI-Consent: yes` (server K requires it). Every AI answer gets the badge "AI-generated (Claude) — check important steps".
 - **Privacy mode toggle** (top bar, default ON): file names inside personal folders (Documents, Desktop, Downloads, Pictures, Videos, Music, OneDrive) show as `[personal file · .ext]` and folder names under them as `[personal folder]`. Show the real name only after a click in the side panel. Expose it as `BVSApp.privacy.label(path, name)` and `BVSApp.privacy.on`. Apply it in your views and in `storage-view.js`, a minimal edit: route displayed names through the helper.
 
-## 3. Agent map (owner M: `dashboard/agents-view.js`, `dashboard/agents.css`, `core/build_agents.py`)
-- **Data:** `core/build_agents.py --scan <dir>` reads `data/agents-ledger.json` (main agent seed: every agent with role, module, tokens, tool uses, duration, status, notes) plus the collectors (line counts) plus the module envelopes (run time from started/finished, findings, check counts). It writes `<scan>/agents.json`; `core/build_datajs.py` exports it as dataset `agents` (main agent wires this).
+## 3. Agent map (owner M: `dashboard/agents-view.js`, `dashboard/agents.css`, `src/core/build_agents.py`)
+- **Data:** `src/core/build_agents.py --scan <dir>` reads `data/agents-ledger.json` (main agent seed: every agent with role, module, tokens, tool uses, duration, status, notes) plus the collectors (line counts) plus the module envelopes (run time from started/finished, findings, check counts). It writes `<scan>/agents.json`; `src/core/build_datajs.py` exports it as dataset `agents` (main agent wires this).
 - **Difficulty scale** (show the legend everywhere):
   | Grade | Colour | Rule |
   |---|---|---|
@@ -88,5 +88,5 @@ chat. Claude never types either.
 
 ## 4. Privacy guarantees (all agents)
 - Never add new reading of personal content.
-- AI context: replace the Windows username with `<user>`, personal file names with `[personal file .ext]`, and drop evidence fields that aren't needed (K implements this in `core/ai_bridge.py`).
+- AI context: replace the Windows username with `<user>`, personal file names with `[personal file .ext]`, and drop evidence fields that aren't needed (K implements this in `src/core/ai_bridge.py`).
 - No signal can trigger deletion, fixes or network calls without the user's chat confirmation.

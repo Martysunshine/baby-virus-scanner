@@ -29,7 +29,7 @@
 
 ## Linux
 
-- Python collectors producing identical envelopes (see `collectors/security/linux/README.md`).
+- Python collectors producing identical envelopes (see `src/collectors/security/linux/README.md`).
 - Shared modules reused as they are: browsers, editors, supply chain, secrets, accounts.
 - ClamAV, rkhunter and chkrootkit as optional report-only engines.
 

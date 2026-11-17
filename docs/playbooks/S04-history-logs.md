@@ -1,7 +1,7 @@
 # S04-history-logs
 
-> Generated from the collector's own code by `tools/windows/gen-playbook.ps1`. After changing the collector,
-> regenerate it: `pwsh -File tools\windows\gen-playbook.ps1 -Path collectors\security\windows\S04-history-logs.ps1 -Force`. See `docs/METHODOLOGY.md` for the overall method.
+> Generated from the collector's own code by `src/tools/windows/gen-playbook.ps1`. After changing the collector,
+> regenerate it: `pwsh -File src\tools\windows\gen-playbook.ps1 -Path src\collectors\security\windows\S04-history-logs.ps1 -Force`. See `docs/METHODOLOGY.md` for the overall method.
 
 ## (a) Purpose
 
@@ -20,14 +20,14 @@ data\<scanId>\security\S04.json (masked by Complete-BvsRun) and logs\S04.log.
   and history lines that reference this project are ignored.
 - Missing or disabled logs become not_applicable (with the reason) rather than errors.
 - Patterns, installer allowlist and vendor update hosts live in S04-history-iocs.json (sidecar).
-- Machine-specific known-good items come from config\local\expected.json via Get-BvsExpected.
+- Machine-specific known-good items come from src\config\local\expected.json via Get-BvsExpected.
 
 Contract: docs\schema.md  Rules: docs\agent-rules.md  Playbook: docs\playbooks\S04-history-logs.md
 ```
 
 ## (b) Implementation
 
-Collector: `collectors\security\windows\S04-history-logs.ps1`. Library: `lib\windows\BVS.Common.psm1`.
+Collector: `src\collectors\security\windows\S04-history-logs.ps1`. Library: `src\lib\windows\BVS.Common.psm1`.
 
 Sidecar data (IoC lists and reference tables): `S04-history-iocs.json`.
 
@@ -50,7 +50,7 @@ Sidecar data (IoC lists and reference tables): `S04-history-iocs.json`.
 | `wmi.activity` | WMI-Activity/Operational 5857-5861 (5861 = permanent event subscription bound; 5860 = temporary subscription; 5857 = provider loaded) |
 | `codeintegrity.events` | CodeIntegrity/Operational 3033/3063: images that did not meet the signing level (info) |
 | `taskscheduler.operational` | TaskScheduler/Operational availability (task execution history; often disabled by default) |
-| `logs.security` | Security log access (1102 clears, 4624/4688 etc. need elevation; covered by admin\windows\admin-checks.ps1) |
+| `logs.security` | Security log access (1102 clears, 4624/4688 etc. need elevation; covered by src\admin\windows\admin-checks.ps1) |
 | `logs.coverage` | Record count, size, oldest/newest event, enabled state and window coverage for every log queried |
 
 Plus 1 check(s) whose ID is built at run time (see the script).
@@ -60,8 +60,8 @@ Parameters: `-Days`, `-MaxEvents`, `-SelfTest`.
 ## (c) Run
 
 ```powershell
-pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\security\windows\S04-history-logs.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\security\windows\S04-history-logs.ps1
+pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\security\windows\S04-history-logs.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\security\windows\S04-history-logs.ps1
 ```
 
 Output: `data\<scanId>\security\S04.json` (`bvs.module/1`). Log: `logs\S04.log`.

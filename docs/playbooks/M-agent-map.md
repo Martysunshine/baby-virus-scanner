@@ -8,7 +8,7 @@ its scripts are, and which AI tools run on this PC right now. Read-only; never i
 ## Files
 | File | Role |
 |---|---|
-| `core/build_agents.py` | `python -I -B core/build_agents.py --scan <dir> [--js <file>]` -> `<scan>/agents.json` (`bvs.agents/1`) |
+| `src/core/build_agents.py` | `python -I -B src/core/build_agents.py --scan <dir> [--js <file>]` -> `<scan>/agents.json` (`bvs.agents/1`) |
 | `dashboard/agents-view.js` | `BVSApp.registerView('agents', ...)`, data from `BVSApp.data.get('agents')` |
 | `dashboard/agents.css` | styles, all scoped under `.agents-view` (view root, tooltip, panel content) |
 
@@ -19,7 +19,7 @@ tab shows an empty state and nothing else is affected.
 `data/agents-ledger.json` (main agent: tokens, tool calls, duration, status, produced files) + line counts of the
 produced files (scripts/code only; `(v1)`/`(input)` entries, docs and configs are listed but not counted) + module
 envelopes `<scan>/{security,storage,inventory,admin}/<module>.json` (run time = finished - started, findings,
-checks) + `<scan>/verify/*.json` record counts -> `agents.json` -> `core/build_datajs.py` exports dataset `agents`.
+checks) + `<scan>/verify/*.json` record counts -> `agents.json` -> `src/core/build_datajs.py` exports dataset `agents`.
 
 ## Ledger format (`data/agents-ledger.json`)
 ```json
@@ -28,7 +28,7 @@ checks) + `<scan>/verify/*.json` record counts -> `agents.json` -> `core/build_d
   "notes": [], "phases": [ { "id": "p1", "label": "Security collection", "order": 1 } ],
   "agents": [ { "id": "S07", "name": "Network", "kind": "collector", "phase": "p1", "module": "S07",
                "status": "finished", "tokens": null, "toolUses": null, "durationSec": null,
-               "produced": [ "collectors/security/windows/S07-network.ps1" ], "notes": "" } ] }
+               "produced": [ "src/collectors/security/windows/S07-network.ps1" ], "notes": "" } ] }
 ```
 Use `null` for anything that was not measured. Keep notes free of machine and account details: the
 ledger is copied into the dashboard data.

@@ -7,7 +7,7 @@ a design note, not a legal certification.
 | Part | AI? | Role |
 |---|---|---|
 | Collectors S01–S13, G0–H2 | No | Deterministic PowerShell rules. Same input, same output. |
-| Verdict (`core/aggregate.py`) | No | A fixed rubric: COMPROMISED only with a verified critical finding. |
+| Verdict (`src/core/aggregate.py`) | No | A fixed rubric: COMPROMISED only with a verified critical finding. |
 | Building the scanner | Yes, at development time (AI coding agents) | Agents wrote collectors and documentation against fixed rules. A human directed the work. |
 | Operating a scan (`AGENTS.md`) | Yes, if the user chooses an AI agent as operator | The agent runs fixed commands, explains the result, and may add verification records and user-confirmed known-good items. It cannot set the verdict, and it must ask before it reads findings. |
 | INFOSEC assistant + scanner copilot | Yes (Claude via the user's Claude Code login), only after opt-in | Explains findings and suggests steps. It **cannot act**: no tools, no commands, no deletion. |

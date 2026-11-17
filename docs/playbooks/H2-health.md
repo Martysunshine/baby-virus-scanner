@@ -8,7 +8,7 @@ Each one gives the impact, the fix (vendor uninstaller or Windows UI first), the
 method `setting`/`tool`. H2 never suggests a registry cleaner. A disguised executable also gets a security
 finding (high, suspicious). Reliability counters and sfc/DISM are `needs_admin`, pending.
 
-## (b) Implementation (`collectors\storage\windows\H2-health.ps1`)
+## (b) Implementation (`src\collectors\storage\windows\H2-health.ps1`)
 - **registryRefs** (`H2.registryRefs`):
   - **Ghost uninstall entries:** InstallLocation is missing, or the non-MSI uninstaller `.exe` is missing.
     Skipped when a DisplayIcon outside `%windir%` still exists, because the app is probably still there.
@@ -44,7 +44,7 @@ finding (high, suspicious). Reliability counters and sfc/DISM are `needs_admin`,
 
 ## (c) How to run
 ```powershell
-pwsh -NoProfile -File <root>\tools\windows\check-collector.ps1 -Path <root>\collectors\storage\windows\H2-health.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File <root>\collectors\storage\windows\H2-health.ps1
+pwsh -NoProfile -File <root>\src\tools\windows\check-collector.ps1 -Path <root>\src\collectors\storage\windows\H2-health.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File <root>\src\collectors\storage\windows\H2-health.ps1
 ```
 Needs S01 and G0 from the same scan. It takes about 15 s. A later elevated run adds reliability counters and sfc/DISM.

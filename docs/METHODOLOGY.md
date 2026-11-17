@@ -13,9 +13,9 @@ The agent's step-by-step runbook is [AGENTS.md](../AGENTS.md); this page explain
 
    The optional extras (one elevated run, a report-only antivirus engine pass, a GitHub sign-in)
    are asked separately, when the user wants them.
-3. **Start a session:** `tools/windows/new-scan.ps1` creates `data/<scanId>/` and records
+3. **Start a session:** `src/tools/windows/new-scan.ps1` creates `data/<scanId>/` and records
    `auditStartUtc`. Log entries after that time are the scan's own activity and are excluded.
-4. **Before snapshot:** `tools/windows/snapshot-state.ps1 -Label before`.
+4. **Before snapshot:** `src/tools/windows/snapshot-state.ps1 -Label before`.
 
 ## Phase 1: collection
 
@@ -51,7 +51,7 @@ by a person or by a capable AI agent; it is not done by the scanner itself yet.
 
 ## Phase 1c: verdict
 
-`core/aggregate.py` merges everything and applies a fixed rubric. The first matching row wins:
+`src/core/aggregate.py` merges everything and applies a fixed rubric. The first matching row wins:
 
 | Verdict | Rule | What happens |
 |---|---|---|
@@ -62,7 +62,7 @@ by a person or by a capable AI agent; it is not done by the scanner itself yet.
 
 Refuted findings, informational findings and storage clean-up items never count. A finding is
 "explained" when it matches a known-good item of this PC that the user confirmed
-(`config/local/expected.json`), unless one of that item's cancel conditions holds.
+(`src/config/local/expected.json`), unless one of that item's cancel conditions holds.
 
 The report always states its confidence and coverage (including log time windows), what could
 not be checked, and the honest limits: no guarantee against kernel rootkits or firmware implants,

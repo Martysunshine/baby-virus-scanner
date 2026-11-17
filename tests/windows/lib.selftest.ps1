@@ -1,7 +1,7 @@
 #Requires -Version 7.2
-<# Self-test for lib\windows\BVS.Common.psm1. Uses synthetic fake secrets built at runtime. Read-only. #>
+<# Self-test for src\lib\windows\BVS.Common.psm1. Uses synthetic fake secrets built at runtime. Read-only. #>
 $ErrorActionPreference = 'Stop'
-Import-Module (Join-Path $PSScriptRoot '..\..\lib\windows\BVS.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot '..\..\src\lib\windows\BVS.Common.psm1') -Force
 $pass = 0; $fail = 0
 function Assert([string]$Name, [bool]$Cond, [string]$Detail = '') {
     if ($Cond) { $script:pass++; "  PASS $Name" } else { $script:fail++; "  FAIL $Name $Detail" }

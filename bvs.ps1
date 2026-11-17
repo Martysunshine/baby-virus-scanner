@@ -135,7 +135,7 @@ function Write-ModuleResult([string]$Name, [bool]$Ok, [string]$Why, [double]$Sec
 }
 function Invoke-Collector([string]$Script) {
     $name = [IO.Path]::GetFileName($Script); $sw = [Diagnostics.Stopwatch]::StartNew()
-    $lint = & $pwshExe -NoProfile -File (Join-Path $Root 'tools\windows\check-collector.ps1') -Path $Script 2>&1
+    $lint = & $pwshExe -NoProfile -File (Join-Path $Root 'src\tools\windows\check-collector.ps1') -Path $Script 2>&1
     if ($LASTEXITCODE -ne 0) { Write-ModuleResult $name $false 'lint' $sw.Elapsed.TotalSeconds $lint; return }
     $extra = Get-CollectorArgs $Script
     $out = & $pwshExe -NoProfile -ExecutionPolicy Bypass -File $Script @extra 2>&1
@@ -147,7 +147,7 @@ function Invoke-Collectors([string[]]$Scripts, [int]$Throttle = 1) {
     $jobs = @($Scripts | ForEach-Object { [pscustomobject]@{ Script = $_; Extra = @(Get-CollectorArgs $_) } })
     $results = $jobs | ForEach-Object -ThrottleLimit $Throttle -Parallel {
         $r = $using:Root; $p = $using:pwshExe; $name = [IO.Path]::GetFileName($_.Script); $extra = @($_.Extra); $sw = [Diagnostics.Stopwatch]::StartNew()
-        $lint = & $p -NoProfile -File (Join-Path $r 'tools\windows\check-collector.ps1') -Path $_.Script 2>&1
+        $lint = & $p -NoProfile -File (Join-Path $r 'src\tools\windows\check-collector.ps1') -Path $_.Script 2>&1
         if ($LASTEXITCODE -ne 0) { return [pscustomobject]@{ Name = $name; Ok = $false; Why = 'lint'; Seconds = $sw.Elapsed.TotalSeconds; Output = @($lint) } }
         $out = & $p -NoProfile -ExecutionPolicy Bypass -File $_.Script @extra 2>&1
         [pscustomobject]@{ Name = $name; Ok = ($LASTEXITCODE -eq 0); Why = "exit $LASTEXITCODE"; Seconds = $sw.Elapsed.TotalSeconds; Output = @($out) }
@@ -157,7 +157,7 @@ function Invoke-Collectors([string[]]$Scripts, [int]$Throttle = 1) {
 
 function Invoke-Snapshot([string]$Label) {
     $extra = if ($Label -ne 'before') { @('-CompareTo', 'before') } else { @() }
-    & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'tools\windows\snapshot-state.ps1') -Label $Label @extra
+    & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'src\tools\windows\snapshot-state.ps1') -Label $Label @extra
 }
 
 # The elevated script writes raw section files (bvs.admin/1) that the aggregator does not read. This turns its
@@ -185,7 +185,7 @@ function Update-AdminSummary([string]$ScanDir) {
 
 function Invoke-Report([string]$ScanDir) {
     Update-AdminSummary $ScanDir
-    Invoke-Python (Join-Path $Root 'core\build_datajs.py') --scan $ScanDir | Out-Host   # runs the aggregator first
+    Invoke-Python (Join-Path $Root 'src\core\build_datajs.py') --scan $ScanDir | Out-Host   # runs the aggregator first
     if ($LASTEXITCODE -ne 0) { throw "report failed (build_datajs.py exit $LASTEXITCODE)" }
 }
 
@@ -295,7 +295,7 @@ switch ($Command) {
             if ($ageH -gt $ResumeMaxHours) { throw ("This scan started {0:N1} hours ago. Scans older than {1} hours are not resumed; start a new one without -Resume." -f $ageH, $ResumeMaxHours) }
         }
         else {
-            $null = & $pwshExe -NoProfile -File (Join-Path $Root 'tools\windows\new-scan.ps1') -Note $Note
+            $null = & $pwshExe -NoProfile -File (Join-Path $Root 'src\tools\windows\new-scan.ps1') -Note $Note
             if ($LASTEXITCODE -ne 0) { throw 'could not start a scan session' }
             $scan = Get-ScanDir
         }
@@ -312,10 +312,10 @@ switch ($Command) {
 
             # Inventory first: S02 cross-checks it, and the storage modules need it.
             $st.step = 'inventory'; Write-ScanStatus $scan $st
-            Invoke-Collectors (& $todo @(Join-Path $Root 'collectors\inventory\windows\G0-inventory.ps1')) 1
+            Invoke-Collectors (& $todo @(Join-Path $Root 'src\collectors\inventory\windows\G0-inventory.ps1')) 1
 
             $st.step = 'security'; Write-ScanStatus $scan $st
-            Invoke-Collectors (& $todo (Get-Collectors (Join-Path $Root 'collectors\security\windows') '^S\d\d-.*\.ps1$')) $Parallel
+            Invoke-Collectors (& $todo (Get-Collectors (Join-Path $Root 'src\collectors\security\windows') '^S\d\d-.*\.ps1$')) $Parallel
 
             $st.step = 'report (security)'; Write-ScanStatus $scan $st
             Invoke-Report $scan
@@ -328,7 +328,7 @@ switch ($Command) {
             }
             else {
                 $st.step = 'storage'; Write-ScanStatus $scan $st
-                Invoke-Collectors (& $todo (Get-Collectors (Join-Path $Root 'collectors\storage\windows') '^[GH]\d-.*\.ps1$')) 1
+                Invoke-Collectors (& $todo (Get-Collectors (Join-Path $Root 'src\collectors\storage\windows') '^[GH]\d-.*\.ps1$')) 1
                 $st.step = 'report'; Write-ScanStatus $scan $st
                 Invoke-Report $scan
             }
@@ -384,7 +384,7 @@ switch ($Command) {
         $scan = Get-ScanDir
         if (-not (Test-Path -LiteralPath (Join-Path $scan 'js\manifest.js'))) { Invoke-Report $scan }
         Write-Host 'Dashboard (this PC only). Stop it with Ctrl+C.'
-        Invoke-Python (Join-Path $Root 'server\serve.py') --scan $scan
+        Invoke-Python (Join-Path $Root 'src\server\serve.py') --scan $scan
     }
 
     'demo' {
@@ -398,39 +398,39 @@ switch ($Command) {
         Invoke-Report $dst
         Write-Host 'Demo dashboard on synthetic data (host DEMO-PC). AI answers are off. Stop it with Ctrl+C.'
         $state = Join-Path $dst 'state'; [void][IO.Directory]::CreateDirectory($state)   # keeps demo clicks apart from real scans
-        $serve = @((Join-Path $Root 'server\serve.py'), '--scan', $dst, '--no-ai', '--state-root', $state)
+        $serve = @((Join-Path $Root 'src\server\serve.py'), '--scan', $dst, '--no-ai', '--state-root', $state)
         if (-not $NoBrowser) { $serve += '--open' }
         Invoke-Python @serve
     }
 
-    'new' { & $pwshExe -NoProfile -File (Join-Path $Root 'tools\windows\new-scan.ps1') -Note $Note }
+    'new' { & $pwshExe -NoProfile -File (Join-Path $Root 'src\tools\windows\new-scan.ps1') -Note $Note }
     'snapshot' { Invoke-Snapshot $(if ($Arg) { $Arg } else { 'before' }) }
 
     'inventory' {
-        $g0 = Join-Path $Root 'collectors\inventory\windows\G0-inventory.ps1'
-        $lint = & $pwshExe -NoProfile -File (Join-Path $Root 'tools\windows\check-collector.ps1') -Path $g0
+        $g0 = Join-Path $Root 'src\collectors\inventory\windows\G0-inventory.ps1'
+        $lint = & $pwshExe -NoProfile -File (Join-Path $Root 'src\tools\windows\check-collector.ps1') -Path $g0
         if ($LASTEXITCODE -ne 0) { $lint; throw 'G0 failed lint' }
         $paths = Split-List $Path
         if ($paths.Count) { & $pwshExe -NoProfile -ExecutionPolicy Bypass -File $g0 -Path ($paths -join ',') } else { & $pwshExe -NoProfile -ExecutionPolicy Bypass -File $g0 }
         exit $LASTEXITCODE
     }
     'security' {
-        Invoke-Collectors (Get-Collectors (Join-Path $Root 'collectors\security\windows') '^S\d\d-.*\.ps1$') $Parallel
+        Invoke-Collectors (Get-Collectors (Join-Path $Root 'src\collectors\security\windows') '^S\d\d-.*\.ps1$') $Parallel
         exit ([int]($script:Failed.Count -gt 0))
     }
     'storage' {
-        Invoke-Collectors (Get-Collectors (Join-Path $Root 'collectors\storage\windows') '^[GH]\d-.*\.ps1$') 1
+        Invoke-Collectors (Get-Collectors (Join-Path $Root 'src\collectors\storage\windows') '^[GH]\d-.*\.ps1$') 1
         exit ([int]($script:Failed.Count -gt 0))
     }
 
     'get-tools' {
         $a = @(); if ($Msert) { $a += '-Msert' }; if ($Gh) { $a += '-Gh' }
-        & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'tools\windows\get-tools.ps1') @a
+        & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'src\tools\windows\get-tools.ps1') @a
         exit $LASTEXITCODE
     }
 
     'admin' {
-        $admin = Join-Path $Root 'admin\windows\admin-checks.ps1'
+        $admin = Join-Path $Root 'src\admin\windows\admin-checks.ps1'
         $msertExe = Join-Path $Root 'intel\msert\msert.exe'
         if (-not (Test-Path -LiteralPath $msertExe)) { throw "Microsoft Safety Scanner is not downloaded ($msertExe). After the user agrees, run: pwsh -NoProfile -File .\bvs.ps1 get-tools -Msert" }
         $null = Get-ScanDir
@@ -438,7 +438,7 @@ switch ($Command) {
         $mHash = (Get-FileHash -LiteralPath $msertExe -Algorithm SHA256).Hash
         Write-Host "admin-checks.ps1 SHA-256: $aHash"
         Write-Host "msert.exe        SHA-256: $mHash"
-        $argList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$(Join-Path $Root 'admin\windows\launch-elevated.ps1')`"", '-AdminScriptSha256', $aHash, '-MsertSha256', $mHash)
+        $argList = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', "`"$(Join-Path $Root 'src\admin\windows\launch-elevated.ps1')`"", '-AdminScriptSha256', $aHash, '-MsertSha256', $mHash)
         if (-not $FullScan) { $argList += '-SkipFullScan' }
         Start-Process -FilePath $pwshExe -Verb RunAs -ArgumentList $argList -WindowStyle Minimized
         Write-Host "Elevated run started (one Windows admin prompt). Progress: $(Join-Path (Get-ScanDir) 'admin\elevated-status.json')"
@@ -474,13 +474,13 @@ switch ($Command) {
 
     'selftest' { & $pwshExe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $Root 'tests\windows\lib.selftest.ps1'); exit $LASTEXITCODE }
     'lint' {
-        $files = @(Get-ChildItem -LiteralPath (Join-Path $Root 'collectors') -Recurse -Filter '*.ps1' | Select-Object -ExpandProperty FullName)
+        $files = @(Get-ChildItem -LiteralPath (Join-Path $Root 'src\collectors') -Recurse -Filter '*.ps1' | Select-Object -ExpandProperty FullName)
         if (-not $files.Count) { throw 'no collectors found' }
         # In-process: `pwsh -File script -Path a b c` would bind only the first file.
-        & (Join-Path $Root 'tools\windows\check-collector.ps1') -Path $files
+        & (Join-Path $Root 'src\tools\windows\check-collector.ps1') -Path $files
         exit $LASTEXITCODE
     }
-    'check-publish' { & $pwshExe -NoProfile -File (Join-Path $Root 'tools\windows\check-publish.ps1'); exit $LASTEXITCODE }
+    'check-publish' { & $pwshExe -NoProfile -File (Join-Path $Root 'src\tools\windows\check-publish.ps1'); exit $LASTEXITCODE }
 
     default {
         # Print this file's own header. (Get-Help does not see a help block that follows #Requires.)

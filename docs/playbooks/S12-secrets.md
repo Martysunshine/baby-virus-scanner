@@ -1,7 +1,7 @@
 # S12-secrets
 
-> Generated from the collector's own code by `tools/windows/gen-playbook.ps1`. After changing the collector,
-> regenerate it: `pwsh -File tools\windows\gen-playbook.ps1 -Path collectors\security\windows\S12-secrets.ps1 -Force`. See `docs/METHODOLOGY.md` for the overall method.
+> Generated from the collector's own code by `src/tools/windows/gen-playbook.ps1`. After changing the collector,
+> regenerate it: `pwsh -File src\tools\windows\gen-playbook.ps1 -Path src\collectors\security\windows\S12-secrets.ps1 -Force`. See `docs/METHODOLOGY.md` for the overall method.
 
 ## (a) Purpose
 
@@ -34,7 +34,7 @@ Safety contract (docs\agent-rules.md):
 
 ## (b) Implementation
 
-Collector: `collectors\security\windows\S12-secrets.ps1`. Library: `lib\windows\BVS.Common.psm1`.
+Collector: `src\collectors\security\windows\S12-secrets.ps1`. Library: `src\lib\windows\BVS.Common.psm1`.
 
 Sidecar data (IoC lists and reference tables): `S12-secret-stores.json`.
 
@@ -64,8 +64,8 @@ Parameters: `-SearchRoots`, `-GitHubUser`, `-NoNetwork`, `-MaxScanMB`.
 ## (c) Run
 
 ```powershell
-pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\security\windows\S12-secrets.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\security\windows\S12-secrets.ps1
+pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\security\windows\S12-secrets.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\security\windows\S12-secrets.ps1
 ```
 
 Output: `data\<scanId>\security\S12.json` (`bvs.module/1`). Log: `logs\S12.log`.

@@ -5,4 +5,4 @@ Licensed under the Apache License, Version 2.0 (see LICENSE).
 
 This product downloads, at the user's request, two third-party programs that are not part of
 this repository and keep their own licenses: Microsoft Safety Scanner (Microsoft Corporation) and
-GitHub CLI (GitHub, Inc., MIT License). See THIRD-PARTY-NOTICES.md.
+GitHub CLI (GitHub, Inc., MIT License). See docs/THIRD-PARTY-NOTICES.md.

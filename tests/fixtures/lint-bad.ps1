@@ -1,4 +1,4 @@
-# Fixture for tools\windows\check-collector.ps1 - every line below must be flagged. NEVER RUN THIS FILE.
+# Fixture for src\tools\windows\check-collector.ps1 - every line below must be flagged. NEVER RUN THIS FILE.
 Remove-Item C:\temp\x
 reg add HKCU\Software\X /v Y /d Z
 schtasks /create /tn evil /tr calc.exe

@@ -2,7 +2,7 @@
 
 ## (a) Brief (condensed)
 
-Build `collectors\security\windows\S10-editors-git.ps1`. Read-only; git only as `git --no-optional-locks <read>`
+Build `src\collectors\security\windows\S10-editors-git.ps1`. Read-only; git only as `git --no-optional-locks <read>`
 (read `.git\config` directly); never run the `code`/`cursor` CLIs; network only via `Invoke-BvsIntel`.
 1. **VS Code/Cursor extensions**: from extensions.json read id, version, source (gallery/vsix), installedTimestamp,
    publisherDisplayName, pre-release and targetPlatform. Also read `.obsolete`, package.json (publisher, main,
@@ -30,7 +30,7 @@ Deliverables: the collector, `data\<scan>\security\S10.json`, this playbook and 
 ## (b) Implementation
 
 - **Data**: all detection data (editor list, regexes, IoCs, severity maps, git expectations) lives in
-  `collectors\security\windows\S10-editor-iocs.json`. Nothing machine-specific is in the code. Expected items come
+  `src\collectors\security\windows\S10-editor-iocs.json`. Nothing machine-specific is in the code. Expected items come
   from `Get-BvsExpected` (categories editorExtension and program). An expected match caps only heuristic findings,
   and only while the extension is gallery-sourced, absent from the kill list and RemovedPackages, and found in its
   gallery. Intel matches are never capped.
@@ -82,8 +82,8 @@ Deliverables: the collector, `data\<scan>\security\S10.json`, this playbook and 
 ## (c) Run
 
 ```
-pwsh -NoProfile -File tools\windows\check-collector.ps1 -Path collectors\security\windows\S10-editors-git.ps1
-pwsh -NoProfile -ExecutionPolicy Bypass -File collectors\security\windows\S10-editors-git.ps1 [-NoIntel] [-RepoDepth 5] [-MaxJsMB 30]
+pwsh -NoProfile -File src\tools\windows\check-collector.ps1 -Path src\collectors\security\windows\S10-editors-git.ps1
+pwsh -NoProfile -ExecutionPolicy Bypass -File src\collectors\security\windows\S10-editors-git.ps1 [-NoIntel] [-RepoDepth 5] [-MaxJsMB 30]
 ```
 - Runtime about 35 s; about 25 s of that is the JS scan.
 - Outputs: `data\<scanId>\security\S10.json`, `logs\S10.log`, and intel copies under `intel\<host>\`.

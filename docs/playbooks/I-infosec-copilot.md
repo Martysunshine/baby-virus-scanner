@@ -14,7 +14,7 @@
   (`sessionStorage`, lost with the tab).
 
 ## What changed
-- **core/ai_bridge.py**
+- **src/core/ai_bridge.py**
   - `ask_stream()` runs the same locked-down CLI in streaming mode (`--input-format stream-json
     --output-format stream-json --include-partial-messages`).
   - `WarmClaude` keeps one process started ahead of time. It waits idle (no API call) until a question
@@ -25,12 +25,12 @@
     space or line break, so a token is never sent half-written.
   - Measured: first words in about 1 s and a short answer in about 2 s. A question asked while the next
     spare is still booting waits up to ~10 s.
-- **server/serve.py**
+- **src/server/serve.py**
   - `POST /api/ask` with `Accept: application/x-ndjson` streams one JSON event per line: `status`
     (asking / thinking / writing), `delta`, `reset`, then `done` or `error`. Busy, rate limit and AI off
     still return normal JSON errors before the stream starts.
   - The bridge is pre-warmed at start and closed on shutdown.
-- **core/chat_store.py** with `POST /api/chats`, `GET /api/chats` and `GET /api/chats/<id>`
+- **src/core/chat_store.py** with `POST /api/chats`, `GET /api/chats` and `GET /api/chats/<id>`
   - Chats are stored as `<state-root>/infosec/chats/<id>.json` with a strict schema and masked secrets.
   - Limits: 5 MB body, 120 saves per minute, no delete route.
 - **dashboard/infosec.js**
