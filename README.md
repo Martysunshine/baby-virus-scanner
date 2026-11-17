@@ -153,7 +153,7 @@ If you downloaded a ZIP instead of cloning, Windows marks the files as downloade
 
 ## Optional extras
 
-Experimental in 0.1: included, off by default, not yet verified end to end.
+Both are off by default and run only when you ask for them.
 
 | Extra | What it adds | What it needs from you |
 |---|---|---|

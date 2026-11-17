@@ -1,7 +1,5 @@
 # Brief: summarize the admin checks
 
-**Status: experimental in 0.1.** The elevated run is not yet verified end to end.
-
 **Goal.** Turn the raw output of the elevated read-only checks into findings the report can show.
 
 **Background.** `bvs.ps1 admin` (one Windows admin prompt, clicked by the user) runs

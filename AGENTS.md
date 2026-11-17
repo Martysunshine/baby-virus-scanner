@@ -175,14 +175,15 @@ item only after the user confirmed that exact item; refute only with concrete ev
 state; and list every one of them in your report. Then run `bvs report`. It prints a warning
 for every file it could not use.
 
-## 8. Optional extras (experimental in 0.1)
+## 8. Optional extras
 
-Both are off unless the user asks for them or agrees. They are not yet verified end to end.
+Both are off unless the user asks for them or agrees.
 
 - **Admin checks:** deeper read-only checks that need administrator rights (Security log, hidden
   tasks, boot integrity, disk health) plus a report-only pass of Microsoft Safety Scanner.
   `bvs get-tools -Msert` downloads the scanner from Microsoft and verifies its signature;
-  `bvs admin` then shows one Windows admin prompt that the user clicks. When
+  `bvs admin` then shows one Windows admin prompt that the user clicks. It takes 20 to 40
+  minutes (`-FullScan` adds a full Safety Scanner pass, which can take hours). When
   `data\<scanId>\admin\elevated-status.json` says `finished`, run `bvs security -Only S05` and
   `bvs report`.
 - **Signed-in GitHub checks:** `bvs get-tools -Gh`, then the **user** runs `bvs github-login`

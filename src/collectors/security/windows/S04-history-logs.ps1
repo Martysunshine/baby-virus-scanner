@@ -910,10 +910,17 @@ function Invoke-S04ScriptBlockScan {
         $text = ($b.parts -join '')
         if ($OwnRx.IsMatch($text) -or ($b.path -and $OwnRx.IsMatch($b.path))) { $st.ownProject++; continue }
         $best = $null; $bestLine = 0; $bestText = $null; $matched = $false
+        # PowerShell-generated (CDXML) module code, such as Microsoft's own Defender module, which Windows logs whenever
+        # any tool reads Defender settings. Its parameter plumbing names DisableRealtimeMonitoring and friends.
+        $generated = $text -match '\$__cmdletization_objectModelWrapper'
         $ln = 0
         foreach ($line in ($text -split "`r?`n" | Select-Object -First 20000)) {
             $ln++
             if ($line.Length -lt 6) { continue }
+            # In generated module code, and in parameter plumbing lines anywhere, a line is skipped only if it holds no
+            # command that could change anything; a planted marker cannot hide a real command.
+            if (($generated -or $line -match '\$__cmdletization_|\$PSBoundParameters\.ContainsKey\(') -and
+                $line -notmatch '(?i)\b(?:Set|Add|Remove)-MpPreference\b|MpCmdRun|\bsc(?:\.exe)?\s|\b(?:Set|New|Remove)-ItemProperty\b|\breg(?:\.exe)?\s+(?:add|delete|import)\b|Invoke-Expression|\biex\b|Start-Process|&\s*\(') { continue }
             $cls = Get-S04Classification -Text $line -Vector $(if ($b.kind -eq 4104) { 'scriptblock' } else { 'pipeline' })
             if (-not $cls) { continue }
             $matched = $true

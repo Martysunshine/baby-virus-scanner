@@ -1807,8 +1807,20 @@ $null = Invoke-BvsCheck -Run $run -Id 's05.assessment' -Description 'Judge detec
         $made++
     }
 
+    # --- found by a detect-only engine and NOT removed (for example Microsoft Safety Scanner /N) ---
+    $kept = @($rows | Where-Object { $_.assessment -in 'history_minor', 'other' -and "$($_.action)" -eq 'detected_only' })
+    if ($kept.Count) {
+        $rg = Get-S05Range $kept
+        $names = @($kept | ForEach-Object { "$($_.name)" } | Where-Object { $_ } | Select-Object -Unique)
+        New-BvsFinding -Run $run -Check 's05.assessment' -Title ("{0} detection(s) reported by a detect-only scan and not removed: {1}" -f $names.Count, (($names | Select-Object -First 4) -join ', ')) `
+            -Severity 'medium' -Class 'suspicious' -Confidence 'medium' -Reasons @('av_detection') -Evidence ((@([ordered]@{ type = 'summary'; names = $names; first = $rg.first; last = $rg.last })) + (Get-S05TopEvidence $kept 10)) `
+            -FpNotes 'Detect-only scans (Microsoft Safety Scanner with /N) report and leave everything in place, so the item is still there. Tool and VirTool verdicts are often about settings rather than malware: VirTool:Win32/DefenderTamperingRestore commonly flags the Defender disable values that Windows sets by itself while another antivirus is registered and active.' `
+            -Recommendation 'Look at each item. For a Defender setting: open Windows Security > Virus & threat protection; if another antivirus you installed is shown as active, this is expected. If no other antivirus is active, or you do not recognise the item, run Microsoft Defender Offline (Windows Security > Scan options) and check how the setting was changed.' -Mitre @('T1562.001')
+        $made++
+    }
+
     # --- removed PUP / heuristic / other ---
-    $minor = @($rows | Where-Object { $_.assessment -in 'history_minor', 'other' })
+    $minor = @($rows | Where-Object { $_.assessment -in 'history_minor', 'other' -and "$($_.action)" -ne 'detected_only' })
     if ($minor.Count) {
         $rg = Get-S05Range $minor
         $exp = Get-S05ExpectedAvDetection -Rows $minor

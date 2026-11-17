@@ -9,7 +9,7 @@
 - [x] Delete-request basket with validated, logged, double-confirmed deletion
 - [x] One-command scan (`bvs.ps1 scan`), preflight (`doctor`), demo mode
 - [x] Agent runbook (`AGENTS.md`) and task briefs
-- [ ] Elevated admin checks and signed-in GitHub checks verified end to end (experimental today)
+- [x] Elevated admin checks and signed-in GitHub checks verified end to end
 
 ## Next
 
