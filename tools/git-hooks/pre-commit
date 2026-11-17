@@ -1,0 +1,5 @@
+#!/bin/sh
+# Optional privacy guard. Enable it once per clone:  git config core.hooksPath tools/git-hooks
+# It runs the project's own check on what is staged and stops the commit if anything is found.
+# Local only: no network, no CI.
+exec pwsh -NoProfile -File tools/windows/check-publish.ps1 -Staged
