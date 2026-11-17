@@ -1,0 +1,186 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S01",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "persistence.run_keys",
+      "description": "persistence run keys",
+      "status": "ok",
+      "reason": null,
+      "items": 14,
+      "ms": 240
+    },
+    {
+      "id": "persistence.startup_folders",
+      "description": "persistence startup folders",
+      "status": "ok",
+      "reason": null,
+      "items": 3,
+      "ms": 357
+    },
+    {
+      "id": "persistence.services",
+      "description": "persistence services",
+      "status": "ok",
+      "reason": null,
+      "items": 212,
+      "ms": 706
+    },
+    {
+      "id": "persistence.scheduled_tasks",
+      "description": "persistence scheduled tasks",
+      "status": "partial",
+      "reason": "3 task XML files could not be read (access denied)",
+      "items": 118,
+      "ms": 873
+    },
+    {
+      "id": "persistence.wmi",
+      "description": "persistence wmi",
+      "status": "needs_admin",
+      "reason": "root\\subscription needs elevation",
+      "items": 0,
+      "ms": 840
+    },
+    {
+      "id": "persistence.ifeo",
+      "description": "persistence ifeo",
+      "status": "ok",
+      "reason": null,
+      "items": 0,
+      "ms": 684
+    },
+    {
+      "id": "persistence.shell_snapshots",
+      "description": "persistence shell snapshots",
+      "status": "not_applicable",
+      "reason": "no ~/.claude/shell-snapshots folder",
+      "items": 0,
+      "ms": 807
+    }
+  ],
+  "findings": [
+    {
+      "id": "S01-0001",
+      "module": "S01",
+      "check": "persistence.run_keys",
+      "title": "Run key starts unsigned EXE from AppData",
+      "severity": "high",
+      "class": "suspicious",
+      "confidence": "medium",
+      "reasons": [
+        "persistence",
+        "user_writable",
+        "unsigned",
+        "created_lt_30d"
+      ],
+      "evidence": [
+        {
+          "type": "registry",
+          "path": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+          "name": "Updater",
+          "value": "C:\\Users\\demo\\AppData\\Roaming\\Updater\\u.exe --silent"
+        }
+      ],
+      "entities": {
+        "files": [
+          {
+            "path": "C:\\Users\\demo\\AppData\\Roaming\\Updater\\u.exe",
+            "sha256": "a90ac65cfb4fc80f51b41d5659f9fe0dadccd9bcef63b79a86cf35c17b135840",
+            "size": 838860,
+            "sig": "NotSigned",
+            "signer": null,
+            "created": "2026-10-10T07:11:00Z",
+            "motw": {
+              "zone": 3,
+              "host": "files.example.net"
+            }
+          }
+        ],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Small vendors often ship unsigned auto-updaters into AppData.",
+      "recommendation": "Check which program installed 'Updater' (Settings > Apps). If unknown, disable the Run entry in Task Manager > Startup apps and ask for a second opinion.",
+      "mitre": [
+        "T1547.001"
+      ],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S01",
+      "verification": null
+    },
+    {
+      "id": "S01-0002",
+      "module": "S01",
+      "check": "persistence.scheduled_tasks",
+      "title": "Scheduled task runs a script from a user-writable folder",
+      "severity": "medium",
+      "class": "hardening",
+      "confidence": "medium",
+      "reasons": [
+        "persistence",
+        "user_writable"
+      ],
+      "evidence": [
+        {
+          "type": "task",
+          "path": "\\DemoBackup",
+          "action": "C:\\nvm4w\\backup.cmd"
+        }
+      ],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "A backup tool you set up yourself would look exactly like this.",
+      "recommendation": "Move the script to a folder only administrators can write to, or delete the task if unused.",
+      "mitre": [
+        "T1053.005"
+      ],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S01",
+      "verification": null
+    },
+    {
+      "id": "S01-0003",
+      "module": "S01",
+      "check": "persistence.services",
+      "title": "212 services reviewed; all third-party services are signed",
+      "severity": "info",
+      "class": "info",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "",
+      "recommendation": "",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S01",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

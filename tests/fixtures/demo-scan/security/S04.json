@@ -1,0 +1,126 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S04",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "history.runmru",
+      "description": "history runmru",
+      "status": "ok",
+      "reason": null,
+      "items": 12,
+      "ms": 164
+    },
+    {
+      "id": "history.psreadline",
+      "description": "history psreadline",
+      "status": "ok",
+      "reason": null,
+      "items": 2,
+      "ms": 478
+    },
+    {
+      "id": "logs.powershell",
+      "description": "logs powershell",
+      "status": "ok",
+      "reason": null,
+      "items": 9120,
+      "ms": 632
+    },
+    {
+      "id": "logs.system",
+      "description": "logs system",
+      "status": "ok",
+      "reason": null,
+      "items": 48211,
+      "ms": 607
+    },
+    {
+      "id": "logs.security",
+      "description": "logs security",
+      "status": "needs_admin",
+      "reason": "Security log needs elevation (covered by the admin script)",
+      "items": 0,
+      "ms": 366
+    },
+    {
+      "id": "logs.defender",
+      "description": "logs defender",
+      "status": "ok",
+      "reason": null,
+      "items": 430,
+      "ms": 461
+    }
+  ],
+  "findings": [
+    {
+      "id": "S04-0001",
+      "module": "S04",
+      "check": "history.psreadline",
+      "title": "PowerShell history contains a download-and-run one-liner",
+      "severity": "low",
+      "class": "suspicious",
+      "confidence": "medium",
+      "reasons": [
+        "lolbin"
+      ],
+      "evidence": [
+        {
+          "type": "history",
+          "path": "C:\\Users\\demo\\AppData\\Roaming\\Microsoft\\Windows\\PowerShell\\PSReadLine\\ConsoleHost_history.txt",
+          "line": 211,
+          "value": "irm https://get.example.test/install.ps1 | iex"
+        }
+      ],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Installers such as Scoop or nvm are installed this way.",
+      "recommendation": "Make sure you remember running it; check what it installed.",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S04",
+      "verification": null
+    }
+  ],
+  "inventory": {
+    "logCoverage": [
+      {
+        "log": "System",
+        "oldest": "2026-07-10T06:12:00Z",
+        "newest": "2026-10-19T07:59:00Z",
+        "events": 48211
+      },
+      {
+        "log": "Microsoft-Windows-PowerShell/Operational",
+        "oldest": "2026-06-13T10:00:00Z",
+        "newest": "2026-10-19T07:58:00Z",
+        "events": 9120
+      },
+      {
+        "log": "Security",
+        "oldest": null,
+        "newest": null,
+        "status": "needs_admin"
+      },
+      {
+        "log": "Microsoft-Windows-Windows Defender/Operational",
+        "oldest": "2026-01-02T09:00:00Z",
+        "newest": "2026-10-18T22:00:00Z",
+        "events": 430
+      }
+    ]
+  },
+  "errors": []
+}

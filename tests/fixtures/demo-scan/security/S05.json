@@ -1,0 +1,66 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S05",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "av.avast_reports",
+      "description": "av avast reports",
+      "status": "ok",
+      "reason": null,
+      "items": 18,
+      "ms": 140
+    },
+    {
+      "id": "av.avast_chest",
+      "description": "av avast chest",
+      "status": "ok",
+      "reason": null,
+      "items": 0,
+      "ms": 499
+    },
+    {
+      "id": "av.msert",
+      "description": "av msert",
+      "status": "skipped",
+      "reason": "msert.log not present yet (scan still running)",
+      "items": 0,
+      "ms": 18
+    }
+  ],
+  "findings": [
+    {
+      "id": "S05-0001",
+      "module": "S05",
+      "check": "av.avast_reports",
+      "title": "Avast: no detections in the last 90 days",
+      "severity": "info",
+      "class": "info",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "",
+      "recommendation": "",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S05",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

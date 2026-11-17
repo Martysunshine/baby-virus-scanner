@@ -1,0 +1,141 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S03",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "accounts.local_users",
+      "description": "accounts local users",
+      "status": "ok",
+      "reason": null,
+      "items": 4,
+      "ms": 664
+    },
+    {
+      "id": "posture.remote_assistance",
+      "description": "posture remote assistance",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 458
+    },
+    {
+      "id": "posture.hosts_file",
+      "description": "posture hosts file",
+      "status": "ok",
+      "reason": null,
+      "items": 9,
+      "ms": 485
+    },
+    {
+      "id": "posture.root_certs",
+      "description": "posture root certs",
+      "status": "ok",
+      "reason": null,
+      "items": 61,
+      "ms": 411
+    }
+  ],
+  "findings": [
+    {
+      "id": "S03-0001",
+      "module": "S03",
+      "check": "posture.remote_assistance",
+      "title": "Remote Assistance is enabled",
+      "severity": "medium",
+      "class": "hardening",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Harmless if you use it to get help.",
+      "recommendation": "System Properties > Remote > untick 'Allow Remote Assistance connections' if you never use it.",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S03",
+      "verification": null
+    },
+    {
+      "id": "S03-0002",
+      "module": "S03",
+      "check": "posture.hosts_file",
+      "title": "hosts file maps 3 host names to tailnet addresses",
+      "severity": "high",
+      "class": "suspicious",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [
+        {
+          "type": "file",
+          "path": "C:\\Windows\\System32\\drivers\\etc\\hosts",
+          "lines": [
+            "100.101.1.2 peer-one",
+            "100.101.1.3 peer-two",
+            "100.101.1.4 peer-three"
+          ]
+        }
+      ],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": {
+        "id": "tailscale-hosts-peers",
+        "reason": "Tailscale MagicDNS peer names.",
+        "confirmWithUser": true
+      },
+      "fp_notes": "Tailscale MagicDNS can write peer names here.",
+      "recommendation": "Confirm that you recognise all three peers.",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S03",
+      "verification": null
+    },
+    {
+      "id": "S03-0003",
+      "module": "S03",
+      "check": "posture.root_certs",
+      "title": "Avast Web/Mail Shield root certificate installed",
+      "severity": "info",
+      "class": "info",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": {
+        "id": "avast-webshield-root",
+        "reason": "Avast HTTPS scanning installs this root."
+      },
+      "fp_notes": "Expected while Avast Web Shield is on.",
+      "recommendation": "",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S03",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

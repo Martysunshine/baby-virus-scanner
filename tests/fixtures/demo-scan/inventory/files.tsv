@@ -1,0 +1,11 @@
+path	sizeBytes	allocBytes	createdUtc	modifiedUtc	attributes	ext	reason
+C:\Users\demo\Downloads\<img src=x onerror=alert(1)>.txt	15728640	15728640	2026-10-17T21:14:03Z	2026-10-17T21:14:03Z	Archive	.txt	large
+C:\Users\demo\Downloads\Win11_23H2_English_x64.iso	6549825126	6549827584	2024-02-11T10:00:00Z	2024-02-11T10:00:00Z	Archive	.iso	large
+C:\Users\demo\Documents\ISOs\Win11_23H2_English_x64.iso	6549825126	6549827584	2024-02-11T10:00:00Z	2024-02-11T10:00:00Z	Archive	.iso	large
+C:\Users\demo\Videos\2018\holiday-2018.mp4	4509715660	4509716480	2018-08-30T18:20:00Z	2018-08-30T18:20:00Z	Archive	.mp4	large
+C:\Users\demo\VirtualBox VMs\linux-lab\linux-lab.vdi	23622320128	23622320128	2026-09-28T12:00:00Z	2026-09-28T12:00:00Z	Archive	.vdi	large
+C:\pagefile.sys	12884901888	12884901888	2026-10-19T06:00:00Z	2026-10-19T06:00:00Z	Archive	.sys	large
+C:\hiberfil.sys	6871947673	6871949312	2026-10-19T06:00:00Z	2026-10-19T06:00:00Z	Archive	.sys	large
+C:\Users\demo\Downloads\setup-tool.exe.crdownload	125829120	125829120	2026-09-01T09:00:00Z	2026-09-01T09:00:00Z	Archive	.crdownload	partial-download
+C:\Users\demo\AppData\Roaming\Updater\u.exe	838860	839680	2026-10-10T07:11:00Z	2026-10-10T07:11:00Z	Archive	.exe	exec-recent
+C:\Users\demo\Desktop\empty-notes.txt	0	0	2025-01-01T00:00:00Z	2025-01-01T00:00:00Z	Archive	.txt	zero-byte

@@ -1,0 +1,66 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S13",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "github.public",
+      "description": "github public",
+      "status": "ok",
+      "reason": null,
+      "items": 31,
+      "ms": 821
+    },
+    {
+      "id": "github.authenticated",
+      "description": "github authenticated",
+      "status": "needs_consent",
+      "reason": "gh sign-in not done yet",
+      "items": 0,
+      "ms": 842
+    },
+    {
+      "id": "npm.publish_history",
+      "description": "npm publish history",
+      "status": "ok",
+      "reason": null,
+      "items": 12,
+      "ms": 472
+    }
+  ],
+  "findings": [
+    {
+      "id": "S13-0001",
+      "module": "S13",
+      "check": "github.public",
+      "title": "2 GitHub SSH keys match local public keys",
+      "severity": "low",
+      "class": "info",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "",
+      "recommendation": "",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S13",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

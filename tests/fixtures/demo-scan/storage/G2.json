@@ -1,0 +1,137 @@
+{
+  "schema": "bvs.module/1",
+  "module": "G2",
+  "area": "storage",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "storage.duplicates",
+      "description": "storage duplicates",
+      "status": "ok",
+      "reason": null,
+      "items": 4,
+      "ms": 855
+    },
+    {
+      "id": "storage.project_copies",
+      "description": "storage project copies",
+      "status": "ok",
+      "reason": null,
+      "items": 2,
+      "ms": 312
+    }
+  ],
+  "findings": [],
+  "inventory": {
+    "duplicateGroups": [
+      {
+        "group": "dup-0001",
+        "sha256": "89b0bf2c7563ca07f43a5a1d1a345b53e2800bf2509d2fa7183e193a8020ce56",
+        "bytes": 6549825126,
+        "category": "installer-image",
+        "purpose": "Two identical copies of the Windows 11 ISO.",
+        "items": [
+          {
+            "id": "dup-0001-a",
+            "path": "C:\\Users\\demo\\Downloads\\Win11_23H2_English_x64.iso",
+            "safety": "safe_after_check",
+            "method": "recycle",
+            "how": "Keep one copy (ISOs folder); delete this one.",
+            "newestUtc": "2024-02-11T10:00:00Z"
+          },
+          {
+            "id": "dup-0001-b",
+            "path": "C:\\Users\\demo\\Documents\\ISOs\\Win11_23H2_English_x64.iso",
+            "safety": "review",
+            "method": "recycle",
+            "how": "This is the copy to keep.",
+            "newestUtc": "2024-02-11T10:00:00Z"
+          }
+        ]
+      },
+      {
+        "group": "dup-0002",
+        "sha256": "81c16d337a1b73144ebf20b45661f2b02aa0b22e886a978d6b2ec929cdaaee9e",
+        "bytes": 1395864371,
+        "category": "personal-media",
+        "purpose": "Same video saved twice.",
+        "items": [
+          {
+            "id": "dup-0002-a",
+            "path": "C:\\Users\\demo\\Videos\\2023\\trip.mp4",
+            "safety": "review",
+            "method": "recycle",
+            "how": "Compare both copies, keep one.",
+            "newestUtc": "2023-07-01T10:00:00Z"
+          },
+          {
+            "id": "dup-0002-b",
+            "path": "C:\\Users\\demo\\OneDrive\\Pictures\\trip.mp4",
+            "safety": "review",
+            "method": "recycle",
+            "how": "OneDrive copy: deleting it also deletes it from the cloud.",
+            "newestUtc": "2023-07-01T10:00:00Z",
+            "flags": [
+              "cloud_synced"
+            ]
+          }
+        ]
+      }
+    ],
+    "projectCopies": [
+      {
+        "id": "st-000301",
+        "path": "C:\\Users\\demo\\Documents\\Projects\\shop-app - Copy",
+        "kind": "dir",
+        "bytes": 2562929395,
+        "files": 8674,
+        "newestUtc": "2026-10-18T14:07:54.000Z",
+        "oldestUtc": "2022-09-14T08:00:00.000Z",
+        "category": "project-copy",
+        "purpose": "A manual copy of the shop-app repository.",
+        "owner": null,
+        "safety": "review",
+        "method": "holding",
+        "how": "It has uncommitted and unpushed work. Push or copy those changes into shop-app first, then remove the copy.",
+        "reversible": true,
+        "flags": [
+          "work_at_risk"
+        ],
+        "gitRisk": {
+          "uncommitted": 3,
+          "unpushed": 2,
+          "stashes": 1
+        },
+        "original": "C:\\Users\\demo\\Documents\\Projects\\shop-app"
+      },
+      {
+        "id": "st-000302",
+        "path": "C:\\Users\\demo\\.claude\\worktrees\\feature-x",
+        "kind": "dir",
+        "bytes": 314572800,
+        "files": 1800,
+        "newestUtc": "2026-10-16T15:47:15.000Z",
+        "oldestUtc": "2026-05-08T08:00:00.000Z",
+        "category": "worktree",
+        "purpose": "A git worktree created by Claude Code.",
+        "owner": null,
+        "safety": "safe_after_check",
+        "method": "tool",
+        "how": "Run 'git worktree remove' from the main repository (everything is pushed).",
+        "reversible": true,
+        "flags": [],
+        "gitRisk": {
+          "uncommitted": 0,
+          "unpushed": 0,
+          "stashes": 0
+        }
+      }
+    ]
+  },
+  "errors": []
+}

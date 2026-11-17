@@ -1,0 +1,124 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S02",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "files.recent_executables",
+      "description": "files recent executables",
+      "status": "ok",
+      "reason": null,
+      "items": 41,
+      "ms": 219
+    },
+    {
+      "id": "files.magic_mismatch",
+      "description": "files magic mismatch",
+      "status": "ok",
+      "reason": null,
+      "items": 2,
+      "ms": 96
+    },
+    {
+      "id": "processes.signers",
+      "description": "processes signers",
+      "status": "ok",
+      "reason": null,
+      "items": 187,
+      "ms": 346
+    }
+  ],
+  "findings": [
+    {
+      "id": "S02-0001",
+      "module": "S02",
+      "check": "files.recent_executables",
+      "title": "Antivirus-flagged file in Downloads: <img src=x onerror=alert(1)>.txt",
+      "severity": "critical",
+      "class": "compromise",
+      "confidence": "low",
+      "reasons": [
+        "av_match",
+        "motw_unknown_host"
+      ],
+      "evidence": [
+        {
+          "type": "file",
+          "path": "C:\\Users\\demo\\Downloads\\<img src=x onerror=alert(1)>.txt",
+          "magic": "html",
+          "note": "Name contains HTML markup - it must render as plain text"
+        }
+      ],
+      "entities": {
+        "files": [
+          {
+            "path": "C:\\Users\\demo\\Downloads\\<img src=x onerror=alert(1)>.txt",
+            "sha256": "24020bf32beffe9ab734e265fc47bc73fc438d6ac325809e3e0ef40f7f95c89c",
+            "size": 15728640,
+            "sig": "NotSigned",
+            "signer": null,
+            "created": "2026-10-17T21:14:03Z",
+            "motw": {
+              "zone": 3,
+              "host": "cdn.example-downloads.test"
+            }
+          }
+        ],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "The name is a classic XSS test string; it may be a harmless test artifact.",
+      "recommendation": "Do not open it. Upload its SHA-256 (not the file) to a reputation service, then delete it via the basket protocol if it is not yours.",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S02",
+      "verification": null
+    },
+    {
+      "id": "S02-0002",
+      "module": "S02",
+      "check": "files.recent_executables",
+      "title": "Right-to-left override in a file name: invoice‮fdp.exe",
+      "severity": "medium",
+      "class": "suspicious",
+      "confidence": "medium",
+      "reasons": [
+        "masquerading"
+      ],
+      "evidence": [
+        {
+          "type": "file",
+          "path": "C:\\Users\\demo\\Downloads\\invoice‮fdp.exe",
+          "displayedAs": "invoiceexe.pdf"
+        }
+      ],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Rare in legitimate files; some archive tools produce it when names are mangled.",
+      "recommendation": "Do not run it. Check its real extension (it is .exe).",
+      "mitre": [
+        "T1036.002"
+      ],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S02",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

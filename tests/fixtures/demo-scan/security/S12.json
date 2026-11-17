@@ -1,0 +1,75 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S12",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "secrets.npmrc",
+      "description": "secrets npmrc",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 764
+    },
+    {
+      "id": "secrets.env_files",
+      "description": "secrets env files",
+      "status": "ok",
+      "reason": null,
+      "items": 6,
+      "ms": 490
+    },
+    {
+      "id": "secrets.ssh_keys",
+      "description": "secrets ssh keys",
+      "status": "ok",
+      "reason": null,
+      "items": 2,
+      "ms": 851
+    }
+  ],
+  "findings": [
+    {
+      "id": "S12-0001",
+      "module": "S12",
+      "check": "secrets.npmrc",
+      "title": "Plaintext npm token in .npmrc",
+      "severity": "medium",
+      "class": "hardening",
+      "confidence": "medium",
+      "reasons": [
+        "plaintext_secret"
+      ],
+      "evidence": [
+        {
+          "type": "file",
+          "path": "C:\\Users\\demo\\.npmrc",
+          "line": 2,
+          "value": "npm_…a1b2"
+        }
+      ],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Needed for publishing, but any process running as you can read it.",
+      "recommendation": "Use a granular, short-lived token, or 'npm login' with 2FA and remove the token line.",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S12",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

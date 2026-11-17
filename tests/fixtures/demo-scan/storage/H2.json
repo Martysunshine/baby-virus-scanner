@@ -1,0 +1,245 @@
+{
+  "schema": "bvs.module/1",
+  "module": "H2",
+  "area": "storage",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "registry.broken_refs",
+      "description": "registry broken refs",
+      "status": "ok",
+      "reason": null,
+      "items": 3,
+      "ms": 735
+    },
+    {
+      "id": "health.shortcuts",
+      "description": "health shortcuts",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 796
+    },
+    {
+      "id": "health.disk",
+      "description": "health disk",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 757
+    },
+    {
+      "id": "health.sfc_dism",
+      "description": "health sfc dism",
+      "status": "ok",
+      "reason": null,
+      "items": 2,
+      "ms": 426
+    }
+  ],
+  "findings": [
+    {
+      "id": "H2-0001",
+      "module": "H2",
+      "check": "health.header_mismatch",
+      "title": "Executable header inside a .jpg file",
+      "severity": "medium",
+      "class": "suspicious",
+      "confidence": "medium",
+      "reasons": [
+        "masquerading"
+      ],
+      "evidence": [
+        {
+          "type": "file",
+          "path": "C:\\Users\\demo\\Pictures\\2024\\IMG_0412.jpg",
+          "magic": "PE32"
+        }
+      ],
+      "entities": {
+        "files": [
+          {
+            "path": "C:\\Users\\demo\\Pictures\\2024\\IMG_0412.jpg",
+            "sha256": "5f399946fea96a34a0dab16091301971ed4818ae5e9f02f90015177959cbced4",
+            "size": 1258291,
+            "sig": "NotSigned",
+            "signer": null,
+            "created": "2026-10-02T10:00:00Z"
+          }
+        ],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Some camera tools embed odd headers; still unusual.",
+      "recommendation": "Do not open it; ask for a second opinion.",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "H2",
+      "verification": null
+    },
+    {
+      "id": "H2-0002",
+      "module": "H2",
+      "check": "health.disk",
+      "title": "Recycle Bin holds 3.1 GB",
+      "severity": "low",
+      "class": "hygiene",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "",
+      "recommendation": "",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "H2",
+      "verification": null
+    }
+  ],
+  "inventory": {
+    "brokenRegistryRefs": [
+      {
+        "id": "rg-0001",
+        "path": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{1234ABCD-GHOST}",
+        "kind": "registry",
+        "bytes": null,
+        "files": null,
+        "newestUtc": null,
+        "oldestUtc": null,
+        "category": "ghost-uninstall",
+        "purpose": "Uninstall entry of a program whose folder no longer exists.",
+        "owner": null,
+        "safety": "safe_after_check",
+        "method": "setting",
+        "how": "Back up the key with 'reg export', then remove the entry (it only clutters Installed apps).",
+        "reversible": true,
+        "flags": [],
+        "name": "Old Toolbar 2.0",
+        "effect": "Shows a program in Installed apps that cannot be uninstalled."
+      },
+      {
+        "id": "rg-0002",
+        "path": "HKCU\\Environment\\Path -> C:\\tools\\old-sdk\\bin",
+        "kind": "registry",
+        "bytes": null,
+        "files": null,
+        "newestUtc": null,
+        "oldestUtc": null,
+        "category": "dead-path",
+        "purpose": "PATH entry pointing to a folder that no longer exists.",
+        "owner": null,
+        "safety": "safe_after_check",
+        "method": "setting",
+        "how": "System Properties > Environment Variables > Path > remove the entry.",
+        "reversible": true,
+        "flags": [],
+        "name": "Dead PATH entry",
+        "effect": "Slightly slower command lookup; can mask other tools."
+      },
+      {
+        "id": "rg-0003",
+        "path": "HKLM\\SOFTWARE\\Microsoft\\Security Center\\Provider\\Av\\{MCAFEE-STALE}",
+        "kind": "registry",
+        "bytes": null,
+        "files": null,
+        "newestUtc": null,
+        "oldestUtc": null,
+        "category": "stale-security-center",
+        "purpose": "Stale Security Center registration of an uninstalled antivirus.",
+        "owner": null,
+        "safety": "use_tool",
+        "method": "tool",
+        "how": "Use the vendor's removal tool (McAfee Consumer Product Removal); do not edit by hand.",
+        "reversible": true,
+        "flags": [],
+        "name": "McAfee (stale)"
+      }
+    ],
+    "brokenShortcuts": [
+      {
+        "id": "hl-0001",
+        "path": "C:\\Users\\demo\\Desktop\\Old Game.lnk",
+        "kind": "file",
+        "bytes": 2048,
+        "files": null,
+        "newestUtc": "2022-05-01T10:00:00Z",
+        "oldestUtc": null,
+        "category": "broken-shortcut",
+        "purpose": "Shortcut whose target no longer exists.",
+        "owner": null,
+        "safety": "safe",
+        "method": "recycle",
+        "how": "Delete the shortcut.",
+        "reversible": true,
+        "flags": []
+      }
+    ],
+    "zeroByteFiles": [
+      {
+        "id": "hl-0002",
+        "path": "C:\\Users\\demo\\Desktop\\empty-notes.txt",
+        "kind": "file",
+        "bytes": 0,
+        "files": null,
+        "newestUtc": "2025-01-01T00:00:00Z",
+        "oldestUtc": null,
+        "category": "zero-byte",
+        "purpose": "Empty file.",
+        "owner": null,
+        "safety": "safe_after_check",
+        "method": "recycle",
+        "how": "Delete it if you do not need it.",
+        "reversible": true,
+        "flags": []
+      }
+    ],
+    "headerMismatch": [
+      {
+        "id": "hl-0003",
+        "path": "C:\\Users\\demo\\Pictures\\2024\\IMG_0412.jpg",
+        "kind": "file",
+        "bytes": 1258291,
+        "files": null,
+        "newestUtc": "2026-10-02T10:00:00Z",
+        "oldestUtc": null,
+        "category": "header-mismatch",
+        "purpose": "A .jpg file whose header says it is an executable (moved to the security list as H2-0001).",
+        "owner": null,
+        "safety": "review",
+        "method": "none",
+        "how": "Do not open it. See finding H2-0001.",
+        "reversible": true,
+        "flags": []
+      }
+    ],
+    "diskHealth": {
+      "reliability": {
+        "readErrorsTotal": 0,
+        "wearPercent": 3,
+        "temperatureC": 41
+      },
+      "sfc": "Windows Resource Protection did not find any integrity violations.",
+      "dism": {
+        "componentStoreCorruption": false,
+        "reclaimablePackages": 2
+      },
+      "ntfsEvents90d": 0
+    }
+  },
+  "errors": []
+}

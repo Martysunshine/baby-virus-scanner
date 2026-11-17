@@ -1,0 +1,67 @@
+{
+  "schema": "bvs.module/1",
+  "module": "V1",
+  "area": "verify",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "verify.S01-0001",
+      "description": "verify S01-0001",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 242
+    },
+    {
+      "id": "verify.S02-0001",
+      "description": "verify S02-0001",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 731
+    },
+    {
+      "id": "verify.S06-0001",
+      "description": "verify S06-0001",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 847
+    }
+  ],
+  "findings": [],
+  "inventory": {
+    "verifications": [
+      {
+        "id": "S01-0001",
+        "result": "refuted",
+        "method": "reg.exe query + vendor release hash comparison",
+        "by": "V1",
+        "at": "2026-10-19T08:50:00.000Z",
+        "notes": "Updater belongs to a portable app the user installed; hash matches the vendor's published release."
+      },
+      {
+        "id": "S02-0001",
+        "result": "refuted",
+        "method": "File content and reputation re-check",
+        "by": "V1",
+        "at": "2026-10-19T08:51:40.000Z",
+        "notes": "A saved web page with a test-string name; the AV signature was a generic HTML heuristic. No script ran."
+      },
+      {
+        "id": "S06-0001",
+        "result": "inconclusive",
+        "method": "Chrome Web Store lookup by extension ID",
+        "by": "V1",
+        "at": "2026-10-19T08:53:20.000Z",
+        "notes": "Not listed in the store; publisher unknown. Ask the user."
+      }
+    ]
+  },
+  "errors": []
+}

@@ -1,0 +1,98 @@
+{
+  "schema": "bvs.module/1",
+  "module": "X1",
+  "area": "admin",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": true,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "admin.security_log",
+      "description": "admin security log",
+      "status": "ok",
+      "reason": null,
+      "items": 5123,
+      "ms": 63
+    },
+    {
+      "id": "admin.auditpol",
+      "description": "admin auditpol",
+      "status": "ok",
+      "reason": null,
+      "items": 58,
+      "ms": 164
+    },
+    {
+      "id": "admin.bitlocker",
+      "description": "admin bitlocker",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 308
+    },
+    {
+      "id": "admin.defender_exclusions",
+      "description": "admin defender exclusions",
+      "status": "not_applicable",
+      "reason": "Defender is off (third-party AV active)",
+      "items": 0,
+      "ms": 190
+    },
+    {
+      "id": "admin.sfc_verifyonly",
+      "description": "admin sfc verifyonly",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 330
+    },
+    {
+      "id": "admin.dism_scanhealth",
+      "description": "admin dism scanhealth",
+      "status": "ok",
+      "reason": null,
+      "items": 1,
+      "ms": 266
+    },
+    {
+      "id": "admin.smb",
+      "description": "admin smb",
+      "status": "partial",
+      "reason": "SMB server config read; share ACLs unavailable",
+      "items": 2,
+      "ms": 747
+    }
+  ],
+  "findings": [
+    {
+      "id": "X1-0001",
+      "module": "X1",
+      "check": "admin.auditpol",
+      "title": "Logon failure auditing is off",
+      "severity": "low",
+      "class": "hardening",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Default on Home editions.",
+      "recommendation": "auditpol /set /subcategory:\"Logon\" /failure:enable (admin)",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "X1",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

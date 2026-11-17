@@ -1,0 +1,21 @@
+{
+  "schema": "bvs.inventory/1",
+  "scanId": "demo-scan",
+  "root": "C:\\",
+  "volume": {
+    "letter": "C:",
+    "fileSystem": "NTFS",
+    "sizeBytes": 549755813888,
+    "freeBytes": 244715111522
+  },
+  "scanned": {
+    "bytes": 296987638686,
+    "files": 158511,
+    "dirs": 1611
+  },
+  "inaccessibleDirs": 1,
+  "cloudOnlyBytes": 26843545600,
+  "durationSec": 412,
+  "unaccountedBytes": 8053063680,
+  "note": "Synthetic fixture. Unaccounted = used - scanned (system files, inaccessible folders, metadata)."
+}

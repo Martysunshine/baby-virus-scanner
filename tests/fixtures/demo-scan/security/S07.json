@@ -1,0 +1,108 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S07",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "network.connections",
+      "description": "network connections",
+      "status": "ok",
+      "reason": null,
+      "items": 96,
+      "ms": 401
+    },
+    {
+      "id": "network.listeners",
+      "description": "network listeners",
+      "status": "ok",
+      "reason": null,
+      "items": 17,
+      "ms": 817
+    },
+    {
+      "id": "network.dns",
+      "description": "network dns",
+      "status": "ok",
+      "reason": null,
+      "items": 6,
+      "ms": 855
+    },
+    {
+      "id": "network.tailscale",
+      "description": "network tailscale",
+      "status": "partial",
+      "reason": "tailscale CLI returned partial peer data",
+      "items": 3,
+      "ms": 183
+    }
+  ],
+  "findings": [
+    {
+      "id": "S07-0001",
+      "module": "S07",
+      "check": "network.listeners",
+      "title": "SMB (445) and a vendor service listen on Private networks",
+      "severity": "medium",
+      "class": "hardening",
+      "confidence": "medium",
+      "reasons": [
+        "exposed_service"
+      ],
+      "evidence": [
+        {
+          "type": "listener",
+          "port": 445,
+          "process": "System",
+          "profile": "Private"
+        }
+      ],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Normal on a home network if you share folders.",
+      "recommendation": "Turn off file sharing if you do not use it.",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S07",
+      "verification": null
+    },
+    {
+      "id": "S07-0002",
+      "module": "S07",
+      "check": "network.dns",
+      "title": "DNS answers match the DoH resolver (no hijack seen)",
+      "severity": "info",
+      "class": "info",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "",
+      "recommendation": "",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S07",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

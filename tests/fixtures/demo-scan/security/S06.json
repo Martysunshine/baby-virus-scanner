@@ -1,0 +1,108 @@
+{
+  "schema": "bvs.module/1",
+  "module": "S06",
+  "area": "security",
+  "scanId": "demo-scan",
+  "host": "DEMO-PC",
+  "platform": "windows",
+  "elevated": false,
+  "started": "2026-10-19T08:01:00.000Z",
+  "finished": "2026-10-19T08:10:00.000Z",
+  "checks": [
+    {
+      "id": "browsers.chrome.extensions",
+      "description": "browsers chrome extensions",
+      "status": "ok",
+      "reason": null,
+      "items": 23,
+      "ms": 323
+    },
+    {
+      "id": "browsers.edge.extensions",
+      "description": "browsers edge extensions",
+      "status": "ok",
+      "reason": null,
+      "items": 4,
+      "ms": 367
+    },
+    {
+      "id": "browsers.launch_flags",
+      "description": "browsers launch flags",
+      "status": "ok",
+      "reason": null,
+      "items": 11,
+      "ms": 363
+    }
+  ],
+  "findings": [
+    {
+      "id": "S06-0001",
+      "module": "S06",
+      "check": "browsers.chrome.extensions",
+      "title": "Chrome extension with access to all sites is not in the Web Store",
+      "severity": "high",
+      "class": "suspicious",
+      "confidence": "medium",
+      "reasons": [
+        "hidden"
+      ],
+      "evidence": [
+        {
+          "type": "extension",
+          "id": "abcdefghijklmnopabcdefghijklmnop",
+          "name": "PDF Tools Pro",
+          "permissions": [
+            "<all_urls>",
+            "webRequest",
+            "cookies"
+          ],
+          "installSource": "sideloaded",
+          "profile": "Profile 1"
+        }
+      ],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Developer-mode extensions you built yourself also look like this.",
+      "recommendation": "chrome://extensions > Developer mode > note the ID > remove it if you did not install it.",
+      "mitre": [
+        "T1176"
+      ],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S06",
+      "verification": null
+    },
+    {
+      "id": "S06-0002",
+      "module": "S06",
+      "check": "browsers.chrome.notifications",
+      "title": "Notification permission granted to 4 unknown sites",
+      "severity": "medium",
+      "class": "hardening",
+      "confidence": "medium",
+      "reasons": [],
+      "evidence": [],
+      "entities": {
+        "files": [],
+        "processes": [],
+        "network": [],
+        "registry": [],
+        "accounts": []
+      },
+      "expected": null,
+      "fp_notes": "Often news sites.",
+      "recommendation": "chrome://settings/content/notifications",
+      "mitre": [],
+      "collected_at": "2026-10-19T08:05:00.000Z",
+      "collector": "S06",
+      "verification": null
+    }
+  ],
+  "inventory": {},
+  "errors": []
+}

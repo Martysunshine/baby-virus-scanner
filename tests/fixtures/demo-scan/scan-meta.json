@@ -1,0 +1,19 @@
+{
+  "schema": "bvs.scan/1",
+  "scanId": "demo-scan",
+  "auditStartUtc": "2026-10-19T08:00:00.000Z",
+  "host": "DEMO-PC",
+  "user": "demo",
+  "userSid": "S-1-5-21-1000000000-2000000000-3000000000-1001",
+  "platform": "windows",
+  "os": {
+    "caption": "Microsoft Windows 11 Home",
+    "version": "10.0.26100",
+    "build": "26100",
+    "language": 1033
+  },
+  "elevated": false,
+  "tool": "baby-virus-scanner",
+  "toolVersion": "0.1.0",
+  "note": "Synthetic fixture for tests and demos. Not real data."
+}
