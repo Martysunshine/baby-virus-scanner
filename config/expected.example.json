@@ -1,0 +1,278 @@
+{
+  "schema": "bvs.expected/1",
+  "description": "Template for config\\local\\expected.json, the machine profile: known-good items of ONE PC. The scanner reads only the 'items' list, which is empty here on purpose, so copying this file changes nothing. Every item you add takes something out of the verdict, so add one only after the user confirmed that exact item. Move an entry from 'examples' into 'items' and adapt it. A match caps the finding at 'severityCap' (default info) and marks it explained, unless one of its 'invalidIf' conditions holds. 'confirmWithUser': true keeps the question open in the report. Format and categories: docs\\schema.md. How to fill it in: docs\\agent\\calibrate.md. Some ids are recognised by name and switch on extra logic in a collector: this-project (extra paths of this scanner), security-tooling-repos, tailscale, asus-glidex, ollama-loopback, defender-off-avast, pentest-tools, codex-sandbox-firewall, startup-known. Keep those ids when you adapt the matching examples.",
+  "host": "",
+  "items": [],
+  "examples": [
+    {
+      "id": "docker-hosts-entries",
+      "category": "hosts",
+      "match": {
+        "hostnameRegex": "^(host|gateway|kubernetes)\\.docker\\.internal$"
+      },
+      "reason": "Docker Desktop adds these hosts-file entries.",
+      "invalidIf": [
+        "Docker Desktop not installed"
+      ]
+    },
+    {
+      "id": "vpn-peer-names",
+      "category": "hosts",
+      "match": {
+        "hostnames": [
+          "my-other-laptop",
+          "my-server"
+        ]
+      },
+      "reason": "Names of the user's own VPN devices.",
+      "confirmWithUser": true
+    },
+    {
+      "id": "tailscale",
+      "category": "network",
+      "match": {
+        "adapter": "Tailscale",
+        "service": "Tailscale",
+        "ipPrefix": "100.64.0.0/10"
+      },
+      "reason": "VPN the user installed on purpose. Its peers must still be reviewed.",
+      "invalidIf": [
+        "control server is not the vendor default",
+        "unknown or shared-in peers"
+      ]
+    },
+    {
+      "id": "virtualbox-hostonly",
+      "category": "network",
+      "match": {
+        "adapterRegex": "VirtualBox Host-Only",
+        "ip": "192.168.56.1"
+      },
+      "reason": "VirtualBox host-only network."
+    },
+    {
+      "id": "ollama-loopback",
+      "category": "listener",
+      "match": {
+        "process": "ollama",
+        "address": "127.0.0.1",
+        "port": 11434
+      },
+      "reason": "Local model server on loopback.",
+      "invalidIf": [
+        "bound to 0.0.0.0 or a LAN address"
+      ]
+    },
+    {
+      "id": "asus-glidex",
+      "category": "listener",
+      "match": {
+        "service": "GlideXService",
+        "process": "GlideXService.exe"
+      },
+      "reason": "PC maker's screen-sharing service. Expected if signed by the maker; exposure to the network is still reported as hardening.",
+      "invalidIf": [
+        "binary not signed by ASUSTeK"
+      ],
+      "class": "hardening"
+    },
+    {
+      "id": "music-app-discovery",
+      "category": "listener",
+      "match": {
+        "process": "Spotify.exe",
+        "port": 57621
+      },
+      "reason": "Spotify Connect local discovery."
+    },
+    {
+      "id": "container-runtime",
+      "category": "program",
+      "match": {
+        "names": [
+          "Docker Desktop",
+          "docker-desktop"
+        ]
+      },
+      "reason": "Installed by the user."
+    },
+    {
+      "id": "bundled-browser-addon",
+      "category": "program",
+      "match": {
+        "displayNameRegex": "^McAfee WebAdvisor"
+      },
+      "reason": "Bundled add-on. Unwanted, not malware.",
+      "severityCap": "low",
+      "class": "hygiene"
+    },
+    {
+      "id": "tool-sandbox-accounts",
+      "category": "account",
+      "match": {
+        "names": [
+          "CodexSandboxOffline",
+          "CodexSandboxOnline"
+        ]
+      },
+      "reason": "Sandbox accounts created by a developer tool, non-admin.",
+      "invalidIf": [
+        "member of Administrators",
+        "interactive or network logons"
+      ]
+    },
+    {
+      "id": "codex-sandbox-firewall",
+      "category": "firewallRule",
+      "match": {
+        "nameRegex": "^codex_sandbox"
+      },
+      "reason": "Outbound block rule created by a developer tool."
+    },
+    {
+      "id": "antivirus-https-root",
+      "category": "rootCert",
+      "match": {
+        "subjectContains": "Avast Web/Mail Shield Root"
+      },
+      "reason": "Root certificate installed by the antivirus product's HTTPS scanning.",
+      "invalidIf": [
+        "the product is not installed",
+        "several roots with that name and different thumbprints"
+      ]
+    },
+    {
+      "id": "defender-off-avast",
+      "category": "securityCenter",
+      "match": {
+        "defenderOffBecause": "Avast Antivirus active"
+      },
+      "reason": "Defender turns itself off while another antivirus is registered and healthy.",
+      "invalidIf": [
+        "the other antivirus is not on",
+        "its definitions are out of date"
+      ]
+    },
+    {
+      "id": "stale-av-registration",
+      "category": "securityCenter",
+      "match": {
+        "displayName": "McAfee",
+        "productType": "firewall",
+        "pathMissing": "C:\\Program Files\\McAfee\\example\\host.exe"
+      },
+      "reason": "Registration left behind by an uninstalled product.",
+      "severityCap": "low",
+      "class": "hygiene"
+    },
+    {
+      "id": "remote-assistance-on",
+      "category": "posture",
+      "match": {
+        "setting": "fAllowToGetHelp=1"
+      },
+      "reason": "Default on many PC-maker images.",
+      "severityCap": "low",
+      "class": "hardening"
+    },
+    {
+      "id": "startup-known",
+      "category": "startup",
+      "match": {
+        "names": [
+          "OneDrive",
+          "Discord",
+          "SecurityHealth"
+        ]
+      },
+      "reason": "Startup entries the user recognises. The target's signer and folder are still checked.",
+      "invalidIf": [
+        "target unsigned or unexpected signer",
+        "target in an unexpected folder"
+      ]
+    },
+    {
+      "id": "tasks-known",
+      "category": "task",
+      "match": {
+        "names": [
+          "OneDrive*",
+          "Zoom*"
+        ]
+      },
+      "reason": "Scheduled tasks the user recognises.",
+      "invalidIf": [
+        "action binary unsigned or unexpected signer"
+      ]
+    },
+    {
+      "id": "browser-ext-known",
+      "category": "browserExtension",
+      "match": {
+        "names": [
+          "Google Docs Offline"
+        ]
+      },
+      "reason": "Built-in or deliberately installed extension.",
+      "invalidIf": [
+        "not from the official store",
+        "unexpected permissions"
+      ]
+    },
+    {
+      "id": "editor-ext-known",
+      "category": "editorExtension",
+      "match": {
+        "ids": [
+          "publisher.extension-name"
+        ]
+      },
+      "reason": "Installed from the official gallery by the user."
+    },
+    {
+      "id": "ai-tool-allow-rules",
+      "category": "claudeConfig",
+      "match": {
+        "permissionsAllowContains": [
+          "VBoxManage"
+        ]
+      },
+      "reason": "Standing approvals the user set on purpose.",
+      "severityCap": "medium",
+      "class": "hardening"
+    },
+    {
+      "id": "third-party-skills",
+      "category": "claudeConfig",
+      "match": {
+        "skillPrefix": "vendor-",
+        "npmGlobal": "@vendor/cli"
+      },
+      "reason": "Skills installed by a CLI the user chose. Their content is still reviewed."
+    },
+    {
+      "id": "security-tooling-repos",
+      "category": "path",
+      "match": {
+        "paths": [
+          "%USERPROFILE%\\Documents\\my-security-lab"
+        ]
+      },
+      "reason": "The user's own security tooling: test secrets and detection strings by design.",
+      "class": "info"
+    },
+    {
+      "id": "pentest-tools",
+      "category": "avDetection",
+      "match": {
+        "detectionTypes": [
+          "HackTool",
+          "RiskWare",
+          "PUP"
+        ]
+      },
+      "reason": "The user does security testing. Such detections are plausible but are still listed.",
+      "severityCap": "medium"
+    }
+  ]
+}

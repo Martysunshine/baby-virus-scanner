@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "description": "The only internet hosts collectors may contact (through Invoke-BvsIntel). What may be sent: package name@version, extension IDs, the GitHub username / npm package name, DNS test names. Never file contents, local paths or hashes.",
+  "hosts": [
+    { "host": "api.osv.dev", "purpose": "OSV malware/vulnerability lookups (package name@version only)" },
+    { "host": "api.github.com", "purpose": "GitHub public + authenticated API, advisory database, repo contents of public intel repos" },
+    { "host": "github.com", "purpose": "github.com/<user>.keys and .gpg (public keys)" },
+    { "host": "raw.githubusercontent.com", "purpose": "public threat-intel lists (malicious extension lists, marketplace removals)" },
+    { "host": "codeberg.org", "purpose": "public threat-intel lists (palant/malicious-extensions-list moved here)" },
+    { "host": "registry.npmjs.org", "purpose": "npm package metadata, tarballs (download only) and read-only token calls" },
+    { "host": "pypi.org", "purpose": "PyPI package metadata" },
+    { "host": "marketplace.visualstudio.com", "purpose": "VS Code extension existence / verified publisher" },
+    { "host": "main.vscode-cdn.net", "purpose": "VS Code extension control (malicious/kill) list" },
+    { "host": "az764295.vo.msecnd.net", "purpose": "legacy VS Code control list location" },
+    { "host": "open-vsx.org", "purpose": "Open VSX extension existence" },
+    { "host": "api2.cursor.sh", "purpose": "Cursor extension control list" },
+    { "host": "marketplace.cursorapi.com", "purpose": "Cursor marketplace metadata" },
+    { "host": "chromewebstore.google.com", "purpose": "Chrome extension existence check" },
+    { "host": "chrome.google.com", "purpose": "legacy Chrome Web Store URLs" },
+    { "host": "microsoftedge.microsoft.com", "purpose": "Edge add-on existence check" },
+    { "host": "cloudflare-dns.com", "purpose": "DNS-over-HTTPS reference answers for the DNS hijack test" },
+    { "host": "dns.google", "purpose": "DNS-over-HTTPS second opinion" },
+    { "host": "standards-oui.ieee.org", "purpose": "MAC address vendor (OUI) list for LAN device identification" },
+    { "host": "www.loldrivers.io", "purpose": "known vulnerable / malicious driver hashes" },
+    { "host": "ctldl.windowsupdate.com", "allowHttp": true, "purpose": "Microsoft trusted-root CTL (signed CAB; verify signature)" },
+    { "host": "check.torproject.org", "purpose": "Tor exit node list (context only)" },
+    { "host": "feodotracker.abuse.ch", "purpose": "botnet C2 IP blocklist (context only)" }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "description": "Collectors must never open these files (regex on the full path, case-insensitive). Report existence/size only if needed. SSH key encryption status only via Get-BvsSshKeyInfo.",
+  "patterns": [
+    "\\\\(Login Data|Login Data For Account|Cookies|History|Web Data|Visited Links|Top Sites|Shortcuts|Network Action Predictor|Favicons|Extension Cookies|Safe Browsing Cookies|Media History|Affiliation Database)(-journal|-wal|-shm)?$",
+    "\\\\Network\\\\Cookies(-journal)?$",
+    "\\\\(Local Extension Settings|Sync Extension Settings|Managed Extension Settings|IndexedDB|Local Storage|Session Storage|Sessions|Service Worker|File System|WebStorage)\\\\",
+    "\\\\\\.claude\\\\\\.credentials\\.json$",
+    "\\\\\\.codex\\\\auth\\.json$",
+    "\\\\\\.ssh\\\\(?!known_hosts)(?!config$)(?!authorized_keys)(?![^\\\\]*\\.pub$)[^\\\\]+$",
+    "\\\\Microsoft\\\\(Credentials|Protect|Vault|Crypto\\\\Keys|Crypto\\\\RSA|SystemCertificates\\\\My\\\\Keys)\\\\",
+    "\\\\\\.git-credentials$",
+    "\\\\(GitHub CLI|gh-config)\\\\hosts\\.yml$",
+    "\\\\(key4\\.db|logins\\.json|cookies\\.sqlite|places\\.sqlite|formhistory\\.sqlite|signons\\.sqlite|cert9\\.db)$",
+    "\\.(key|pem|pfx|p12|kdbx|kdb|ppk|jks|keystore|ovpn)$",
+    "[-_.](key|secret|secrets|token)$",
+    "\\\\wallet\\.dat$",
+    "\\\\(Exodus|Electrum|atomic|Ethereum|Bitcoin|Monero|Guarda|Coinomi)\\\\",
+    "\\\\Telegram Desktop\\\\tdata\\\\",
+    "\\\\Signal\\\\sql\\\\"
+  ]
+}
