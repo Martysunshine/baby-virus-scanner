@@ -1,5 +1,9 @@
 # D: visual design (3D shape system, motion, asset slots)
 
+Code comments mark the dashboard's build passes: UI-A shell and views, UI-B storage map, UI-C
+INFOSEC and scanner (see `docs/ui-contract.md`), UI-D this visual design, UI-E the frame-timing
+probe (`tests/ui/perf-probe.mjs`), UI-F the Overview orb and smoothness pass below.
+
 The look changed; markup hooks (`data-bvs-*`), routes, wording, data flow and colours did not. CSS lives in the
 "UI-D" blocks at the end of `style.css`, `storage.css` and `agents.css`; JS additions are marked `UI-D`.
 

@@ -724,7 +724,7 @@ $procWithPath = @($procs | Where-Object { $_.Path })
                 -Severity $sev -Class 'suspicious' -Confidence 'medium' -Reasons $rs `
                 -Evidence @((New-S02SigEvidence $f), (New-S02ProcEvidence $p0)) -Entities @{ processes = @($g.Group | ForEach-Object { New-S02ProcEntity $_ }) } `
                 -FpNotes 'HashMismatch can follow an in-place update or a damaged file; NotTrusted/UnknownError also appear with self-signed tools, expired chains without timestamps, or revocation-check failures when offline.' `
-                -Recommendation 'Open the file Properties > Digital Signatures and compare with the vendor. If the vendor does not ship it this way, have Avast scan the file and reinstall the program from the official source.' `
+                -Recommendation 'Open the file Properties > Digital Signatures and compare with the vendor. If the vendor does not ship it this way, have your antivirus scan the file and reinstall the program from the official source.' `
                 -Mitre @('T1036.001', 'T1553.002') -Expected $f.Expected
         }
         Out-S02Items $uniq
@@ -759,7 +759,7 @@ $procWithPath = @($procs | Where-Object { $_.Path })
                 -Evidence @((New-S02ProcEvidence $p0), (New-S02SigEvidence $f), [ordered]@{ type = 'expected_folders'; folders = $sysBins[$p0.Name.ToLowerInvariant()] }) `
                 -Entities @{ processes = @($g.Group | ForEach-Object { New-S02ProcEntity $_ }) } `
                 -FpNotes 'A Microsoft-signed copy can run from a servicing, WinSxS or backup folder; anything unsigned or third-party under a Windows process name is almost never legitimate.' `
-                -Recommendation 'Note the PID and path, check the signer in Properties, and run a full Avast scan plus a second-opinion scanner. Do not kill it blindly: collect evidence first and verify the parent process.' `
+                -Recommendation 'Note the PID and path, check the signer in Properties, and run a full scan with your antivirus plus a second-opinion scanner. Do not kill it blindly: collect evidence first and verify the parent process.' `
                 -Mitre @('T1036.005') -Expected $f.Expected
         }
         if ($noPath -gt 0) { Set-BvsCheckStatus -Id 'processes.masquerading' -Status partial -Reason "$noPath system-named process(es) without a readable image path" }
@@ -796,7 +796,7 @@ $procWithPath = @($procs | Where-Object { $_.Path })
                 -Evidence @((New-S02ProcEvidence $p0), (New-S02SigEvidence $f), [ordered]@{ type = 'lookalike'; imitates = "$hit.exe"; method = $how; skeleton = $sk }) `
                 -Entities @{ processes = @($group | ForEach-Object { New-S02ProcEntity $_ }) } `
                 -FpNotes 'Some vendors use names close to Windows binaries; a valid third-party signature makes this much less likely to be malicious (reported as low).' `
-                -Recommendation 'Check the signer and the folder of this program. If it is not something you installed, run a full Avast scan and investigate how it starts (S01 persistence report).' `
+                -Recommendation 'Check the signer and the folder of this program. If it is not something you installed, run a full scan with your antivirus and investigate how it starts (S01 persistence report).' `
                 -Mitre @('T1036.005') -Expected $(if ($f) { $f.Expected } else { $null })
         }
         Out-S02Items $names
@@ -823,7 +823,7 @@ $nativeHosts = [System.Collections.Generic.List[object]]::new()
                         -Evidence @((New-S02ProcEvidence $p), (New-S02SigEvidence $f), [ordered]@{ type = 'expected_parent'; expected = $rules[$n]; actual = $parDesc }) `
                         -Entities @{ processes = @((New-S02ProcEntity $p)) } `
                         -FpNotes 'Rare legitimate cases: a debugger or crash-handler restarting the process, or PID reuse right after the real parent exited (checked by start time).' `
-                        -Recommendation 'Record the PID, path and parent. Compare the image path and signer with the real Windows binary; if they differ or the parent is unusual, run a full offline/boot-time Avast scan.' `
+                        -Recommendation 'Record the PID, path and parent. Compare the image path and signer with the real Windows binary; if they differ or the parent is unusual, run a full offline or boot-time antivirus scan (for example Microsoft Defender Offline).' `
                         -Mitre @('T1036.005', 'T1055') -Expected $(if ($f) { $f.Expected } else { $null })
                 }
             }
@@ -846,7 +846,7 @@ $nativeHosts = [System.Collections.Generic.List[object]]::new()
                     -Severity 'high' -Class 'suspicious' -Confidence 'medium' -Reasons @('lolbin') `
                     -Evidence @((New-S02ProcEvidence $p), (New-S02ProcEvidence $par)) -Entities @{ processes = @((New-S02ProcEntity $p), (New-S02ProcEntity $par)) } `
                     -FpNotes 'Some add-ins, mail macros you wrote yourself, or browser native-messaging hosts launch helpers; native messaging (chrome-extension:// in the command line) is excluded automatically.' `
-                    -Recommendation 'Find which document or page was open at that time. Do not enable macros or content; close the parent application and have Avast scan the document and the Downloads folder.' `
+                    -Recommendation 'Find which document or page was open at that time. Do not enable macros or content; close the parent application and have your antivirus scan the document and the Downloads folder.' `
                     -Mitre @('T1204.002', 'T1566.001', 'T1059')
             }
         }
@@ -896,7 +896,7 @@ $ownCmdHits = 0
                 -Severity $sev -Class 'suspicious' -Confidence $(if ($sev -eq 'high') { 'medium' } else { 'low' }) -Reasons $rs `
                 -Evidence @($ev) -Entities @{ processes = @((New-S02ProcEntity $p)) } `
                 -FpNotes 'Installers and admin scripts sometimes use -WindowStyle Hidden, -EncodedCommand or "irm ... | iex" one-liners (for example official install scripts). Check who started it and when; processes started by this scan are excluded.' `
-                -Recommendation 'Note the parent process and the decoded command (evidence). If you did not start it, disconnect from the network, have Avast run a full scan, and review persistence (S01) for whatever launches it.' `
+                -Recommendation 'Note the parent process and the decoded command (evidence). If you did not start it, disconnect from the network, run a full scan with your antivirus, and review persistence (S01) for whatever launches it.' `
                 -Mitre $mt -Expected $(if ($f) { $f.Expected } else { $null })
         }
         Out-S02Items $withCmd
@@ -924,7 +924,7 @@ $ownCmdHits = 0
                 -Severity $sev -Class 'suspicious' -Confidence 'medium' -Reasons $rs -Evidence $ev `
                 -Entities @{ processes = @($g.Group | ForEach-Object { New-S02ProcEntity $_ }); files = @([ordered]@{ path = $p0.Path; sha256 = (Get-BvsHash -Path $p0.Path -MaxBytes ($MaxHashMB * 1MB)); sig = $f.SigStatus; signer = $f.Signer; motw = if ($motw) { [ordered]@{ zone = $motw.ZoneId; host = $motw.HostDomain } } else { $null } }) } `
                 -FpNotes 'Portable tools, installers and self-extracting updaters run from Temp or Downloads; unsigned builds of developer tools are common for technical users.' `
-                -Recommendation 'Identify the program (Properties > Details, where it was downloaded from). If unknown, check the hash on VirusTotal yourself and let Avast scan the folder; remove it only after confirming.' `
+                -Recommendation 'Identify the program (Properties > Details, where it was downloaded from). If unknown, check the hash on VirusTotal yourself and let your antivirus scan the folder; remove it only after confirming.' `
                 -Mitre @('T1204.002') -Expected $f.Expected
         }
         if ($signedLow.Count) {
@@ -979,7 +979,7 @@ $ownCmdHits = 0
                 -Evidence @((New-S02ProcEvidence $p0), [ordered]@{ type = 'image'; path = $p0.Path; exists = $false; pathSource = $p0.PathSource }) `
                 -Entities @{ processes = @($g.Group | ForEach-Object { New-S02ProcEntity $_ }) } `
                 -FpNotes 'Applications that update themselves while running (browsers, editors, Squirrel/Electron apps) delete the old version folder; temporary installers also remove themselves.' `
-                -Recommendation 'Restart the application and check whether the process comes back from a normal folder. A self-deleting unknown process is a strong malware sign: scan with Avast and review persistence.' `
+                -Recommendation 'Restart the application and check whether the process comes back from a normal folder. A self-deleting unknown process is a strong malware sign: scan with your antivirus and review persistence.' `
                 -Mitre @('T1070.004')
         }
         Out-S02Items $evaluated
@@ -1026,7 +1026,7 @@ $ownCmdHits = 0
                 -Evidence @([ordered]@{ type = 'cpu'; avgPctOfMachine = $r.RawPct; sample1Pct = $r.F1; sample2Pct = $r.F2; cores = $ncpu; thresholdPct = $CpuThresholdPct }, $(if ($p) { New-S02ProcEvidence $p }), (New-S02SigEvidence $f)) `
                 -Entities @{ processes = @($(if ($p) { New-S02ProcEntity $p })) } `
                 -FpNotes 'Compilers, video encoders, local AI models (Ollama), games and scientific tools legitimately use many cores; unsigned builds of such tools exist.' `
-                -Recommendation 'Check what the program is and whether you started it. Coin miners often run from AppData or Temp with pool addresses in the command line; scan with Avast and look for its startup entry.' `
+                -Recommendation 'Check what the program is and whether you started it. Coin miners often run from AppData or Temp with pool addresses in the command line; scan with your antivirus and look for its startup entry.' `
                 -Mitre @('T1496') -Expected $(if ($f) { $f.Expected } else { $null })
         }
         Out-S02Items $rows
@@ -1622,16 +1622,16 @@ function New-S02FileEvidence {
 }
 
 $fileText = @{
-    'files.name_tricks'              = @{ T = 'Deceptive file name'; M = @('T1036.002', 'T1036.007'); F = 'Double extensions occasionally come from tools that append an extension; right-to-left override characters have essentially no legitimate use in file names.'; R = 'Do not open it. Check Properties > Details / Digital Signatures and where it came from (MOTW host in evidence); delete or quarantine it with Avast if you do not recognise it.' }
-    'files.disguised_executables'    = @{ T = 'Executable disguised behind another extension'; M = @('T1036.008'); F = 'Some programs store executable code in cache or data files with custom extensions; a PE header behind a document, image or script extension is a classic malware trick.'; R = 'Do not open or rename it. Let Avast scan the file and the folder; if it came from a download or e-mail, delete it.' }
-    'files.signatures'               = @{ T = 'Unsigned or badly signed executable'; M = @('T1204.002', 'T1553.002'); F = 'Many legitimate open-source and developer tools are unsigned; installers extract unsigned helpers into Temp while they run.'; R = 'Confirm you know the program and where it came from. If not, check its hash on VirusTotal yourself and let Avast scan it before running.' }
-    'files.appdata_root_executables' = @{ T = 'Executable directly in an AppData root folder'; M = @('T1204.002', 'T1036.005'); F = 'A few installers drop helpers in the AppData root, but normal programs live in vendor subfolders.'; R = 'Find out which program created it (creation time, MOTW, S01 startup entries). Quarantine it with Avast if you cannot identify it.' }
+    'files.name_tricks'              = @{ T = 'Deceptive file name'; M = @('T1036.002', 'T1036.007'); F = 'Double extensions occasionally come from tools that append an extension; right-to-left override characters have essentially no legitimate use in file names.'; R = 'Do not open it. Check Properties > Details / Digital Signatures and where it came from (MOTW host in evidence); delete or quarantine it with your antivirus if you do not recognise it.' }
+    'files.disguised_executables'    = @{ T = 'Executable disguised behind another extension'; M = @('T1036.008'); F = 'Some programs store executable code in cache or data files with custom extensions; a PE header behind a document, image or script extension is a classic malware trick.'; R = 'Do not open or rename it. Let your antivirus scan the file and the folder; if it came from a download or e-mail, delete it.' }
+    'files.signatures'               = @{ T = 'Unsigned or badly signed executable'; M = @('T1204.002', 'T1553.002'); F = 'Many legitimate open-source and developer tools are unsigned; installers extract unsigned helpers into Temp while they run.'; R = 'Confirm you know the program and where it came from. If not, check its hash on VirusTotal yourself and let your antivirus scan it before running.' }
+    'files.appdata_root_executables' = @{ T = 'Executable directly in an AppData root folder'; M = @('T1204.002', 'T1036.005'); F = 'A few installers drop helpers in the AppData root, but normal programs live in vendor subfolders.'; R = 'Find out which program created it (creation time, MOTW, S01 startup entries). Quarantine it with your antivirus if you cannot identify it.' }
     'files.lnk_abuse'                = @{ T = 'Shortcut launches a shell or LOLBin'; M = @('T1204.002', 'T1547.009', 'T1059'); F = 'Shortcuts you create yourself (for example "cmd /k ..." helpers) and some admin tools use shell targets with arguments.'; R = 'Right-click > Properties and read the full Target and arguments (evidence). Delete the shortcut if you did not make it, and scan what it points to.' }
     'files.url_abuse'                = @{ T = 'Shortcut file points to a local, UNC, WebDAV or protocol-handler target'; M = @('T1187', 'T1204.001'); F = 'Internet shortcuts to intranet shares exist in some companies; on a home PC they are rare.'; R = 'Do not open it. Opening such shortcuts can leak your Windows password hash or run remote code; delete it if you did not create it.' }
-    'files.script_content'           = @{ T = 'Script with suspicious content'; M = @('T1059.001', 'T1059.005', 'T1059.007', 'T1027'); F = 'Admin and installer scripts (and security tools) legitimately contain download or encoding code; only the pattern ids are recorded.'; R = 'Do not run it. Review it in a text editor (never double-click). If it arrived from the internet or e-mail and you do not know it, delete it and scan with Avast.' }
+    'files.script_content'           = @{ T = 'Script with suspicious content'; M = @('T1059.001', 'T1059.005', 'T1059.007', 'T1027'); F = 'Admin and installer scripts (and security tools) legitimately contain download or encoding code; only the pattern ids are recorded.'; R = 'Do not run it. Review it in a text editor (never double-click). If it arrived from the internet or e-mail and you do not know it, delete it and scan with your antivirus.' }
     'files.risky_types'              = @{ T = 'Risky file type in a high-risk folder'; M = @('T1204.002'); F = 'These file types have legitimate uses, but they are rarely needed by home users and are common malware carriers.'; R = 'Open only if you know exactly what it is and where it came from; otherwise delete it.' }
-    'files.sideloading'              = @{ T = 'Possible DLL side-loading'; M = @('T1574.002'); F = 'Portable apps and games ship their own unsigned DLLs next to a signed launcher; a DLL named like a Windows system DLL is the stronger signal.'; R = 'Check whether the folder is a program you installed. If the signed EXE came with an unexpected DLL (typical in malicious ZIPs), delete the folder and scan with Avast.' }
-    'files.header_vs_extension'      = @{ T = 'File header does not match its extension'; M = @('T1036.008'); F = 'Interrupted downloads, HTML error pages saved with the wrong extension, or renamed archives cause harmless mismatches.'; R = 'Check the file in a hex viewer or let Avast scan it; delete broken downloads.' }
+    'files.sideloading'              = @{ T = 'Possible DLL side-loading'; M = @('T1574.002'); F = 'Portable apps and games ship their own unsigned DLLs next to a signed launcher; a DLL named like a Windows system DLL is the stronger signal.'; R = 'Check whether the folder is a program you installed. If the signed EXE came with an unexpected DLL (typical in malicious ZIPs), delete the folder and scan with your antivirus.' }
+    'files.header_vs_extension'      = @{ T = 'File header does not match its extension'; M = @('T1036.008'); F = 'Interrupted downloads, HTML error pages saved with the wrong extension, or renamed archives cause harmless mismatches.'; R = 'Check the file in a hex viewer or let your antivirus scan it; delete broken downloads.' }
     'downloads.origins'              = @{ T = 'Downloaded from an unusual source'; M = @('T1105', 'T1204.002'); F = 'File sharers and raw code hosts are also used for legitimate tools.'; R = 'See the downloads.origins finding for the full list.' }
 }
 
@@ -1706,7 +1706,7 @@ $artifactRows = [System.Collections.Generic.List[object]]::new()
                 -Severity $sev -Class $cls -Confidence $conf -Reasons @('intel_match', 'hidden') -Evidence @($rows | ForEach-Object { [ordered]@{ type = 'artifact' } + $_ }) `
                 -Entities @{ files = @($rows | ForEach-Object { [ordered]@{ path = $_.path; sha256 = $null; size = $_.size; sig = $null; signer = $null; created = $_.created; motw = $null } }) } `
                 -FpNotes 'These exact names are used by the listed campaigns; a coincidental tool with the same dot-folder name is possible but rare. Contents were deliberately not read.' `
-                -Recommendation 'Treat the machine as possibly compromised: disconnect from the network, do not delete anything yet, and from a clean device rotate passwords, GitHub/npm tokens, SSH keys and crypto wallets. Then collect the files for analysis and run a full offline Avast scan.' `
+                -Recommendation 'Treat the machine as possibly compromised: disconnect from the network, do not delete anything yet, and from a clean device rotate passwords, GitHub/npm tokens, SSH keys and crypto wallets. Then collect the files for analysis and run a full offline antivirus scan (for example Microsoft Defender Offline).' `
                 -Mitre @($rows | ForEach-Object { $_.mitre }) -Expected $exp
         }
         Out-S02Items $artifactRows
@@ -1777,7 +1777,7 @@ $originInventory = $null
                 -Evidence @($items | Select-Object -First 25 | ForEach-Object { [ordered]@{ type = 'download'; path = $_.path; created = $_.created; size = $_.size; host = $_.motwHost; hostUrl = $_.motwHostUrl; referrerHost = $_.motwReferrerHost; sig = $_.sigStatus; signer = $_.signer } }) `
                 -Entities @{ files = @($items | Select-Object -First 25 | ForEach-Object { New-S02FileEntity $_ }) } `
                 -FpNotes 'Legitimate tools are sometimes distributed through file sharers, Discord or raw GitHub links; raw IP addresses and URL shorteners are rarer for genuine software.' `
-                -Recommendation 'For each file, confirm the project or person you got it from. Delete unknown executables; for anything you already ran, scan with Avast and review S01 persistence.' `
+                -Recommendation 'For each file, confirm the project or person you got it from. Delete unknown executables; for anything you already ran, scan with your antivirus and review S01 persistence.' `
                 -Mitre @('T1105', 'T1204.002')
         }
         $script:originInventory = [ordered]@{
@@ -1835,7 +1835,7 @@ $g0Inventory = $null
             Add-S02Finding -Check 'crosscheck.g0_exec_recent' -Title "Unsigned recent executable outside the targeted folders: $($ff.name)" -Severity 'medium' -Class 'suspicious' -Confidence 'low' `
                 -Reasons @($ff.reasons) -Evidence (New-S02FileEvidence $ff) -Entities @{ files = @((New-S02FileEntity $ff)) } `
                 -FpNotes 'Developer builds, portable tools and package-manager binaries are often unsigned.' `
-                -Recommendation 'Confirm you know this program and where it came from; scan it with Avast if not.' -Mitre @('T1204.002')
+                -Recommendation 'Confirm you know this program and where it came from; scan it with your antivirus if not.' -Mitre @('T1204.002')
         }
         if ($lowRows.Count) {
             Add-S02Finding -Check 'crosscheck.g0_exec_recent' -Title "$($lowRows.Count) unsigned recent executable(s) elsewhere in user folders (no download mark)" -Severity 'low' -Class 'hygiene' -Confidence 'low' `

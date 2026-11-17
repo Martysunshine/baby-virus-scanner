@@ -73,8 +73,9 @@ anything to an AI. You do not answer that for the user.
 
 ## 3. Run the scan
 
-About 15 to 40 minutes. Most modules take under 5 minutes; the AI-tools module can take up to
-15 on a PC with years of chat transcripts. Start **one** scan; never a second one in parallel.
+About 15 to 40 minutes. Most modules take a few minutes; on a busy PC, or one with years of AI
+chat transcripts, a single module can take 10 to 15. Start **one** scan; never a second one in
+parallel.
 
 If your tool can run a long command, or run one in the background:
 

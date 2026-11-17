@@ -141,7 +141,7 @@
     "info": "Context only."
   },
   "defaultRec": {
-    "compromise": "Do not delete anything yet. Disconnect from the network, verify the file (right-click > Properties > Digital Signatures; look the SHA-256 up on VirusTotal yourself by hash). If confirmed, remove the autostart (Task Manager > Startup apps, Task Scheduler, Services, or regedit after exporting a backup), run an offline scan (Avast Rescue Disk / Defender Offline) and change passwords from a clean device.",
+    "compromise": "Do not delete anything yet. Disconnect from the network, verify the file (right-click > Properties > Digital Signatures; look the SHA-256 up on VirusTotal yourself by hash). If confirmed, remove the autostart (Task Manager > Startup apps, Task Scheduler, Services, or regedit after exporting a backup), run an offline scan (for example Microsoft Defender Offline, or your antivirus vendor's rescue disk) and change passwords from a clean device.",
     "suspicious": "Check whether you installed this program. Verify the publisher (Properties > Digital Signatures) and look its SHA-256 up on VirusTotal yourself. If unknown, disable the entry (Task Manager > Startup apps / Task Scheduler / Services) and re-scan; delete only after confirming.",
     "hardening": "Reinstall the program into a folder only administrators can write (for example C:\\Program Files), or change the entry so it does not run with higher privileges from a user-writable location.",
     "hygiene": "Optional cleanup: remove the stale entry with the owning program's uninstaller, Autoruns, or regedit (export a backup first).",
