@@ -1,0 +1,120 @@
+{
+  "schema": "bvs.manualchecks/1",
+  "module": "S13",
+  "description": "Manual account checks that have no API. S13-github-npm.ps1 copies every item into inventory.manualChecks, resolves {placeholders} (githubUser, npmUser, npmPackage, gateway) and evaluates 'when' so each item says whether this machine shows evidence the account/service is in use. Conditions: always | sshKeyNameRegex | expectedId | expectedHostRegex | knownHostsRegex | pathExists | gitEmailDomainRegex. Edit freely; no collector change needed.",
+  "items": [
+    {
+      "id": "github-sessions", "area": "GitHub", "title": "Active web sessions",
+      "urls": ["https://github.com/settings/sessions"],
+      "lookFor": ["Sessions from devices, browsers, countries or IPs you do not recognise", "Revoke anything unknown, then change the password"],
+      "when": { "always": true }
+    },
+    {
+      "id": "github-security-log", "area": "GitHub", "title": "Security log (account audit trail)",
+      "urls": [
+        "https://github.com/settings/security-log",
+        "https://github.com/settings/security-log?q=action%3Aoauth_authorization.create",
+        "https://github.com/settings/security-log?q=action%3Apersonal_access_token",
+        "https://github.com/settings/security-log?q=action%3Aoauth_access.create",
+        "https://github.com/settings/security-log?q=action%3Apublic_key.create",
+        "https://github.com/settings/security-log?q=action%3Atwo_factor_authentication",
+        "https://github.com/settings/security-log?q=action%3Arepo.create",
+        "https://github.com/settings/security-log?q=action%3Arepo.access",
+        "https://github.com/settings/security-log?q=action%3Auser.login"
+      ],
+      "lookFor": [
+        "oauth_authorization.create: OAuth apps you did not authorise (a GitHub CLI authorisation created for this scanner's signed-in checks is expected)",
+        "personal_access_token.* and oauth_access.create: tokens you did not create",
+        "public_key.create / gpg_key.create: SSH or GPG keys you did not add",
+        "two_factor_authentication.*: 2FA disabled, recovery codes viewed/regenerated, new 2FA methods",
+        "repo.create / repo.access: new repos, or private repos switched to public (Shai-Hulud '-migration', s1ngularity)",
+        "user.login and new-device events: logins from new IPs or countries"
+      ],
+      "when": { "always": true }
+    },
+    {
+      "id": "github-oauth-apps", "area": "GitHub", "title": "Authorised OAuth apps",
+      "urls": ["https://github.com/settings/applications"],
+      "lookFor": ["Unknown apps", "Apps with repo, workflow, admin:org, delete_repo or write:packages scopes you do not use", "Recently authorised apps"],
+      "when": { "always": true }
+    },
+    {
+      "id": "github-apps", "area": "GitHub", "title": "Authorised and installed GitHub Apps",
+      "urls": ["https://github.com/settings/apps/authorizations", "https://github.com/settings/installations"],
+      "lookFor": ["Unknown GitHub Apps", "Apps installed on all repositories that only need a few", "Apps with write access to code, workflows or secrets"],
+      "when": { "always": true }
+    },
+    {
+      "id": "github-pats", "area": "GitHub", "title": "Personal access tokens (classic and fine-grained)",
+      "urls": ["https://github.com/settings/tokens", "https://github.com/settings/personal-access-tokens"],
+      "lookFor": ["Tokens you do not recognise", "Tokens with no expiry", "Recent 'last used' on tokens you no longer use", "A classic token stored in plaintext in a user .npmrc (for example for npm.pkg.github.com): keep only if needed, give it read:packages only, set an expiry"],
+      "when": { "always": true }
+    },
+    {
+      "id": "github-2fa", "area": "GitHub", "title": "2FA, passkeys, SSH/GPG keys and emails",
+      "urls": ["https://github.com/settings/security", "https://github.com/settings/keys", "https://github.com/settings/emails"],
+      "lookFor": ["2FA enabled with an authenticator app or security key (not SMS only)", "Unknown passkeys or security keys", "Recovery codes stored offline", "SSH/GPG/signing keys you cannot map to one of your devices", "Email addresses you did not add (an attacker email enables password resets)"],
+      "when": { "always": true }
+    },
+    {
+      "id": "npm-tokens", "area": "npm", "title": "npm access tokens",
+      "urls": ["https://www.npmjs.com/settings/{npmUser}/tokens"],
+      "lookFor": ["Tokens you do not recognise", "Write (publish) tokens without expiry or CIDR restriction", "Recently created tokens", "If a user .npmrc holds a plaintext token, replace it with a short-lived granular token (or trusted publishing) and revoke the old one"],
+      "when": { "always": true }
+    },
+    {
+      "id": "npm-2fa", "area": "npm", "title": "npm 2FA, account and package publishing access",
+      "urls": ["https://www.npmjs.com/settings/{npmUser}/profile", "https://www.npmjs.com/~{npmUser}", "https://www.npmjs.com/package/{npmPackage}/access"],
+      "lookFor": ["2FA mode 'authorization and writes' (or security-key only)", "Packages you do not recognise under your account", "Publishing access set to 'Require two-factor authentication and disallow tokens' (or trusted publishing only)", "Maintainers you did not add"],
+      "when": { "always": true }
+    },
+    {
+      "id": "tailscale-admin", "area": "Tailscale", "title": "Tailscale admin console",
+      "urls": ["https://login.tailscale.com/admin/machines", "https://login.tailscale.com/admin/settings/keys", "https://login.tailscale.com/admin/logs", "https://login.tailscale.com/admin/users"],
+      "lookFor": ["Unknown devices or devices shared in from other tailnets", "Devices with key expiry disabled", "Reusable or long-lived auth keys", "Configuration audit log entries you did not make (ACL changes, new users, Funnel/Serve)"],
+      "when": { "anyOf": [ { "expectedId": "tailscale" }, { "pathExists": ["%ProgramFiles%\\Tailscale"] } ] }
+    },
+    {
+      "id": "microsoft-account", "area": "Microsoft account", "title": "Microsoft account recent activity",
+      "urls": ["https://account.live.com/Activity", "https://account.microsoft.com/devices", "https://account.live.com/proofs/manage", "https://account.live.com/consent/Manage"],
+      "lookFor": ["Successful sign-ins from unknown locations or apps", "Unknown devices", "Security info (phone/email/authenticator) you did not add", "Apps with access you no longer use"],
+      "when": { "always": true }
+    },
+    {
+      "id": "google-account", "area": "Google account", "title": "Google security checkup",
+      "urls": ["https://myaccount.google.com/security-checkup", "https://myaccount.google.com/notifications", "https://myaccount.google.com/device-activity", "https://myaccount.google.com/connections", "https://mail.google.com/mail/u/0/#settings/fwdandpop", "https://mail.google.com/mail/u/0/#settings/filters"],
+      "lookFor": ["Recent security events you did not cause", "Unknown signed-in devices", "Third-party apps with Gmail/Drive access", "Gmail forwarding addresses or filters that forward or delete mail"],
+      "when": { "always": true }
+    },
+    {
+      "id": "anthropic-console", "area": "Anthropic", "title": "Anthropic Console / Claude account",
+      "urls": ["https://console.anthropic.com/settings/keys", "https://console.anthropic.com/settings/members", "https://console.anthropic.com/settings/usage", "https://claude.ai/settings/account"],
+      "lookFor": ["API keys you do not recognise or with unexpected 'last used'", "Unknown organisation members or invites", "Usage spikes you did not cause", "Unknown active sessions and connectors on claude.ai"],
+      "when": { "anyOf": [ { "expectedId": "claude-code" }, { "pathExists": ["%USERPROFILE%\\.claude"] } ] }
+    },
+    {
+      "id": "vps-server", "area": "Servers you reach over SSH", "title": "Your servers ({hosts})",
+      "urls": [],
+      "lookFor": ["In the hosting provider's control panel: account activity, 2FA, API tokens, firewall and snapshot changes you did not make", "On the server: ~/.ssh/authorized_keys of every user (compare fingerprints with the local keys listed in context)", "/var/log/auth.log (or journalctl -u ssh): 'Accepted' logins from unknown IPs; last -i; new users in /etc/passwd; unknown crontab entries; unexpected listening ports (ss -tlnp)"],
+      "when": { "anyOf": [ { "knownHostsRegex": "^(?!(github\\.com|gitlab\\.com|bitbucket\\.org|ssh\\.dev\\.azure\\.com|vs-ssh\\.visualstudio\\.com|codeberg\\.org)$).+" } ] }
+    },
+    {
+      "id": "cloud-console", "area": "Cloud provider", "title": "Cloud provider console (AWS, Azure, Google Cloud or another)",
+      "urls": [],
+      "lookFor": ["IAM: users, service accounts, access keys and API keys you did not create", "VMs or GPU instances you did not start (crypto-mining)", "SSH keys on VMs you cannot map to a local key", "Audit logs and billing anomalies"],
+      "when": { "anyOf": [ { "pathExists": ["%USERPROFILE%\\.aws", "%USERPROFILE%\\.azure", "%APPDATA%\\gcloud", "%USERPROFILE%\\.config\\gcloud", "%USERPROFILE%\\.oci"] } ] }
+    },
+    {
+      "id": "custom-mail-forwarding", "area": "Mail (own domain)", "title": "Mail on your own domain: forwarding rules, filters and sessions",
+      "urls": [],
+      "lookFor": ["In the mail provider's webmail/admin for each mailbox: forwarding addresses, filters/rules that forward, hide or delete mail, auto-replies", "App passwords and active sessions", "Admin panel: new mailboxes, aliases or catch-all forwards you did not create"],
+      "when": { "anyOf": [ { "gitEmailDomainRegex": "^(?!users\\.noreply\\.github\\.com$)(?!(gmail|googlemail|outlook|hotmail|live|msn|yahoo|icloud|me|mac|proton|protonmail|pm|gmx|aol|zoho|yandex|mail|seznam|email|centrum|web)\\.[a-z.]+$).+" } ] }
+    },
+    {
+      "id": "router-admin", "area": "Home router", "title": "Router admin page ({gateway})",
+      "urls": ["http://{gateway}/"],
+      "lookFor": ["DNS servers: must be your ISP's or ones you chose (changed DNS = hijack)", "Firmware: latest version from the vendor", "Remote (WAN) management: off", "UPnP: off, or review its port mappings", "WPS: off", "Admin password changed from the default", "Unknown DHCP clients and port forwards"],
+      "when": { "always": true }
+    }
+  ]
+}

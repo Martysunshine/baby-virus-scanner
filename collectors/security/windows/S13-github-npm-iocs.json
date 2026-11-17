@@ -1,0 +1,83 @@
+{
+  "schema": "bvs.iocs/1",
+  "module": "S13",
+  "description": "Indicators used by S13-github-npm.ps1 for GitHub account and npm package compromise checks (Shai-Hulud 1.0 / 2.0 'The Second Coming', s1ngularity/Nx, GhostAction-style workflow exfiltration). Data only: edit this file to extend detection without touching collector logic. Regexes are .NET, case-insensitive.",
+  "updated": "2026-10-20",
+  "sources": [
+    "Public incident write-ups: Shai-Hulud (Sep 2025), Shai-Hulud 2.0 'Sha1-Hulud: The Second Coming' (Nov 2025), s1ngularity / Nx (Aug 2025), GhostAction (Sep 2025). Re-verify against current vendor reports (Socket, StepSecurity, Wiz, Aikido, Datadog, GitGuardian) before relying on any single indicator."
+  ],
+  "repoNames": [
+    { "regex": "^Shai-Hulud$", "family": "Shai-Hulud 1.0", "severity": "critical", "note": "Exfiltration repo created on the victim account (data.json)." },
+    { "regex": "^Sha1-Hulud", "family": "Shai-Hulud 2.0", "severity": "critical", "note": "Name variant." },
+    { "regex": "^s1ngularity-repository", "family": "s1ngularity (Nx)", "severity": "critical", "note": "Exfiltration repo (results.b64) or renamed private repo made public." }
+  ],
+  "repoDescriptions": [
+    { "equals": "Sha1-Hulud: The Second Coming.", "family": "Shai-Hulud 2.0", "severity": "critical" },
+    { "equals": "Shai-Hulud Migration", "family": "Shai-Hulud 1.0", "severity": "critical" },
+    { "equals": "Shai-Hulud Repository.", "family": "Shai-Hulud 1.0", "severity": "critical" },
+    { "equals": "S1ngularity", "family": "s1ngularity (Nx)", "severity": "critical" },
+    { "contains": "Sha1-Hulud", "family": "Shai-Hulud (mention)", "severity": "medium" },
+    { "contains": "Shai-Hulud", "family": "Shai-Hulud (mention)", "severity": "medium" }
+  ],
+  "migrationSuffixRegex": "-migration$",
+  "randomRepoName": { "regex": "^[a-z0-9]{18}$", "minDigits": 2, "minLetters": 4, "maxVowelRatio": 0.30, "family": "Shai-Hulud 2.0 (random-name exfil repo)" },
+  "branchNames": [
+    { "regex": "^shai-hulud$", "family": "Shai-Hulud 1.0", "severity": "critical" },
+    { "regex": "^add-linter-workflow-\\d+$", "family": "Shai-Hulud 2.0 (reported)", "severity": "high" }
+  ],
+  "workflowFileNames": [
+    { "regex": "^shai-hulud(-workflow)?\\.ya?ml$", "family": "Shai-Hulud 1.0", "severity": "critical" },
+    { "regex": "^discussion\\.ya?ml$", "family": "Shai-Hulud 2.0 (self-hosted runner backdoor)", "severity": "high" },
+    { "regex": "^formatter_\\d+\\.ya?ml$", "family": "Shai-Hulud 2.0 (secrets dump)", "severity": "critical" },
+    { "regex": "github[_-]actions[_-]security\\.ya?ml$", "family": "GhostAction (reported)", "severity": "high" }
+  ],
+  "workflowContentPatterns": [
+    { "id": "tojson-secrets", "regex": "toJSON\\(\\s*secrets\\s*\\)", "severity": "critical", "note": "Dumps every repository secret." },
+    { "id": "webhook-site", "regex": "webhook\\.site", "severity": "critical", "note": "Common exfiltration endpoint." },
+    { "id": "curl-data-post", "regex": "curl\\s[^\\n]*(\\s-d\\s|\\s--data(-binary|-raw|-urlencode)?[\\s=]|\\s-F\\s|\\s-T\\s)", "severity": "high", "note": "curl uploading data from a workflow." },
+    { "id": "discussion-body-exec", "regex": "github\\.event\\.discussion\\.body", "severity": "critical", "note": "Shai-Hulud 2.0 backdoor: runs discussion text on a self-hosted runner." },
+    { "id": "self-hosted", "regex": "runs-on:\\s*\\[?\\s*self-hosted", "severity": "high", "note": "Workflow targets a self-hosted runner." },
+    { "id": "sha1hulud", "regex": "SHA1HULUD|Sha1-Hulud|Shai-Hulud", "severity": "critical", "note": "Campaign marker." },
+    { "id": "env-dump", "regex": "(printenv|\\benv\\b)\\s*\\|\\s*(base64|curl|nc\\b)", "severity": "high", "note": "Environment dump piped to encoder/network." },
+    { "id": "plesk-page", "regex": "\\.plesk\\.page", "severity": "high", "note": "GhostAction exfiltration host family (reported)." }
+  ],
+  "runnerNames": [
+    { "regex": "^SHA1HULUD$", "family": "Shai-Hulud 2.0", "severity": "critical" }
+  ],
+  "exfilFileNames": [
+    { "regex": "^(cloud|contents|environment|truffleSecrets|actionsSecrets)\\.json$", "family": "Shai-Hulud 2.0", "severity": "high" },
+    { "regex": "^results\\.b64$", "family": "s1ngularity (Nx)", "severity": "high" },
+    { "regex": "^data\\.json$", "family": "Shai-Hulud 1.0 (generic name, weak)", "severity": "low" }
+  ],
+  "webhookHostRegexes": [
+    { "regex": "(^|\\.)webhook\\.site$", "severity": "critical" },
+    { "regex": "(^|\\.)pipedream\\.net$", "severity": "high" },
+    { "regex": "(^|\\.)requestbin\\.(com|net)$", "severity": "high" },
+    { "regex": "(^|\\.)hookbin\\.com$", "severity": "high" },
+    { "regex": "(^|\\.)beeceptor\\.com$", "severity": "high" },
+    { "regex": "(^|\\.)requestcatcher\\.com$", "severity": "high" },
+    { "regex": "(^|\\.)ngrok(-free)?\\.(io|app|dev)$", "severity": "high" },
+    { "regex": "(^|\\.)trycloudflare\\.com$", "severity": "high" },
+    { "regex": "(^|\\.)(interact\\.sh|oastify\\.com|burpcollaborator\\.net)$", "severity": "high" },
+    { "regex": "(^|\\.)oast\\.(fun|live|me|online|pro|site)$", "severity": "high" },
+    { "regex": "(^|\\.)plesk\\.page$", "severity": "high" },
+    { "regex": "^(canary\\.|ptb\\.)?discord(app)?\\.com$", "severity": "medium" },
+    { "regex": "^api\\.telegram\\.org$", "severity": "medium" }
+  ],
+  "npm": {
+    "installScripts": ["preinstall", "install", "postinstall"],
+    "lifecycleScriptsOfInterest": ["prepare", "prepublish", "preprepare", "postprepare"],
+    "maliciousFileNames": [
+      { "regex": "^bundle\\.js$", "family": "Shai-Hulud 1.0 (postinstall: node bundle.js)", "severity": "critical", "rootOnly": true },
+      { "regex": "^setup_bun\\.js$", "family": "Shai-Hulud 2.0 (preinstall: node setup_bun.js)", "severity": "critical", "rootOnly": false },
+      { "regex": "^bun_environment\\.js$", "family": "Shai-Hulud 2.0 payload", "severity": "critical", "rootOnly": false },
+      { "regex": "^telemetry\\.js$", "family": "s1ngularity (Nx postinstall)", "severity": "high", "rootOnly": true }
+    ],
+    "installScriptIocRegex": "node\\s+(\\./)?(bundle|setup_bun|bun_environment|telemetry)\\.js|curl\\s|wget\\s|powershell|bun\\s+install|\\|\\s*(sh|bash)\\b",
+    "sensitiveFileRegex": "(^|/)(\\.npmrc|\\.env(\\..*)?|\\.git-credentials|id_(rsa|ed25519|ecdsa)(\\.pub)?|.*\\.(pem|key|p12|pfx|kdbx))$",
+    "contentIocStrings": ["Sha1-Hulud", "Shai-Hulud", "SHA1HULUD", "s1ngularity-repository", "bb8ca5f6-4175-45d2-b042-fc9ebb8170b7", "setup_bun.js", "bun_environment.js", "truffleSecrets.json", "actionsSecrets.json", "webhook.site"],
+    "knownBadSha256": []
+  },
+  "githubSafeActors": ["dependabot[bot]", "github-actions[bot]", "renovate[bot]", "github-pages[bot]", "copilot-swe-agent[bot]", "Copilot"],
+  "githubSafeRunEvents": ["push", "pull_request", "schedule", "workflow_dispatch", "release", "dynamic", "pull_request_target", "merge_group", "page_build"]
+}

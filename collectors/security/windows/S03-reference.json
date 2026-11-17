@@ -1,0 +1,35 @@
+{
+  "schema": "bvs.s03-reference/1",
+  "updated": "2026-10-20",
+  "description": "Generic (not machine-specific) reference data for S03. Machine-specific known-good items live in config\\local\\expected.json.",
+  "builtinRootsNotInCtl": [
+    { "thumbprint": "245C97DF7514E7CF2DF8BE72AE957B9E04741E85", "subject": "OU=Copyright (c) 1997 Microsoft Corp., OU=Microsoft Time Stamping Service Root", "note": "Legacy Microsoft time-stamping root shipped in every Windows ROOT store; not part of the AuthRoot CTL." },
+    { "thumbprint": "7F88CD7223F3C813818C994614A89C99FA3B5247", "subject": "CN=Microsoft Authenticode(tm) Root Authority, O=MSFT, C=US", "note": "Legacy Microsoft Authenticode root shipped in every Windows ROOT store; not part of the AuthRoot CTL." }
+  ],
+  "ctl": {
+    "url": "http://ctldl.windowsupdate.com/msdownload/update/v3/static/trustedr/en/authrootstl.cab",
+    "cabSignerRegex": "Microsoft",
+    "attributeOids": {
+      "1.3.6.1.4.1.311.10.11.11": "friendlyName",
+      "1.3.6.1.4.1.311.10.11.9": "enhancedKeyUsage",
+      "1.3.6.1.4.1.311.10.11.104": "disallowedFiletime",
+      "1.3.6.1.4.1.311.10.11.126": "notBeforeFiletime",
+      "1.3.6.1.4.1.311.10.11.122": "disallowedEnhKeyUsage"
+    }
+  },
+  "localProxyExplainedBySignerRegex": "(?i)(Avast|AVG Technologies|Gen Digital|NortonLifeLock)",
+  "explainedPathRegex": "(?i)\\\\(Avast Software|AVG)\\\\",
+  "explainedPacHostRegex": "(?i)(^|\\.)(avast\\.com|avcdn\\.net|avg\\.com)$",
+  "sensitiveDomains": [
+    "avast.com", "avcdn.net", "avg.com", "gendigital.com", "norton.com", "symantec.com", "mcafee.com", "kaspersky.com",
+    "kaspersky-labs.com", "eset.com", "bitdefender.com", "bitdefender.net", "malwarebytes.com", "sophos.com", "trendmicro.com",
+    "f-secure.com", "withsecure.com", "avira.com", "drweb.com", "emsisoft.com", "virustotal.com", "crowdstrike.com",
+    "microsoft.com", "windowsupdate.com", "windows.com", "update.microsoft.com", "live.com", "microsoftonline.com", "msftncsi.com",
+    "msftconnecttest.com", "office.com", "outlook.com", "bing.com", "msedge.net",
+    "google.com", "gmail.com", "googleapis.com", "gstatic.com", "youtube.com", "apple.com", "icloud.com", "amazon.com",
+    "paypal.com", "facebook.com", "instagram.com", "github.com", "githubusercontent.com", "npmjs.org", "npmjs.com", "pypi.org",
+    "anthropic.com", "claude.ai", "openai.com", "chatgpt.com", "discord.com", "telegram.org", "whatsapp.com", "steamcommunity.com",
+    "steampowered.com", "binance.com", "coinbase.com", "metamask.io", "tailscale.com", "docker.com", "docker.io"
+  ],
+  "localNameSuffixes": [ ".local", ".test", ".localhost", ".internal", ".lan", ".home.arpa", ".example", ".invalid" ]
+}

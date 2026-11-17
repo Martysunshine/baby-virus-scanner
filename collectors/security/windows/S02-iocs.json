@@ -1,0 +1,188 @@
+{
+  "schema": "bvs.s02-iocs/1",
+  "description": "Tunable detection data for S02 (processes and suspicious files). Pure data: the collector reads it, never executes it. Regexes are .NET syntax, case-insensitive where marked (?i). Paths use %ENV% variables and are expanded at runtime. Machine-specific known-good items do NOT belong here (they live in config\\local\\expected.json).",
+  "updated": "2026-10-20",
+
+  "systemBinaries": {
+    "svchost.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"],
+    "lsass.exe": ["%SystemRoot%\\System32"],
+    "csrss.exe": ["%SystemRoot%\\System32"],
+    "winlogon.exe": ["%SystemRoot%\\System32"],
+    "services.exe": ["%SystemRoot%\\System32"],
+    "smss.exe": ["%SystemRoot%\\System32"],
+    "wininit.exe": ["%SystemRoot%\\System32"],
+    "explorer.exe": ["%SystemRoot%", "%SystemRoot%\\SysWOW64"],
+    "rundll32.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"],
+    "dllhost.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"],
+    "conhost.exe": ["%SystemRoot%\\System32"],
+    "taskhostw.exe": ["%SystemRoot%\\System32"],
+    "runtimebroker.exe": ["%SystemRoot%\\System32"],
+    "spoolsv.exe": ["%SystemRoot%\\System32"],
+    "searchindexer.exe": ["%SystemRoot%\\System32"],
+    "lsaiso.exe": ["%SystemRoot%\\System32"],
+    "dwm.exe": ["%SystemRoot%\\System32"],
+    "sihost.exe": ["%SystemRoot%\\System32"],
+    "ctfmon.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"],
+    "fontdrvhost.exe": ["%SystemRoot%\\System32"],
+    "userinit.exe": ["%SystemRoot%\\System32"],
+    "wmiprvse.exe": ["%SystemRoot%\\System32\\wbem", "%SystemRoot%\\SysWOW64\\wbem"],
+    "unsecapp.exe": ["%SystemRoot%\\System32\\wbem", "%SystemRoot%\\SysWOW64\\wbem"],
+    "audiodg.exe": ["%SystemRoot%\\System32"],
+    "searchprotocolhost.exe": ["%SystemRoot%\\System32"],
+    "searchfilterhost.exe": ["%SystemRoot%\\System32"],
+    "backgroundtaskhost.exe": ["%SystemRoot%\\System32"],
+    "wudfhost.exe": ["%SystemRoot%\\System32"],
+    "dashost.exe": ["%SystemRoot%\\System32"],
+    "cmd.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"],
+    "powershell.exe": ["%SystemRoot%\\System32\\WindowsPowerShell\\v1.0", "%SystemRoot%\\SysWOW64\\WindowsPowerShell\\v1.0"],
+    "mshta.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"],
+    "wscript.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"],
+    "cscript.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"],
+    "regsvr32.exe": ["%SystemRoot%\\System32", "%SystemRoot%\\SysWOW64"]
+  },
+
+  "lookalike": {
+    "note": "Names compared without .exe, lower-case. 'protected' = names worth impersonating; a candidate is a look-alike when its homoglyph skeleton equals a protected skeleton, or its Damerau-Levenshtein distance to a protected name of length >= minLength is 1. 'allow' = real Windows/vendor names that are near-misses.",
+    "protected": ["svchost", "lsass", "csrss", "winlogon", "services", "smss", "wininit", "explorer", "rundll32", "dllhost", "conhost", "taskhostw", "runtimebroker", "spoolsv", "searchindexer", "lsaiso", "sihost", "ctfmon", "fontdrvhost", "userinit", "wmiprvse", "audiodg", "searchprotocolhost", "backgroundtaskhost", "powershell", "regsvr32", "taskmgr"],
+    "minLength": 5,
+    "allow": ["sihost", "lsaiso", "taskhost", "taskhostex", "iexplore", "dllhst3g", "lsm", "csrsrv", "wlanext", "dashost", "smartscreen", "services", "service", "explore", "powershell_ise", "conhostv1", "pwsh", "spoolss", "userinit", "ctfmon"],
+    "homoglyphs": {
+      "0": "o", "1": "l", "i": "l", "|": "l", "!": "l", "3": "e", "4": "a", "5": "s", "7": "t", "8": "b", "@": "a", "$": "s",
+      "\u0430": "a", "\u0435": "e", "\u043e": "o", "\u0440": "p", "\u0441": "c", "\u0443": "y", "\u0445": "x", "\u0456": "l", "\u0458": "j", "\u0455": "s", "\u0501": "d", "\u04cf": "l", "\u0261": "g",
+      "\u03bf": "o", "\u03b1": "a", "\u03bd": "v", "\u03c1": "p", "\u03c4": "t", "\u03b9": "l", "\u03ba": "k"
+    },
+    "digraphs": { "rn": "m", "vv": "w" }
+  },
+
+  "parentRules": [
+    { "child": "svchost.exe", "parents": ["services.exe"], "note": "services.exe never exits; every svchost is its child" },
+    { "child": "lsass.exe", "parents": ["wininit.exe"] },
+    { "child": "services.exe", "parents": ["wininit.exe"] },
+    { "child": "spoolsv.exe", "parents": ["services.exe"] },
+    { "child": "searchindexer.exe", "parents": ["services.exe"] }
+  ],
+  "officeProcesses": ["winword.exe", "excel.exe", "powerpnt.exe", "outlook.exe", "olk.exe", "onenote.exe", "onenotem.exe", "msaccess.exe", "mspub.exe", "visio.exe", "winproj.exe", "eqnedt32.exe", "wordpad.exe"],
+  "browserProcesses": ["chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe", "iexplore.exe", "browser.exe", "arc.exe", "chromium.exe", "thorium.exe", "waterfox.exe", "librewolf.exe", "zen.exe"],
+  "suspiciousChildren": ["powershell.exe", "pwsh.exe", "cmd.exe", "mshta.exe", "wscript.exe", "cscript.exe", "rundll32.exe", "regsvr32.exe", "certutil.exe", "bitsadmin.exe", "hh.exe", "wmic.exe", "msbuild.exe", "forfiles.exe", "schtasks.exe", "curl.exe", "finger.exe"],
+  "nativeMessagingMarkers": ["chrome-extension://", "moz-extension://", "chrome.nativeMessaging", "--parent-window="],
+
+  "shellHosts": ["cmd.exe", "powershell.exe", "pwsh.exe", "powershell_ise.exe", "wscript.exe", "cscript.exe", "mshta.exe", "conhost.exe", "openconsole.exe"],
+  "commandLinePatterns": [
+    { "id": "ps_encoded_command", "hosts": ["powershell.exe", "pwsh.exe", "powershell_ise.exe"], "severity": "high", "reasons": ["obfuscation", "encoded_command"], "mitre": ["T1059.001", "T1027"],
+      "regex": "(?i)(?:^|\\s)[-/]e(?:c|n|nc|nco|ncod|ncode|ncoded|ncodedc|ncodedco|ncodedcom|ncodedcomm|ncodedcomma|ncodedcomman|ncodedcommand)?\\s+['\"]?[A-Za-z0-9+/]{16,}={0,2}" },
+    { "id": "ps_hidden_window", "hosts": ["powershell.exe", "pwsh.exe", "powershell_ise.exe"], "severity": "medium", "reasons": ["hidden"], "mitre": ["T1564.003"],
+      "regex": "(?i)(?:^|\\s)[-/]w(?:i|in|ind|indo|indow|indows|indowst|indowsty|indowstyl|indowstyle)?\\s+['\"]?(?:h|hi|hid|hidd|hidde|hidden|1)['\"]?(?=\\s|$)" },
+    { "id": "ps_iex", "hosts": ["powershell.exe", "pwsh.exe", "powershell_ise.exe"], "severity": "high", "reasons": ["obfuscation", "lolbin"], "mitre": ["T1059.001"],
+      "regex": "(?i)(?:^|[\\s;|('\"{&])(?:iex|invoke-expression)(?=$|[\\s;|('\"(&])" },
+    { "id": "ps_download_cradle", "hosts": ["powershell.exe", "pwsh.exe", "powershell_ise.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1105", "T1059.001"],
+      "regex": "(?i)\\.Download(?:String|File|Data)(?:Async)?\\s*\\(|Net\\.WebClient|Start-BitsTransfer|(?:\\biwr|\\birm|\\bcurl|\\bwget|Invoke-WebRequest|Invoke-RestMethod)\\b[^|]{0,300}\\|\\s*(?:iex|invoke-expression)\\b" },
+    { "id": "ps_frombase64", "hosts": ["powershell.exe", "pwsh.exe", "powershell_ise.exe"], "severity": "high", "reasons": ["obfuscation"], "mitre": ["T1027", "T1140"],
+      "regex": "(?i)FromBase64String" },
+    { "id": "ps_reflection_load", "hosts": ["powershell.exe", "pwsh.exe", "powershell_ise.exe"], "severity": "high", "reasons": ["obfuscation"], "mitre": ["T1620"],
+      "regex": "(?i)\\[(?:System\\.)?Reflection\\.Assembly\\]::Load" },
+    { "id": "defender_tamper", "hosts": ["powershell.exe", "pwsh.exe", "powershell_ise.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1562.001"],
+      "regex": "(?i)Add-MpPreference\\b.{0,200}-Exclusion|Set-MpPreference\\b.{0,200}-Disable" },
+    { "id": "mshta_remote", "hosts": ["mshta.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1218.005"],
+      "regex": "(?i)mshta(?:\\.exe)?['\"]?\\s+['\"]?(?:https?:|javascript:|vbscript:|about:)" },
+    { "id": "regsvr32_remote", "hosts": ["regsvr32.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1218.010"],
+      "regex": "(?i)/i:\\s*['\"]?(?:https?:|\\\\\\\\)|scrobj\\.dll" },
+    { "id": "rundll32_script", "hosts": ["rundll32.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1218.011"],
+      "regex": "(?i)javascript:|vbscript:|mshtml(?:\\.dll)?['\"]?\\s*,\\s*#?\\s*RunHTMLApplication" },
+    { "id": "certutil_download", "hosts": ["certutil.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1105", "T1140"],
+      "regex": "(?i)(?:^|\\s)[-/](?:urlcache|verifyctl|decode|decodehex)\\b" },
+    { "id": "bitsadmin_transfer", "hosts": ["bitsadmin.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1197"],
+      "regex": "(?i)/(?:transfer|addfile|create|setnotifycmdline|resume|complete)\\b" },
+    { "id": "bitsadmin_any", "hosts": ["bitsadmin.exe"], "severity": "medium", "reasons": ["lolbin"], "mitre": ["T1197"],
+      "regex": "(?i)bitsadmin" },
+    { "id": "msiexec_remote", "hosts": ["msiexec.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1218.007"],
+      "regex": "(?i)(?:^|\\s)/(?:i|package|fa?|x)\\s*['\"]?https?:" },
+    { "id": "wmic_process_create", "hosts": ["wmic.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1047"],
+      "regex": "(?i)process\\s+call\\s+create" },
+    { "id": "shadow_copy_delete", "hosts": ["vssadmin.exe", "wmic.exe", "wbadmin.exe"], "severity": "high", "reasons": ["lolbin"], "mitre": ["T1490"],
+      "regex": "(?i)delete\\s+shadows|shadowcopy\\s+delete|delete\\s+catalog" },
+    { "id": "miner_markers", "hosts": ["*"], "severity": "high", "reasons": ["intel_match"], "mitre": ["T1496"],
+      "regex": "(?i)stratum\\+(?:tcp|ssl|tls)://|--donate-level|\\bcryptonight\\b|--algo[= ](?:rx/|cn/|kawpow|ethash|randomx)|\\bxmrig\\b|\\bminexmr\\b|\\bmoneroocean\\b|\\bsupportxmr\\b|\\bnanopool\\.org\\b|\\bunmineable\\b" }
+  ],
+  "conptyFlags": {
+    "withValue": ["width", "height", "signal", "server", "vtmode", "feature", "textmeasurement", "glyphwidth"],
+    "noValue": ["headless", "inheritcursor", "resizequirk", "win32input", "passthrough", "forcev1", "delegated"]
+  },
+
+  "riskyExtensions": [".exe", ".dll", ".scr", ".com", ".pif", ".cpl", ".msi", ".msp", ".ps1", ".psm1", ".vbs", ".vbe", ".js", ".jse", ".wsf", ".wsh", ".hta", ".bat", ".cmd", ".lnk", ".url", ".jar", ".a3x", ".au3", ".iso", ".img", ".vhd", ".vhdx", ".xll", ".docm", ".xlsm", ".one", ".chm", ".reg", ".library-ms", ".search-ms", ".msc", ".application"],
+  "archiveExtensions": [".zip", ".rar", ".7z"],
+  "installerExtensions": [".msix", ".msixbundle", ".appx", ".appxbundle"],
+  "peExtensions": [".exe", ".dll", ".scr", ".com", ".pif", ".cpl", ".xll", ".ocx", ".sys"],
+  "signableExtensions": [".exe", ".dll", ".scr", ".com", ".pif", ".cpl", ".xll", ".ocx", ".sys", ".msi", ".msp", ".ps1", ".psm1", ".vbs", ".js", ".wsf", ".msix", ".msixbundle", ".appx", ".appxbundle"],
+  "scriptExtensions": [".ps1", ".psm1", ".vbs", ".vbe", ".js", ".jse", ".wsf", ".wsh", ".hta", ".bat", ".cmd", ".a3x", ".au3"],
+  "wshExtensions": [".vbs", ".vbe", ".js", ".jse", ".wsf", ".wsh", ".hta"],
+  "rareRiskyExtensions": [".scr", ".pif", ".com", ".cpl", ".xll", ".chm", ".msc", ".application", ".a3x", ".au3", ".one", ".library-ms", ".search-ms"],
+  "decoyExtensions": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt", ".rtf", ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp", ".svg", ".ico", ".mp3", ".mp4", ".avi", ".mkv", ".mov", ".wav", ".zip", ".rar", ".7z", ".html", ".htm", ".csv", ".odt", ".ods", ".eml", ".msg", ".xml", ".json", ".log"],
+  "doubleExtensionTargets": [".exe", ".scr", ".com", ".pif", ".bat", ".cmd", ".js", ".jse", ".vbs", ".vbe", ".wsf", ".wsh", ".hta", ".lnk", ".ps1", ".msi", ".cpl", ".jar", ".iso", ".img", ".vhd", ".vhdx", ".url", ".chm", ".reg", ".a3x", ".au3", ".xll", ".library-ms", ".search-ms", ".msc", ".application"],
+  "neutralPeExtensions": [".tmp", ".bak", ".old", ".partial", ".crdownload", ".part", ".download", ".cache", ".bin", ".dat", ".node", ".pyd", ".manifest", ".delete", ".dmp", ".etl", ".odl", ".aodl", ".mui"],
+
+  "lnk": {
+    "lolbins": ["powershell", "pwsh", "cmd", "mshta", "rundll32", "wscript", "cscript", "regsvr32", "certutil", "bitsadmin", "conhost", "forfiles", "msiexec", "curl", "wmic", "schtasks", "hh", "msbuild", "installutil", "cmstp", "odbcconf", "pcalua", "scriptrunner", "syncappvpublishingserver", "finger", "ftp"],
+    "longArgumentChars": 260,
+    "paddingRun": 32,
+    "maxBytes": 1048576,
+    "largeLnkBytes": 65536
+  },
+  "urlFile": {
+    "badSchemes": ["file:", "search-ms:", "search:", "ms-msdt:", "ms-officecmd:", "ms-appinstaller:", "javascript:", "vbscript:", "ms-search:"],
+    "webdavMarkers": ["@SSL", "DavWWWRoot", "@80\\", "@443\\"]
+  },
+  "scriptIndicators": [
+    { "id": "encoded_powershell", "strong": true, "regex": "(?i)(?:powershell|pwsh)[^\\r\\n]{0,120}\\s[-/]e(?:c|nc|ncodedcommand)?\\s+['\"]?[A-Za-z0-9+/]{40,}" },
+    { "id": "download_cradle", "strong": true, "regex": "(?i)\\.Download(?:String|File|Data)\\s*\\(|Net\\.WebClient|MSXML2\\.(?:Server)?XMLHTTP|WinHttp\\.WinHttpRequest|Start-BitsTransfer|bitsadmin\\s+/transfer|certutil[^\\r\\n]{0,60}-urlcache" },
+    { "id": "frombase64", "strong": false, "regex": "(?i)FromBase64String|\\batob\\s*\\(|Base64Decode" },
+    { "id": "iex", "strong": false, "regex": "(?i)(?:^|[\\s;|(])(?:iex|Invoke-Expression)(?=$|[\\s;|(])" },
+    { "id": "long_base64_blob", "strong": false, "regex": "[A-Za-z0-9+/]{600,}={0,2}" },
+    { "id": "exec_shell", "strong": false, "regex": "(?i)WScript\\.Shell|Shell\\.Application|ShellExecute|ActiveXObject\\s*\\(\\s*['\"]WScript" },
+    { "id": "eval_obfuscation", "strong": false, "regex": "(?i)\\beval\\s*\\(|String\\.fromCharCode\\s*\\(|\\bExecuteGlobal\\b|(?:\\bchrw?\\s*\\(\\s*\\d+\\s*\\)\\s*&\\s*){4,}" },
+    { "id": "lolbin_call", "strong": false, "regex": "(?i)\\b(?:mshta|regsvr32|certutil|bitsadmin)(?:\\.exe)?\\b|rundll32(?:\\.exe)?\\s+[^\\r\\n]{0,60}javascript:|schtasks(?:\\.exe)?\\s+/create" },
+    { "id": "defender_tamper", "strong": true, "regex": "(?i)Add-MpPreference[^\\r\\n]{0,120}-Exclusion|DisableRealtimeMonitoring\\s+\\$?true|Set-MpPreference[^\\r\\n]{0,80}-Disable" },
+    { "id": "amsi_bypass", "strong": true, "regex": "(?i)AmsiUtils|amsiInitFailed|AmsiScanBuffer" },
+    { "id": "prompt_injection", "strong": false, "regex": "(?i)\\b(?:ignore|disregard|forget)\\b[^\\r\\n]{0,30}\\b(?:all|any|previous|prior|above|earlier)\\b[^\\r\\n]{0,30}\\b(?:instructions|prompts?|rules)\\b" }
+  ],
+  "promptInjectionName": "(?i)\\b(?:ignore|disregard|forget)\\b.{0,30}\\b(?:previous|prior|above|all)\\b.{0,30}\\b(?:instructions|prompts?|rules)\\b|\\bsystem prompt\\b|\\byou are (?:now )?(?:an? )?(?:ai|assistant|claude|chatgpt|llm)\\b",
+
+  "sideloading": {
+    "note": "An unsigned, recent DLL in a user-writable folder that also holds a validly signed EXE. 'allowDlls' are app-local redistributables that legitimately share a System32 name (wildcards allowed).",
+    "allowDlls": ["vulkan-1.dll", "d3dcompiler_47.dll", "dxcompiler.dll", "dxil.dll", "msvcp1*.dll", "vcruntime1*.dll", "concrt1*.dll", "vccorlib1*.dll", "vcomp1*.dll", "msvcr1*.dll", "mfc1*.dll", "mfcm1*.dll", "ucrtbase.dll", "api-ms-win-*.dll", "ext-ms-win-*.dll", "opengl32sw.dll", "libegl.dll", "libglesv2.dll", "ffmpeg.dll", "vk_swiftshader.dll"],
+    "maxFolders": 400
+  },
+
+  "downloadSources": {
+    "note": "Host matches an entry when it equals it or ends with '.'+entry ('*' wildcards allowed). Flagged categories mark unusual origins for executables; 'personal_cloud' is informational.",
+    "flagged": ["ip_address", "file_sharer", "url_shortener", "chat_cdn", "raw_code", "tunnel_dyndns", "free_hosting", "punycode"],
+    "file_sharer": ["mega.nz", "mega.io", "mega.co.nz", "mediafire.com", "gofile.io", "anonfiles.com", "file.io", "transfer.sh", "pixeldrain.com", "catbox.moe", "sendspace.com", "zippyshare.com", "4shared.com", "uploadhaven.com", "workupload.com", "krakenfiles.com", "files.fm", "filebin.net", "bashupload.com", "temp.sh", "qu.ax", "uguu.se", "0x0.st", "ufile.io", "dropmefiles.com", "rapidgator.net", "nitroflare.com", "turbobit.net", "1fichier.com", "bayfiles.com", "letsupload.io", "filetransfer.io", "tmpfiles.org", "send.cm", "buzzheavier.com", "fileditch.com", "wetransfer.com", "we.tl", "swisstransfer.com", "limewire.com", "anonymfile.com", "filemail.com"],
+    "url_shortener": ["bit.ly", "tinyurl.com", "t.co", "goo.gl", "is.gd", "cutt.ly", "rb.gy", "shorturl.at", "rebrand.ly", "ow.ly", "buff.ly", "t.ly", "s.id", "tiny.cc", "v.gd", "lnkd.in", "bl.ink", "short.io", "clck.ru", "u.to", "x.gd", "shorturl.gg"],
+    "chat_cdn": ["cdn.discordapp.com", "media.discordapp.net", "cdn.discord.com", "discordapp.com", "discord.com", "t.me", "telegram.org", "telegram.me", "telesco.pe", "telegram-cdn.org", "files.slack.com", "slack-files.com"],
+    "raw_code": ["raw.githubusercontent.com", "gist.githubusercontent.com", "gist.github.com", "raw.github.com", "pastebin.com", "paste.ee", "hastebin.com", "rentry.co", "ghostbin.com", "controlc.com", "bitbucket.org"],
+    "tunnel_dyndns": ["ngrok.io", "ngrok-free.app", "ngrok.app", "ngrok-free.dev", "trycloudflare.com", "serveo.net", "loca.lt", "localtunnel.me", "duckdns.org", "ddns.net", "hopto.org", "zapto.org", "no-ip.com", "no-ip.org", "sytes.net", "servegame.com", "myftp.org", "dynu.net", "afraid.org", "portmap.io", "pinggy.io", "localhost.run", "serveousercontent.com"],
+    "free_hosting": ["pages.dev", "workers.dev", "r2.dev", "vercel.app", "netlify.app", "github.io", "web.app", "firebaseapp.com", "glitch.me", "replit.dev", "repl.co", "herokuapp.com", "000webhostapp.com", "weebly.com", "wixsite.com", "sites.google.com", "ipfs.io", "dweb.link", "cloudflare-ipfs.com", "surge.sh", "onrender.com", "fly.dev"],
+    "personal_cloud": ["drive.google.com", "drive.usercontent.google.com", "docs.google.com", "googleusercontent.com", "dropbox.com", "dropboxusercontent.com", "onedrive.live.com", "1drv.ms", "1drv.com", "sharepoint.com", "box.com", "pcloud.link", "pcloud.com", "icloud.com", "yadi.sk", "disk.yandex.ru"]
+  },
+
+  "dropperArtifacts": [
+    { "path": "%USERPROFILE%\\.npl", "campaign": "contagious_interview", "family": "Contagious Interview: InvisibleFerret client script", "mitre": ["T1204.002", "T1059.006"] },
+    { "path": "%USERPROFILE%\\.n2", "campaign": "contagious_interview", "family": "Contagious Interview: InvisibleFerret module folder", "mitre": ["T1204.002", "T1059.006"] },
+    { "path": "%USERPROFILE%\\.n3", "campaign": "contagious_interview", "family": "Contagious Interview: InvisibleFerret module folder", "mitre": ["T1204.002", "T1059.006"] },
+    { "path": "%USERPROFILE%\\.pyp", "campaign": "contagious_interview", "family": "Contagious Interview: BeaverTail portable Python", "mitre": ["T1204.002", "T1059.006"] },
+    { "path": "%USERPROFILE%\\p.zi", "campaign": "contagious_interview", "family": "Contagious Interview: BeaverTail Python archive", "mitre": ["T1105"] },
+    { "path": "%USERPROFILE%\\p2.zip", "campaign": "contagious_interview", "family": "Contagious Interview: BeaverTail Python archive (renamed)", "mitre": ["T1105"] },
+    { "path": "%USERPROFILE%\\.dev-env", "campaign": "shai_hulud", "family": "Shai-Hulud 2.0: self-hosted GitHub Actions runner (SHA1HULUD)", "mitre": ["T1195.002", "T1219"], "markers": ["run.cmd", "run.sh", "config.cmd", "config.sh", ".runner", "bin\\Runner.Listener.exe", "bin\\Runner.Worker.exe"] },
+    { "path": "%USERPROFILE%\\.truffler-cache", "campaign": "shai_hulud", "family": "Shai-Hulud 2.0: TruffleHog download cache", "mitre": ["T1552.001"] },
+    { "path": "%TEMP%\\inventory.txt*", "campaign": "s1ngularity", "family": "s1ngularity (Nx): harvested-secret inventory list", "mitre": ["T1552.001", "T1195.002"], "glob": true }
+  ],
+  "workerFileNames": [
+    { "name": "setup_bun.js", "campaign": "shai_hulud", "family": "Shai-Hulud 2.0 loader (preinstall)", "mitre": ["T1195.002"] },
+    { "name": "bun_environment.js", "campaign": "shai_hulud", "family": "Shai-Hulud 2.0 payload", "mitre": ["T1195.002"] },
+    { "name": "truffleSecrets.json", "campaign": "shai_hulud", "family": "Shai-Hulud 2.0 harvested secrets file", "mitre": ["T1552.001"] },
+    { "name": "actionsSecrets.json", "campaign": "shai_hulud", "family": "Shai-Hulud 2.0 harvested GitHub Actions secrets", "mitre": ["T1552.001"] }
+  ],
+  "workerSearch": { "roots": ["%USERPROFILE%", "%TEMP%"], "maxDepth": 6 },
+
+  "ideExtensionDirs": [".vscode\\extensions", ".vscode-insiders\\extensions", ".cursor\\extensions", ".windsurf\\extensions", ".vscode-oss\\extensions", ".antigravity\\extensions", ".kiro\\extensions"],
+  "pseudoProcesses": ["System Idle Process", "System", "Secure System", "Registry", "Memory Compression", "Interrupts", "_Total", "Idle", "vmmem", "vmmemWSL"]
+}

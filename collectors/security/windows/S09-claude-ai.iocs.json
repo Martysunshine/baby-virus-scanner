@@ -1,0 +1,148 @@
+{
+  "schema": "bvs.iocs/1",
+  "module": "S09",
+  "description": "IoC and heuristic lists for S09 (Claude Code & AI tools). Platform-neutral: the Linux collector should load the same file. Every entry is a .NET/PCRE-compatible regex fragment unless the key ends in 'Suffixes' (plain host suffixes) or 'Names' (plain names). Strings here are DATA, never commands.",
+  "exfilDomains": [
+    "webhook\\.site", "requestbin\\.(?:com|net|io)", "(?:^|[./])pipedream\\.(?:net|com)", "\\.m\\.pipedream\\.net",
+    "ngrok(?:-free)?\\.(?:io|app|dev)", "trycloudflare\\.com", "pastebin\\.com", "paste\\.ee", "hastebin\\.(?:com|skyra\\.pw)",
+    "termbin\\.com", "dpaste\\.(?:com|org)", "0x0\\.st", "paste\\.rs", "rentry\\.(?:co|org)", "privatebin\\.(?:net|info)",
+    "ghostbin\\.\\w+", "controlc\\.com", "transfer\\.sh", "(?<![\\w-])file\\.io\\b", "temp\\.sh", "bashupload\\.com",
+    "discord(?:app)?\\.com/api/webhooks", "api\\.telegram\\.org/bot", "interact\\.sh", "oast\\.(?:fun|pro|live|site|online|me)",
+    "oastify\\.com", "burpcollaborator\\.net", "canarytokens\\.(?:com|org)", "requestcatcher\\.com", "beeceptor\\.com",
+    "hookbin\\.com", "webhook\\.cool", "serveo\\.net", "(?<![\\w-])loca\\.lt\\b", "localhost\\.run", "bore\\.pub", "pinggy\\.(?:io|link)",
+    "gofile\\.io", "catbox\\.moe", "filebin\\.net", "tmpfiles\\.org", "ufile\\.io", "anonfiles\\.\\w+", "oshi\\.at", "keep\\.sh"
+  ],
+  "skipPermissionFlags": [
+    "--dangerously-skip-permissions", "--dangerously-bypass-approvals-and-sandbox", "--allow-dangerously-skip-permissions",
+    "--trust-all-tools", "(?<![\\w-])--yolo\\b", "--permission-mode[ =]+bypassPermissions", "\"permissionMode\"\\s*:\\s*\"bypassPermissions\""
+  ],
+  "fileHuntTerms": [
+    "wallets?\\b", "seed ?phrases?", "mnemonic", "keystore", "inventory\\.txt", "metamask", "exodus", "electrum", "phantom wallet",
+    "\\.env\\b", "\\bid_rsa\\b", "\\bid_ed25519\\b", "private keys?", "\\.ssh[\\\\/]", "\\.npmrc", "credentials?\\b", "api[ _-]?keys?", "secrets?\\b"
+  ],
+  "localPathMarkers": [
+    "\\$HOME", "~/", "%USERPROFILE%", "\\$env:USERPROFILE", "C:\\\\Users", "/home/", "/Users/", "find /\\s", "Get-ChildItem[^\\r\\n]{0,80}-Recurse",
+    "recursively (?:search|scan|look)", "entire (?:file ?system|disk|drive)", "all (?:files|folders|directories) (?:on|in) (?:the )?(?:system|disk|machine)"
+  ],
+  "remoteContextMarkers": [ "\\bssh\\b[^\\r\\n]{0,200}@", "docker exec", "kubectl exec", "vagrant ssh", "wsl(?:\\.exe)? -d" ],
+  "credentialFiles": [
+    "\\.credentials\\.json", "\\.npmrc", "(?<![\\w.-])id_(?:ed25519|rsa|ecdsa|dsa)(?![\\w.-])", "\\.git-credentials",
+    "\\.codex[\\\\/]auth\\.json", "gh[\\\\/]hosts\\.yml", "\\.aws[\\\\/]credentials", "\\.docker[\\\\/]config\\.json", "\\.pypirc",
+    "(?<![\\w.-])\\.netrc", "\\.kube[\\\\/]config", "wallet\\.dat", "key4\\.db", "logins\\.json", "Login Data", "\\.config[\\\\/]gcloud[\\\\/](?:credentials|application_default)"
+  ],
+  "credentialIssuers": [
+    { "file": "\\.credentials\\.json", "label": "Claude Code OAuth credential store", "issuers": [ "anthropic.com", "claude.ai", "claude.com" ] },
+    { "file": "\\.npmrc", "label": "npm config (may hold registry tokens)", "issuers": [ "npmjs.org", "npmjs.com" ] },
+    { "file": "\\.git-credentials|gh[\\\\/]hosts\\.yml", "label": "git / GitHub CLI credentials", "issuers": [ "github.com", "githubusercontent.com" ] },
+    { "file": "\\.codex[\\\\/]auth\\.json", "label": "Codex CLI credentials", "issuers": [ "openai.com", "chatgpt.com" ] },
+    { "file": "\\.aws[\\\\/]credentials", "label": "AWS credentials", "issuers": [ "amazonaws.com" ] },
+    { "file": "\\.docker[\\\\/]config\\.json", "label": "Docker registry credentials", "issuers": [ "docker.io", "docker.com" ] },
+    { "file": "\\.pypirc", "label": "PyPI credentials", "issuers": [ "pypi.org" ] },
+    { "file": "id_(?:ed25519|rsa|ecdsa|dsa)", "label": "SSH private key", "issuers": [] },
+    { "file": "wallet\\.dat|key4\\.db|logins\\.json|Login Data", "label": "wallet / browser credential store", "issuers": [] }
+  ],
+  "readVerbs":"(?:(?<![\\w-])(?:cat|type|more|less|head|tail|base64|xxd|od|strings|cp|copy|Copy-Item|scp|rsync|jq|gc|Get-Content|Import-Clixml)\\b|open\\(|ReadAll(?:Text|Bytes|Lines)|readFile(?:Sync)?|read_text\\(|read_bytes\\(|json\\.load\\(|\\[IO\\.File\\]::Open)",
+  "networkVerbs": [
+    "(?<![\\w-])curl(?:\\.exe)?\\b", "(?<![\\w-])wget\\b", "Invoke-WebRequest", "Invoke-RestMethod", "(?<![\\w-])iwr\\b", "(?<![\\w-])irm\\b",
+    "requests\\.(?:post|get|put|request)\\(", "httpx\\.(?:post|get|put|request|Client)", "axios(?:\\.(?:post|get|put))?\\(", "(?<![\\w.])fetch\\(",
+    "Net\\.WebClient", "UploadString", "UploadFile", "UploadData", "(?<![\\w-])scp\\b", "(?<![\\w-])rsync\\b", "(?<![\\w-])ncat?\\s", "urllib\\.request", "http\\.client"
+  ],
+  "postVerbs": [
+    "curl(?:\\.exe)?\\b[^\\r\\n|;]{0,400}?(?:-X\\s*['\"]?POST|--request\\s+['\"]?POST|\\s-d\\s|\\s-d['\"@]|--data|\\s-F\\s|--form|\\s-T\\s|--upload-file|--json)",
+    "wget\\b[^\\r\\n]{0,200}--post-(?:data|file)", "Invoke-(?:WebRequest|RestMethod)\\b[^\\r\\n]{0,400}-Method\\s+['\"]?Post", "-InFile\\b",
+    "requests\\.post\\(", "httpx\\.post\\(", "axios\\.post\\(", "method\\s*:\\s*['\"]POST", "UploadString", "UploadFile", "UploadData"
+  ],
+  "injectionPhrases": [
+    "ignore (?:all |any )?(?:the )?(?:previous|prior|above|earlier) (?:instructions|prompts|messages|rules)",
+    "disregard (?:all |any )?(?:the )?(?:previous|prior|above|earlier)", "forget (?:all |your )?(?:previous |prior )?instructions",
+    "you are now (?:in )?(?:developer|dan|jailbreak|unrestricted)", "system prompt override", "new system instructions?:",
+    "<\\s*/?\\s*system\\s*>", "\\[\\s*SYSTEM\\s*\\]", "BEGIN (?:ADMIN|SYSTEM) (?:INSTRUCTIONS|PROMPT)", "IMPORTANT: (?:the user|you) (?:must|should) not (?:know|see)"
+  ],
+  "hidePhrases": [
+    "do not (?:tell|inform|show|alert|notify|mention (?:this|it) to) the user", "don't (?:tell|inform|show|alert|notify) the user",
+    "without (?:telling|informing|notifying|alerting|asking) the user", "without the user(?:'s)? (?:knowledge|knowing)",
+    "hide (?:this|it|these|that|the \\w+) from the user", "keep (?:this|it) (?:secret|hidden) from", "never reveal (?:this|these) instructions",
+    "silently (?:send|upload|post|exfiltrate|copy|forward)", "do not mention [^\\r\\n]{0,160}(?:in|to) (?:the )?(?:user|user-facing)", "never expose [^\\r\\n]{0,60}to (?:the )?user"
+  ],
+  "exfilInstructionPhrases": [
+    "(?:send|upload|post|exfiltrate|transmit|forward|copy|paste) (?:all |the |any |every |their |your )?(?:\\.env|env(?:ironment)? (?:files?|variables)|secrets?|credentials?|tokens?|api keys?|ssh keys?|private keys?|cookies|passwords?|wallets?|seed phrases?)[^\\r\\n]{0,100}(?:to|into) (?:https?://|[a-z0-9-]+\\.[a-z]{2,}|a (?:webhook|remote|server|pastebin|gist))",
+    "(?:collect|gather|harvest|enumerate) (?:all )?(?:secrets|credentials|tokens|wallets|private keys)[^\\r\\n]{0,80}(?:and|then) (?:send|upload|post|write)"
+  ],
+  "defensiveContext": "treat (?:it |them |this )?as (?:untrusted )?data|untrusted|do not follow|don't follow|never follow|prompt.injection|malicious|attack|adversar|phishing|example of|refuse",
+  "execPatterns": [
+    "\\bsubprocess\\b", "child_process", "os\\.system\\(", "os\\.popen\\(", "execSync\\(", "spawnSync\\(", "execFileSync\\(", "\\bspawn\\(",
+    "Invoke-Expression", "(?<![\\w-])iex\\b", "(?<![\\w.])eval\\(", "(?<![\\w.])exec\\(", "new Function\\(", "ShellExecute", "Start-Process"
+  ],
+  "pipeToShell": [
+    "(?:curl|wget)(?:\\.exe)?\\b[^\\r\\n|]{0,240}\\|\\s*(?:sudo\\s+)?(?:ba|z|da)?sh\\b",
+    "(?:iwr|irm|Invoke-WebRequest|Invoke-RestMethod)\\b[^\\r\\n|]{0,240}\\|\\s*(?:iex|Invoke-Expression)",
+    "(?:iex|Invoke-Expression)\\s*\\(\\s*(?:New-Object\\s+Net\\.WebClient|\\(?\\s*(?:iwr|irm|Invoke-WebRequest|Invoke-RestMethod))",
+    "bash\\s+<\\(\\s*curl", "python3?\\s+-c\\s+[\"'][^\"']{0,200}urlopen"
+  ],
+  "encodedCommand": [
+    "(?:powershell|pwsh)(?:\\.exe)?\\s+[^\\r\\n]{0,60}(?<![\\w])-(?:e|ec|en|enc|enco|encod|encode|encoded|encodedcommand)\\s+[A-Za-z0-9+/=]{20,}",
+    "FromBase64String\\(", "base64\\s+(?:-d|--decode|-D)\\b", "\\batob\\(", "certutil(?:\\.exe)?\\s+-decode"
+  ],
+  "envKeysOfInterest": [
+    "ANTHROPIC_BASE_URL", "ANTHROPIC_API_URL", "ANTHROPIC_BEDROCK_BASE_URL", "ANTHROPIC_VERTEX_BASE_URL", "ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN",
+    "ANTHROPIC_CUSTOM_HEADERS", "ANTHROPIC_MODEL", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "NO_PROXY", "NODE_OPTIONS", "NODE_EXTRA_CA_CERTS",
+    "NODE_TLS_REJECT_UNAUTHORIZED", "SSL_CERT_FILE", "REQUESTS_CA_BUNDLE", "OTEL_EXPORTER_OTLP_ENDPOINT", "OTEL_EXPORTER_OTLP_HEADERS",
+    "OTEL_EXPORTER_OTLP_PROTOCOL", "OTEL_LOGS_EXPORTER", "OTEL_METRICS_EXPORTER", "CLAUDE_CONFIG_DIR", "DISABLE_AUTOUPDATER", "DISABLE_TELEMETRY",
+    "OPENAI_BASE_URL", "OPENAI_API_KEY", "CODEX_HOME", "GEMINI_API_KEY", "GOOGLE_API_KEY", "OLLAMA_HOST", "OLLAMA_MODELS", "OLLAMA_ORIGINS"
+  ],
+  "envKeyPrefixesOfInterest": [ "CLAUDE_CODE_", "ANTHROPIC_", "OTEL_", "MCP_" ],
+  "broadAllow": [
+    { "reason": "tool-wide", "regex": "^(?:Bash|PowerShell|WebFetch|Edit|Write|MultiEdit|NotebookEdit)(?:\\(\\s*\\*{1,2}\\s*\\))?$" },
+    { "reason": "read-anything", "regex": "^Read(?:\\((?:/{1,2}|~/|//[a-zA-Z]/)?\\*{1,2}\\))?$" },
+    { "reason": "webfetch-any-domain", "regex": "^WebFetch\\(domain:\\*\\)$" },
+    { "reason": "interpreter-wildcard", "regex": "^(?:Bash|PowerShell)\\((?:sudo\\s+)?(?:[^\\s()]*[\\\\/])?(?:python3?|py|node|deno|bun|ruby|perl|php|pwsh|powershell|bash|sh|zsh|cmd|cmd\\.exe|osascript)(?:\\.exe)?\\b[^)]*\\*\\)$" },
+    { "reason": "package-runner-wildcard", "regex": "^(?:Bash|PowerShell)\\((?:npx|bunx|uvx|pipx\\s+run|pnpm\\s+dlx|yarn\\s+dlx|npm\\s+exec)\\b[^)]*\\*\\)$" },
+    { "reason": "package-install-wildcard", "regex": "^(?:Bash|PowerShell)\\([^)]*(?:pip3?|npm|pnpm|yarn|uv)\\s+(?:install|add|i)\\b[^)]*\\*\\)$" },
+    { "reason": "network-wildcard", "regex": "^(?:Bash|PowerShell)\\((?:curl|wget|Invoke-WebRequest|Invoke-RestMethod|iwr|irm)\\b[^)]*\\*\\)$" },
+    { "reason": "remote-shell", "regex": "^(?:Bash|PowerShell)\\([^)]*\\bssh\\b[^)]*(?:bash\\s+-s|sh\\s+-s|\\*\\))" },
+    { "reason": "destructive", "regex": "^(?:Bash|PowerShell)\\([^)]*(?:rm\\s+-rf|Remove-Item\\b[^)]*-Recurse|git\\s+push\\b[^)]*--force|git\\s+reset\\s+--hard|Stop-Process|taskkill|format\\s)" },
+    { "reason": "mcp-server-wide", "regex": "^mcp__[^_]+(?:__\\*)?$" },
+    { "reason": "skill-wildcard", "regex": "^Skill\\([^)]*:\\*\\)$" }
+  ],
+  "firstPartyMarketplaces": [ "anthropics/claude-plugins-official", "anthropics/claude-code" ],
+  "firstPartySyncedMarketplaces": [ "anthropic-plugin-directory" ],
+  "knownMcpPackages": [
+    "@modelcontextprotocol/", "@anthropic-ai/", "@playwright/mcp", "@upstash/context7-mcp", "@supabase/mcp-server-supabase", "@sentry/mcp-server",
+    "@notionhq/notion-mcp-server", "@stripe/mcp", "@cloudflare/", "@azure/mcp", "@microsoft/", "chrome-devtools-mcp", "figma-developer-mcp", "mcp-remote",
+    "@github/github-mcp-server", "@vercel/mcp-adapter", "@heroku/mcp-server", "@browserbasehq/mcp", "@hostinger/"
+  ],
+  "knownMcpHostSuffixes": [
+    "mcp.figma.com", "mcp.supabase.com", "mcp.hostinger.com", "mcp.notion.com", "mcp.linear.app", "api.githubcopilot.com", "mcp.stripe.com",
+    "mcp.sentry.dev", "mcp.atlassian.com", "mcp.asana.com", "mcp.context7.com", "mcp.higgsfield.ai", "api.anthropic.com", "mcp.vercel.com",
+    "mcp.cloudflare.com", "mcp.canva.com", "mcp.zapier.com", "mcp.paypal.com", "mcp.squareup.com", "mcp.intercom.com"
+  ],
+  "knownApiHostSuffixes": [
+    "anthropic.com", "claude.ai", "claude.com", "openai.com", "chatgpt.com", "github.com", "githubusercontent.com", "githubcopilot.com",
+    "googleapis.com", "google.com", "gstatic.com", "huggingface.co", "huggingface.cloud", "hf.co", "groq.com", "elevenlabs.io", "cartesia.ai",
+    "deepgram.com", "assemblyai.com", "npmjs.org", "npmjs.com", "pypi.org", "pythonhosted.org", "supabase.co", "supabase.com", "cloudflare.com",
+    "stripe.com", "twilio.com", "plivo.com", "bandwidth.com", "telnyx.com", "vonage.com", "sentry.io", "openstreetmap.org", "overpass-api.de",
+    "kumi.systems", "higgsfield.ai", "hostinger.com", "figma.com", "sitemaps.org", "microsoft.com", "azure.com", "windows.net", "amazonaws.com",
+    "mistral.ai", "cohere.ai", "together.xyz", "openrouter.ai", "replicate.com", "fal.ai", "x.ai", "deepseek.com", "nousresearch.com",
+    "resend.com", "sendgrid.net", "mailgun.net", "postmarkapp.com", "slack.com", "notion.so", "notion.com", "linear.app", "atlassian.net",
+    "docker.io", "docker.com", "ollama.com", "ollama.ai", "vercel.com", "netlify.com", "render.com", "railway.app", "fly.io", "ipify.org", "ifconfig.me"
+  ],
+  "hostingPlatformSuffixes": [
+    "vercel.app", "netlify.app", "pages.dev", "workers.dev", "herokuapp.com", "onrender.com", "fly.dev", "github.io", "glitch.me", "repl.co",
+    "replit.dev", "web.app", "firebaseapp.com", "azurewebsites.net", "cloudfront.net", "up.railway.app", "deno.dev", "surge.sh"
+  ],
+  "reservedTestHosts": [ "\\.example$", "\\.test$", "\\.invalid$", "\\.localhost$", "^example\\.(?:com|net|org)$", "^(?:www\\.)?example\\.(?:com|net|org)$" ],
+  "skillTextExtensions": [ ".md", ".mdc", ".txt", ".py", ".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx", ".sh", ".bash", ".ps1", ".psm1", ".bat", ".cmd", ".json", ".yaml", ".yml", ".toml", ".html", ".htm", ".css", ".xml", ".xsd", ".svg", ".rb", ".go", ".rs", ".lua", ".ini", ".cfg", ".env" ],
+  "instructionFileNames": [ "CLAUDE.md", "CLAUDE.local.md", "AGENTS.md", "AGENTS.override.md", "GEMINI.md", ".cursorrules", ".windsurfrules", ".clinerules", "copilot-instructions.md" ],
+  "mcpConfigFileNames": [ ".mcp.json", "mcp.json", "mcp_config.json", "cline_mcp_settings.json", "claude_desktop_config.json" ],
+  "connectorCapabilityHints": [
+    { "regex": "mail|gmail|outlook|smtp|imap", "hint": "mailbox access; may read, draft or send mail - a prompt injection could make an agent send or forward data" },
+    { "regex": "drive|docs|dropbox|onedrive|box|sharepoint", "hint": "document/file access; read and possibly create/share files" },
+    { "regex": "calendar", "hint": "calendar access; read and possibly create events" },
+    { "regex": "hostinger|hosting|vercel|cloudflare|aws|azure|gcp|vps|deploy", "hint": "infrastructure control; deploy, DNS, hosting changes" },
+    { "regex": "figma|canva|design", "hint": "design files read/write" },
+    { "regex": "higgsfield|image|video|media", "hint": "media generation; uploads prompts/assets, spends credits" },
+    { "regex": "remote|bridge", "hint": "remote control of local Claude Code sessions" },
+    { "regex": "custom", "hint": "custom (non-directory) connector: not reviewed by Anthropic; verify its scopes and hosting" }
+  ],
+  "writeCapableToolVerbs": "(?:^|__)(?:send|forward|reply|delete|trash|move|share|create|update|publish|deploy|upload|execute|run|sandbox_exec|website_secrets|website_repo_access)"
+}

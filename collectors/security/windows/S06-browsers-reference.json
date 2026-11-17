@@ -1,0 +1,191 @@
+{
+  "schema": "bvs.s06.reference/1",
+  "updated": "2026-10-20",
+  "description": "Vendor-level reference data for S06-browsers.ps1. NOT machine-specific: known-good items for one PC belong in config\\local\\expected.json. Edit this file to extend browser support, wallet IDs, flag rules or intel sources without touching code.",
+
+  "chromiumBrowsers": [
+    { "id": "chrome",        "label": "Google Chrome",        "userData": "%LOCALAPPDATA%\\Google\\Chrome\\User Data",            "regVendor": "Google\\Chrome",              "exe": ["chrome.exe"],  "proxyExe": ["chrome_proxy.exe"],  "installDirs": ["%ProgramFiles%\\Google\\Chrome\\Application", "%ProgramFiles(x86)%\\Google\\Chrome\\Application", "%LOCALAPPDATA%\\Google\\Chrome\\Application"], "signers": ["Google LLC"], "store": "chrome-web-store" },
+    { "id": "chrome-beta",   "label": "Google Chrome Beta",   "userData": "%LOCALAPPDATA%\\Google\\Chrome Beta\\User Data",       "regVendor": "Google\\Chrome Beta",         "exe": ["chrome.exe"],  "proxyExe": ["chrome_proxy.exe"],  "installDirs": ["%ProgramFiles%\\Google\\Chrome Beta\\Application", "%LOCALAPPDATA%\\Google\\Chrome Beta\\Application"], "signers": ["Google LLC"], "store": "chrome-web-store" },
+    { "id": "chrome-dev",    "label": "Google Chrome Dev",    "userData": "%LOCALAPPDATA%\\Google\\Chrome Dev\\User Data",        "regVendor": "Google\\Chrome Dev",          "exe": ["chrome.exe"],  "proxyExe": ["chrome_proxy.exe"],  "installDirs": ["%ProgramFiles%\\Google\\Chrome Dev\\Application", "%LOCALAPPDATA%\\Google\\Chrome Dev\\Application"], "signers": ["Google LLC"], "store": "chrome-web-store" },
+    { "id": "chrome-canary", "label": "Google Chrome Canary", "userData": "%LOCALAPPDATA%\\Google\\Chrome SxS\\User Data",        "regVendor": "Google\\Chrome SxS",          "exe": ["chrome.exe"],  "proxyExe": ["chrome_proxy.exe"],  "installDirs": ["%LOCALAPPDATA%\\Google\\Chrome SxS\\Application"], "signers": ["Google LLC"], "store": "chrome-web-store" },
+    { "id": "edge",          "label": "Microsoft Edge",       "userData": "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data",           "regVendor": "Microsoft\\Edge",             "exe": ["msedge.exe"],  "proxyExe": ["msedge_proxy.exe"],  "installDirs": ["%ProgramFiles(x86)%\\Microsoft\\Edge\\Application", "%ProgramFiles%\\Microsoft\\Edge\\Application"], "signers": ["Microsoft Corporation"], "store": "edge-add-ons" },
+    { "id": "edge-beta",     "label": "Microsoft Edge Beta",  "userData": "%LOCALAPPDATA%\\Microsoft\\Edge Beta\\User Data",      "regVendor": "Microsoft\\Edge Beta",        "exe": ["msedge.exe"],  "proxyExe": ["msedge_proxy.exe"],  "installDirs": ["%ProgramFiles(x86)%\\Microsoft\\Edge Beta\\Application"], "signers": ["Microsoft Corporation"], "store": "edge-add-ons" },
+    { "id": "edge-dev",      "label": "Microsoft Edge Dev",   "userData": "%LOCALAPPDATA%\\Microsoft\\Edge Dev\\User Data",       "regVendor": "Microsoft\\Edge Dev",         "exe": ["msedge.exe"],  "proxyExe": ["msedge_proxy.exe"],  "installDirs": ["%ProgramFiles(x86)%\\Microsoft\\Edge Dev\\Application"], "signers": ["Microsoft Corporation"], "store": "edge-add-ons" },
+    { "id": "edge-canary",   "label": "Microsoft Edge Canary","userData": "%LOCALAPPDATA%\\Microsoft\\Edge SxS\\User Data",       "regVendor": "Microsoft\\Edge SxS",         "exe": ["msedge.exe"],  "proxyExe": ["msedge_proxy.exe"],  "installDirs": ["%LOCALAPPDATA%\\Microsoft\\Edge SxS\\Application"], "signers": ["Microsoft Corporation"], "store": "edge-add-ons" },
+    { "id": "brave",         "label": "Brave",                "userData": "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\User Data", "regVendor": "BraveSoftware\\Brave-Browser", "exe": ["brave.exe"], "proxyExe": ["brave_proxy.exe"], "installDirs": ["%ProgramFiles%\\BraveSoftware\\Brave-Browser\\Application", "%LOCALAPPDATA%\\BraveSoftware\\Brave-Browser\\Application"], "signers": ["Brave Software, Inc."], "store": "chrome-web-store" },
+    { "id": "vivaldi",       "label": "Vivaldi",              "userData": "%LOCALAPPDATA%\\Vivaldi\\User Data",                   "regVendor": "Vivaldi",                     "exe": ["vivaldi.exe"], "proxyExe": ["vivaldi_proxy.exe"], "installDirs": ["%LOCALAPPDATA%\\Vivaldi\\Application", "%ProgramFiles%\\Vivaldi\\Application"], "signers": ["Vivaldi Technologies AS"], "store": "chrome-web-store" },
+    { "id": "opera",         "label": "Opera",                "userData": "%APPDATA%\\Opera Software\\Opera Stable",              "singleProfile": true, "regVendor": "Opera Software", "exe": ["opera.exe"], "proxyExe": [], "installDirs": ["%LOCALAPPDATA%\\Programs\\Opera"], "signers": ["Opera Norway AS"], "store": "opera-addons" },
+    { "id": "opera-gx",      "label": "Opera GX",             "userData": "%APPDATA%\\Opera Software\\Opera GX Stable",           "singleProfile": true, "regVendor": "Opera Software", "exe": ["opera.exe"], "proxyExe": [], "installDirs": ["%LOCALAPPDATA%\\Programs\\Opera GX"], "signers": ["Opera Norway AS"], "store": "opera-addons" },
+    { "id": "chromium",      "label": "Chromium",             "userData": "%LOCALAPPDATA%\\Chromium\\User Data",                  "regVendor": "Chromium",                    "exe": ["chrome.exe"],  "proxyExe": ["chrome_proxy.exe"],  "installDirs": ["%LOCALAPPDATA%\\Chromium\\Application"], "signers": [], "store": "chrome-web-store" },
+    { "id": "yandex",        "label": "Yandex Browser",       "userData": "%LOCALAPPDATA%\\Yandex\\YandexBrowser\\User Data",     "regVendor": "Yandex\\YandexBrowser",       "exe": ["browser.exe"], "proxyExe": [],                    "installDirs": ["%LOCALAPPDATA%\\Yandex\\YandexBrowser\\Application"], "signers": ["YANDEX LLC"], "store": "chrome-web-store" }
+  ],
+
+  "extraBrowserExeNames": ["firefox.exe", "iexplore.exe", "launcher.exe", "chrome-headless-shell.exe", "msedgewebview2.exe"],
+  "webViewExeNames": ["msedgewebview2.exe"],
+  "nativeMessagingRegistryVendors": ["Google\\Chrome", "Microsoft\\Edge", "Chromium", "BraveSoftware\\Brave-Browser", "Vivaldi", "Mozilla"],
+  "externalExtensionRegistryVendors": ["Google\\Chrome", "Microsoft\\Edge", "Chromium", "BraveSoftware\\Brave-Browser"],
+  "policyRegistryVendors": ["Google\\Chrome", "Microsoft\\Edge", "BraveSoftware\\Brave", "Chromium", "Google\\Update", "Microsoft\\EdgeUpdate"],
+  "firefoxMarkers": ["%APPDATA%\\Mozilla\\Firefox\\profiles.ini", "%ProgramFiles%\\Mozilla Firefox\\firefox.exe", "%ProgramFiles(x86)%\\Mozilla Firefox\\firefox.exe"],
+
+  "storeUpdateHosts": {
+    "chrome-web-store": ["clients2.google.com", "clients2.googleusercontent.com"],
+    "edge-add-ons": ["edge.microsoft.com"],
+    "opera-addons": ["extension-updates.opera.com"]
+  },
+
+  "locationNames": {
+    "0": "invalid", "1": "internal", "2": "external_pref", "3": "external_registry", "4": "unpacked",
+    "5": "component", "6": "external_pref_download", "7": "external_policy_download", "8": "command_line",
+    "9": "external_policy", "10": "external_component"
+  },
+  "componentLocations": [5, 10],
+  "policyLocations": [7, 9],
+  "externalLocations": [2, 3, 6],
+
+  "disableReasonNames": {
+    "1": "user_action", "2": "permissions_increase", "4": "reload", "8": "unsupported_requirement",
+    "16": "sideload_wipeout", "32": "unknown_from_webstore", "256": "not_verified", "512": "greylist",
+    "1024": "corrupted", "2048": "remote_install", "8192": "external_extension_unacknowledged",
+    "16384": "update_required_by_policy", "32768": "custodian_approval_required", "65536": "blocked_by_policy",
+    "131072": "reinstall", "262144": "not_allowlisted_safe_browsing", "524288": "not_ash_keeplisted",
+    "1048576": "published_in_store_required_by_policy", "2097152": "unsupported_manifest_version",
+    "4194304": "unsupported_developer_extension", "8388608": "unknown"
+  },
+
+  "permissions": {
+    "topTierWithAllSites": ["webRequest", "webRequestBlocking", "webRequestAuthProvider", "declarativeNetRequest", "declarativeNetRequestWithHostAccess", "declarativeNetRequestFeedback", "scripting", "cookies", "debugger", "proxy", "nativeMessaging", "management", "clipboardRead", "history", "downloads"],
+    "highTier": ["debugger", "nativeMessaging", "proxy", "management", "cookies", "history", "clipboardRead", "desktopCapture", "tabCapture", "pageCapture", "privacy", "contentSettings", "webRequestBlocking", "declarativeNetRequestWithHostAccess", "declarativeNetRequestFeedback", "browsingData", "downloads.open", "webAuthenticationProxy", "vpnProvider", "certificateProvider"],
+    "mediumTier": ["tabs", "webNavigation", "downloads", "scripting", "webRequest", "declarativeNetRequest", "topSites", "bookmarks", "geolocation", "identity", "identity.email", "sessions", "readingList", "tabGroups", "userScripts", "background", "search", "favicon", "processes", "system.storage"],
+    "unexpectedForExpected": ["debugger", "proxy", "clipboardRead", "desktopCapture", "tabCapture", "pageCapture", "vpnProvider"]
+  },
+
+  "walletExtensions": {
+    "nkbihfbeogaeaoehlefnkodbefgpgknn": "MetaMask",
+    "ejbalbakoplchlghecdalmeeeajnimhm": "MetaMask (Edge Add-ons)",
+    "bfnaelmomeimhlpmgjnjophhpkkoljpa": "Phantom",
+    "hnfanknocfeofbddgcijnmhnfnkdnaad": "Coinbase Wallet",
+    "egjidjbpglichdcondbcbdnbeeppgdph": "Trust Wallet",
+    "acmacodkjbdgmoleebolmdjonilkdbch": "Rabby Wallet",
+    "dmkamcknogkgcdfhhbddcghachkejeap": "Keplr",
+    "mcohilncbfahbmgdjkbpemcciiolgcge": "OKX Wallet",
+    "fhbohimaelbohpjbbldcngcnapndodjp": "Binance Wallet",
+    "ibnejdfjmmkpcnlpebklmnkoeoihofec": "TronLink",
+    "fnjhmkhhmkbjkkabndcnnogagogbneec": "Ronin Wallet",
+    "aholpfdialjgjfhomihkjbmgjidlcdno": "Exodus Web3 Wallet",
+    "bhhhlbepdkbapadjdnnojkbgioiodbic": "Solflare",
+    "aflkmfhebedbjioipglgcbcmnbpgliof": "Backpack",
+    "opcgpfmipidbgpenhmajoajpbobppdil": "Sui Wallet",
+    "ejjladinnckdgjemekebdpeokbikhfci": "Petra (Aptos)",
+    "efbglgofoippbgcjepnhiblaibcnclgk": "Martian",
+    "jnlgamecbpmbajjfhmmmlhejkemejdma": "Braavos",
+    "dlcobpjiigpikoobohmabehhmhfoodbb": "Argent X",
+    "jiidiaalihmmhddjgbnbgdfflelocpak": "Bitget Wallet",
+    "afbcbjpbpfadlkmhmclhkeeodmamcflc": "Math Wallet",
+    "aeachknmefphepccionboohckonoeemg": "Coin98",
+    "lpfcbjknijpeeillifnkikgncikgfhdo": "Nami (Cardano)",
+    "kmhcihpebfmpgmihbkipmjlmmioameka": "Eternl (Cardano)",
+    "ffnbelfdoeiohenkjibnmadjiehjhajb": "Yoroi (Cardano)",
+    "ookjlbkiijinhpmnjffcofjonbfbgaoc": "Temple (Tezos)",
+    "hmeobnfnfcmdkdcmlblgagmfpfboieaf": "XDEFI / Ctrl Wallet",
+    "klghhnkeealcohjjanjjdaeeggmfmlpl": "Zerion",
+    "opfgelmcmbiajamepnmloijbpoleiama": "Rainbow",
+    "eajafomhmkipbjmfmhebemolkcicgfmd": "Taho",
+    "kkpllkodjeloidieedojogacfhpaihoh": "Enkrypt",
+    "onhogfjeacnfoofkfgppdlbmlmnplgbn": "SubWallet",
+    "mopnmbcafieddcagagdcbnhejhlodfdd": "Polkadot{.js}",
+    "fijngjgcjhjmmpcmkeiomlglpeiijkld": "Talisman",
+    "aiifbnbfobpmeekipheeijimdpnlpgpp": "Station (Terra)",
+    "jblndlipeogpafnldhgmapagcccfchpi": "Kaikas",
+    "hpglfhgfnhbgpjdenjgmdgoeiappafln": "Guarda",
+    "hifafgmccdpekplomjjkcfgodnhcellj": "Crypto.com DeFi Wallet",
+    "amkmjjmmflddogmhpjloimipbofnfjih": "Wombat",
+    "nlbmnnijcnlegkjjpcfjclmcfggfefdm": "MEW CX",
+    "lgmpcpglpngdoalbgeoldeajfclnhafa": "SafePal",
+    "mfgccjchihfkkindfppnaooecgfneiii": "TokenPocket",
+    "nnpmfplkfogfpmcngplhnbdnnilmcdcg": "Uniswap Extension",
+    "mkpegjkblkkefacfnmkajcjmabijhclg": "Magic Eden Wallet",
+    "agoakfejjabomempkjlepdflaleeobhb": "Core (Avalanche)",
+    "fcfcfllfndlomdhbehjjcoimbgofdncg": "Leap Cosmos Wallet",
+    "ldinpeekobnhjjdofggfgjlcehhmanlj": "Leather (Hiro)",
+    "idnnbdplmphpflfnlkomgpfbpcgelopg": "Xverse",
+    "ppbibelpcjmhbdihakflkdcoccbgbkpo": "UniSat",
+    "pdliaogehgdbhbnmkklieghmmjkpigpa": "Bybit Wallet"
+  },
+  "walletBrandRegex": "(?i)\\b(meta ?mask|phantom|coinbase wallet|trust wallet|rabby|keplr|okx wallet|exodus|ledger live|trezor|tronlink|ronin wallet|solflare|bitget wallet|binance wallet)\\b",
+  "walletNameRegex": "(?i)\\b(wallet|seed phrase|metamask|crypto ?wallet|web3)\\b",
+
+  "knownSearchHosts": ["google.", "bing.com", "duckduckgo.com", "search.yahoo.com", "yahoo.co.jp", "ecosia.org", "yandex.", "ya.ru", "baidu.com", "seznam.cz", "startpage.com", "search.brave.com", "qwant.com", "naver.com", "sogou.com", "so.com", "mojeek.com", "you.com", "perplexity.ai", "chatgpt.com", "kagi.com", "swisscows.com", "metager.de", "daum.net", "coccoc.com", "go.mail.ru", "aol.com", "ecosia.com", "presearch.com", "yep.com"],
+  "searchHijackPatterns": ["(?i)/yhs/", "(?i)[?&]fr=yhs", "(?i)[?&]hspart=", "(?i)[?&]type=(hsp|ds_)", "(?i)trovi", "(?i)conduit", "(?i)mysearch", "(?i)searchbaron", "(?i)searchmarquis", "(?i)searchalgo", "(?i)weknow", "(?i)myway\\.", "(?i)mystart\\.", "(?i)searchlee", "(?i)gosearchresults", "(?i)search-checker", "(?i)searchgg", "(?i)nearbyme", "(?i)tapufind", "(?i)safesearch\\.(?!google)", "(?i)\\bask\\.com", "(?i)chromstera", "(?i)search\\.(handy|easy|quick|fast|smart|simple|tap|super)[a-z-]*\\."],
+
+  "knownDohHosts": ["dns.google", "dns.google.com", "8.8.8.8", "8.8.4.4", "cloudflare-dns.com", "chrome.cloudflare-dns.com", "mozilla.cloudflare-dns.com", "1.1.1.1", "1.0.0.1", "one.one.one.one", "security.cloudflare-dns.com", "family.cloudflare-dns.com", "dns.quad9.net", "dns9.quad9.net", "dns10.quad9.net", "dns11.quad9.net", "doh.opendns.com", "doh.familyshield.opendns.com", "dns.nextdns.io", "doh.cleanbrowsing.org", "dns.adguard-dns.com", "unfiltered.adguard-dns.com", "family.adguard-dns.com", "dns.adguard.com", "doh.mullvad.net", "dns.mullvad.net", "adblock.dns.mullvad.net", "freedns.controld.com", "doh.xfinity.com", "dns.alidns.com", "doh.pub", "dns.switch.ch", "doh.dns.sb", "odvr.nic.cz", "doh.libredns.gr", "dns.surfsharkdns.com", "doh.cox.net", "chromium.dns.nextdns.io", "dns.comss.one", "dns0.eu", "zero.dns0.eu"],
+
+  "labsInsecureExperiments": ["allow-insecure-localhost", "unsafely-treat-insecure-origin-as-secure", "extensions-on-chrome-urls", "extensions-on-extension-urls", "enable-experimental-extension-apis", "site-isolation-trial-opt-out", "enable-unsafe-webgpu", "enable-unsafe-swiftshader", "disable-site-isolation-trials", "allow-legacy-mv2-extensions", "extension-manifest-v2-deprecation-disabled", "temporary-unexpire-flags"],
+
+  "extensionControlledPrefsBenign": ["privacy_sandbox.", "enable_a_ping", "alternate_error_pages.enabled", "net.network_prediction_options", "webrtc.ip_handling_policy", "webrtc.multiple_routes_enabled", "webrtc.nonproxied_udp_enabled", "enable_do_not_track", "enable_referrers", "translate.enabled", "search.suggest_enabled", "autofill.", "credentials_enable_service", "safebrowsing.scout_reporting_enabled", "spellcheck.", "hyperlink_auditing"],
+  "extensionControlledPrefsHijack": ["homepage", "homepage_is_newtabpage", "session.restore_on_startup", "session.startup_urls", "default_search_provider", "browser.show_home_button", "proxy", "safebrowsing.enabled", "safebrowsing.enhanced", "download.default_directory", "dns_over_https."],
+
+  "sitePermissionTypes": ["notifications", "popups", "automatic_downloads"],
+  "chromeFlaggedSiteTypes": ["abusive_notification_permissions", "disruptive_notification_permissions", "suspicious_notification_ids"],
+  "suspiciousTlds": [".top", ".xyz", ".click", ".online", ".icu", ".cyou", ".rest", ".shop"],
+  "suspiciousSiteWordsRegex": "(?i)(^|[.\\-0-9])(re)?(captcha|verif[a-z]*|allow[a-z]*|robot[a-z]*|human[a-z]*|notarobot)",
+
+  "shortcutBrowserNameRegex": "(?i)^(google chrome|chrome|chromium|microsoft edge|edge|brave|brave browser|mozilla firefox|firefox|opera|opera gx|opera browser|opera gx browser|vivaldi|internet explorer|yandex)( \\(\\d+\\))?$|(?i) - (chrome|google chrome|microsoft edge|edge|brave)$",
+
+  "benignSwitches": ["profile-directory", "app-id", "app-url", "app-launch-source", "app-launch-url-for-shortcuts-menu-item", "no-startup-window", "win-session-start", "flag-switches-begin", "flag-switches-end", "restore-last-session", "single-argument", "from-installer", "do-not-de-elevate", "launch-time-ticks", "new-window", "start-maximized", "incognito", "inprivate", "app-run-on-os-login-mode", "edge-skip-compat-layer-relaunch", "check-for-update-interval", "try-chrome-again", "noerrdialogs", "disable-crash-reporter", "origin-trial-disabled-features", "enable-audio-service-sandbox", "pwa-launcher-version", "web-app-install-source", "lang", "notification-launch-id", "source-app-id", "uninstall", "system-level", "edge-webview-is-background", "embedded-browser-webview", "webview-exe-name", "webview-exe-version", "user-agent", "mojo-named-platform-channel-pipe", "edge-webview-enable-mojo-ipcz", "edge-webview-disable-crash-reporting", "embedded-browser-webview-enable-extension", "enable-features", "disable-features"],
+
+  "launchFlagRules": [
+    { "switch": "remote-debugging-port",   "severity": "critical", "class": "suspicious", "reason": "remote_debugging", "webview": true,  "mitre": ["T1539", "T1185"], "label": "Chrome DevTools Protocol exposed on a TCP port (infostealers use it to dump cookies)" },
+    { "switch": "remote-debugging-pipe",   "severity": "critical", "class": "suspicious", "reason": "remote_debugging", "webview": true,  "mitre": ["T1539", "T1185"], "label": "DevTools Protocol over a pipe (automation / cookie theft)" },
+    { "switch": "remote-debugging-address","severity": "high",     "class": "suspicious", "reason": "remote_debugging", "webview": true,  "mitre": ["T1539"], "label": "DevTools bound to a non-default address" },
+    { "switch": "remote-allow-origins",    "severity": "high",     "class": "suspicious", "reason": "remote_debugging", "webview": true,  "mitre": ["T1539"], "label": "DevTools websocket origin check relaxed" },
+    { "switch": "load-extension",          "severity": "high",     "class": "suspicious", "reason": "load_extension",   "webview": false, "mitre": ["T1176.001"], "label": "Loads an unpacked extension from disk at every start" },
+    { "switch": "disable-extensions-except","severity": "high",    "class": "suspicious", "reason": "load_extension",   "webview": false, "mitre": ["T1176.001"], "label": "Disables all extensions except a chosen (often sideloaded) one" },
+    { "switch": "user-data-dir",           "severity": "high",     "class": "suspicious", "reason": "temp_profile",     "webview": false, "condition": "temp", "mitre": ["T1539"], "label": "Browser profile in a Temp folder (stealers copy the profile and drive it headless)" },
+    { "switch": "disable-web-security",    "severity": "high",     "class": "suspicious", "reason": "security_disabled","webview": false, "mitre": ["T1562.001"], "label": "Same-origin policy disabled" },
+    { "switch": "no-sandbox",              "severity": "high",     "class": "suspicious", "reason": "security_disabled","webview": false, "mitre": ["T1562.001"], "label": "Renderer sandbox disabled" },
+    { "switch": "headless",                "severity": "high",     "class": "suspicious", "reason": "headless",         "webview": false, "mitre": ["T1564.003", "T1539"], "label": "Invisible (headless) browser" },
+    { "switch": "silent-debugger-extension-api","severity": "high","class": "suspicious", "reason": "remote_debugging", "webview": false, "mitre": ["T1176.001"], "label": "Hides the 'extension is debugging this browser' infobar" },
+    { "switch": "proxy-server",            "severity": "high",     "class": "suspicious", "reason": "proxy",            "webview": false, "mitre": ["T1090", "T1557"], "label": "Forces traffic through a proxy" },
+    { "switch": "proxy-pac-url",           "severity": "high",     "class": "suspicious", "reason": "proxy",            "webview": false, "mitre": ["T1090", "T1557"], "label": "Proxy auto-config script" },
+    { "switch": "host-resolver-rules",     "severity": "high",     "class": "suspicious", "reason": "dns_redirect",     "webview": false, "mitre": ["T1557"], "label": "Overrides DNS resolution inside the browser" },
+    { "switch": "ignore-certificate-errors","severity": "high",    "class": "suspicious", "reason": "tls_disabled",     "webview": false, "mitre": ["T1557"], "label": "TLS certificate errors ignored" },
+    { "switch": "ignore-certificate-errors-spki-list","severity": "high","class": "suspicious","reason": "tls_disabled","webview": false, "mitre": ["T1557"], "label": "TLS pinning bypass list" },
+    { "switch": "safebrowsing-disable-download-protection","severity": "high","class": "suspicious","reason": "security_disabled","webview": false, "mitre": ["T1562.001"], "label": "Safe Browsing download protection disabled" },
+    { "switch": "disable-client-side-phishing-detection","severity": "medium","class": "suspicious","reason": "security_disabled","webview": false, "mitre": ["T1562.001"], "label": "Client-side phishing detection disabled" },
+    { "switch": "allow-running-insecure-content","severity": "medium","class": "hardening","reason": "security_disabled","webview": false, "mitre": [], "label": "Mixed content allowed" },
+    { "switch": "unsafely-treat-insecure-origin-as-secure","severity": "medium","class": "hardening","reason": "security_disabled","webview": false, "mitre": [], "label": "Insecure origins treated as secure" },
+    { "switch": "enable-automation",       "severity": "medium",   "class": "suspicious", "reason": "automation",       "webview": false, "mitre": [], "label": "Browser automation mode (Selenium/Puppeteer, also abused by malware)" },
+    { "switch": "disable-features",        "severity": "medium",   "class": "suspicious", "reason": "security_disabled","webview": false, "valueRegex": "(?i)SafeBrowsing|ExtensionManifestV2Unsupported|ExtensionManifestV2Disabled|ExtensionsManifestV3Only|SitePerProcess|IsolateOrigins", "mitre": ["T1562.001"], "label": "Security-relevant features disabled" },
+    { "switch": "kiosk",                   "severity": "low",      "class": "suspicious", "reason": "kiosk",            "webview": false, "mitre": [], "label": "Full-screen kiosk mode" }
+  ],
+
+  "knownNativeHosts": [
+    { "namePattern": "^com\\.microsoft\\.",                    "signerPattern": "^Microsoft ",                         "label": "Microsoft" },
+    { "namePattern": "^com\\.(avast|avg|gendigital|norton)",   "signerPattern": "(Avast|AVG|Gen Digital|NortonLifeLock|Symantec)", "label": "Avast / Gen Digital" },
+    { "namePattern": "^com\\.anthropic\\.",                    "signerPattern": "^Anthropic",                          "label": "Anthropic (Claude in Chrome)" },
+    { "namePattern": "mcafee",                                 "signerPattern": "^McAfee",                             "label": "McAfee" },
+    { "namePattern": "^com\\.adobe\\.",                        "signerPattern": "^Adobe",                              "label": "Adobe" },
+    { "namePattern": "^com\\.(webex|cisco)\\.",                "signerPattern": "^Cisco",                              "label": "Cisco Webex" },
+    { "namePattern": "^com\\.1password\\.",                    "signerPattern": "^(AgileBits|1Password)",              "label": "1Password" },
+    { "namePattern": "^com\\.8bit\\.bitwarden",                "signerPattern": "^(Bitwarden|8bit)",                   "label": "Bitwarden" },
+    { "namePattern": "^com\\.lastpass\\.",                     "signerPattern": "^(LastPass|LogMeIn|GoTo)",            "label": "LastPass" },
+    { "namePattern": "^com\\.dashlane\\.",                     "signerPattern": "^Dashlane",                           "label": "Dashlane" },
+    { "namePattern": "^org\\.keepassxc\\.",                    "signerPattern": "^(KeePassXC|DroidMonkey)",            "label": "KeePassXC" },
+    { "namePattern": "^com\\.google\\.",                       "signerPattern": "^Google",                             "label": "Google" },
+    { "namePattern": "^(com|us)\\.zoom\\.",                    "signerPattern": "^Zoom",                               "label": "Zoom" },
+    { "namePattern": "^com\\.kaspersky\\.",                    "signerPattern": "Kaspersky",                           "label": "Kaspersky" },
+    { "namePattern": "^com\\.eset\\.",                         "signerPattern": "^ESET",                               "label": "ESET" },
+    { "namePattern": "^com\\.bitdefender\\.",                  "signerPattern": "^Bitdefender",                        "label": "Bitdefender" },
+    { "namePattern": "^com\\.malwarebytes\\.",                 "signerPattern": "^Malwarebytes",                       "label": "Malwarebytes" },
+    { "namePattern": "^com\\.dropbox\\.",                      "signerPattern": "^Dropbox",                            "label": "Dropbox" },
+    { "namePattern": "^com\\.grammarly\\.",                    "signerPattern": "^Grammarly",                          "label": "Grammarly" }
+  ],
+  "scriptHostExtensions": [".bat", ".cmd", ".ps1", ".vbs", ".js", ".py", ".sh"],
+
+  "intelSources": [
+    { "name": "malicious_extension_sentry (toborrm9)", "format": "csv-detailed", "url": "https://raw.githubusercontent.com/toborrm9/malicious_extension_sentry/main/malicious_extensions_detailed.csv", "saveName": "toborrm9-malicious_extensions_detailed.csv", "githubRepo": "toborrm9/malicious_extension_sentry", "githubPath": "malicious_extensions_detailed.csv", "note": "Aggregates store take-downs plus Unit42, Socket, Koi, Secure Annex, Microsoft and other campaign IOCs; updated daily." },
+    { "name": "malicious-extensions-list (Wladimir Palant)", "format": "id-lines", "url": "https://codeberg.org/palant/malicious-extensions-list/raw/branch/main/list.txt", "saveName": "palant-malicious-extensions-list.txt", "githubRepo": null, "githubPath": null, "note": "Moved from GitHub to Codeberg (GitHub repo archived 2026-03-27). codeberg.org must be added to config\\intel-hosts.json before this source can be used." }
+  ],
+  "intelMaliciousReasons": ["Malware", "Spyware", "Stealer", "Infostealer", "Data Exfiltration", "Session Theft", "Backdoor", "Trojan", "Credential Theft", "Cryptostealer", "Remote Access"],
+  "intelStaleDays": 30
+}

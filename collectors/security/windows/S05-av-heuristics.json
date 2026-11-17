@@ -1,0 +1,134 @@
+{
+  "schema": "bvs.s05-heuristics/1",
+  "description": "Data-driven heuristics for S05 (antivirus evidence). Platform-neutral: a Linux collector can load the same file. Regexes are .NET/PCRE compatible. Nothing here is machine-specific; machine-specific known-good items belong in config\\local\\expected.json.",
+
+  "avastTypeMap": {
+    "Trj": "malware", "Wrm": "malware", "Vir": "malware", "Drp": "malware", "Dldr": "malware", "Expl": "malware",
+    "Rtk": "malware", "Spy": "malware", "Pws": "malware", "Bkdr": "malware", "Bd": "malware", "Bot": "malware",
+    "Ransom": "malware", "Rans": "malware", "Cryp": "malware", "Rat": "malware", "Malv": "malware", "Phish": "malware",
+    "Inf": "malware", "Malware": "malware", "Miner": "malware",
+    "PUP": "pup", "PUA": "pup", "Adw": "pup",
+    "Tool": "tool", "Hktl": "tool", "HackTool": "tool", "Risk": "tool", "RiskWare": "tool",
+    "Susp": "suspicious", "Heur": "suspicious", "Misc": "suspicious", "Gen": "suspicious"
+  },
+
+  "msTypeMap": {
+    "Trojan": "malware", "TrojanDownloader": "malware", "TrojanDropper": "malware", "TrojanSpy": "malware",
+    "TrojanClicker": "malware", "TrojanProxy": "malware", "TrojanNotifier": "malware", "Backdoor": "malware",
+    "Worm": "malware", "Virus": "malware", "Ransom": "malware", "PWS": "malware", "Exploit": "malware",
+    "Rogue": "malware", "Spyware": "malware", "DDoS": "malware", "Constructor": "malware", "Dialer": "malware",
+    "VirTool": "tool", "HackTool": "tool", "RemoteAccess": "tool", "MonitoringTool": "tool", "Tool": "tool",
+    "PUA": "pup", "PUADlManager": "pup", "PUABundler": "pup", "PUAMiner": "pup", "PUAAdvertising": "pup",
+    "PUATorrent": "pup", "Adware": "pup", "BrowserModifier": "pup", "SoftwareBundler": "pup", "Program": "pup",
+    "Misleading": "pup", "Joke": "pup", "SettingsModifier": "pup", "App": "pup",
+    "Behavior": "suspicious", "SupportScamAlert": "url"
+  },
+
+  "nameCategoryRules": [
+    { "pattern": "^(?i)URL:", "category": "url" },
+    { "pattern": "(?i)(^|[:/.\\-])(HackTool|HackKMS|RiskWare|Keygen|Crack|Patcher|KMSAuto|Mimikatz|Netcat|PsExec|NirSoft|PassView)", "category": "tool" },
+    { "pattern": "(?i)(^|[:/.\\-])(PUP|PUA|Adware|Bundler|Toolbar|Unwanted)", "category": "pup" },
+    { "pattern": "^(?i)(IDP\\.|FileRep)", "category": "suspicious" }
+  ],
+
+  "highRiskNamePattern": "(?i)(\\bRAT\\b|[-:.]Rat[-.\\b]|Backdoor|Bkdr|Stealer|\\bPWS\\b|Spyware|Ransom|Rootkit|Keylog|CoinMiner|Banker|Lumma|RedLine|Vidar|AgentTesla|Remcos|AsyncRAT|njRAT|NanoCore|DarkGate|CobaltStrike|Meterpreter|Rozena|Sliver|BruteRatel|Emotet|Qakbot|IcedID|SocGholish)",
+
+  "genericHeuristicNames": [
+    { "pattern": "^(?i)IDP\\.", "why": "Avast/AVG IDP.* is a behaviour/machine-learning verdict; it often fires on freshly compiled, unsigned developer binaries." },
+    { "pattern": "^(?i)FileRep", "why": "Avast/AVG FileRep* is a cloud reputation verdict (rare or new file), not a malware signature; common on self-built tools." },
+    { "pattern": "(?i)Evo-gen|Malware-gen|Trojan-gen|TrojanX-gen|DropperX-gen|MalwareX-gen|Agent-gen|Generic", "why": "Generic or heuristic signature family with a higher false-positive rate." },
+    { "pattern": "(?i)!(ml|MTB|cl|rfn|pz)$", "why": "Microsoft machine-learning or cloud verdict suffix (for example Wacatac!ml); generic and false-positive prone on unsigned dev binaries." }
+  ],
+
+  "docExtensions": [ ".md", ".markdown", ".txt", ".rst", ".adoc", ".yml", ".yaml", ".csv", ".tsv", ".log", ".json", ".jsonl", ".toml", ".ini", ".cfg", ".conf", ".nfo", ".ipynb", ".tex" ],
+
+  "executableExtensions": [ ".exe", ".dll", ".sys", ".scr", ".cpl", ".ocx", ".com", ".pif", ".bat", ".cmd", ".ps1", ".psm1", ".psd1", ".vbs", ".vbe", ".js", ".jse", ".mjs", ".cjs", ".wsf", ".wsh", ".hta", ".lnk", ".msi", ".msp", ".jar", ".py", ".pyw", ".sh", ".bin", ".elf", ".so", ".dylib", ".node", ".appx", ".msix", ".application", ".gadget", ".reg", ".url", ".inf", ".chm", ".xll", ".wll", ".drv", ".efi" ],
+
+  "activeContainerExtensions": [ ".zip", ".rar", ".7z", ".cab", ".iso", ".img", ".vhd", ".vhdx", ".gz", ".tgz", ".tar", ".docm", ".dotm", ".xlsm", ".xlsb", ".xltm", ".pptm", ".potm", ".doc", ".xls", ".ppt", ".rtf", ".pdf", ".one", ".html", ".htm", ".svg", ".xml", ".xsl", ".apk", ".dmg", ".pkg", ".deb", ".rpm", ".eml", ".msg" ],
+
+  "securityCorpusMarkers": [
+    "(?i)[\\\\/]atomic-red-team[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/]atomics[\\\\/]T\\d{4}",
+    "(?i)[\\\\/]_?gtfobins[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/]lolbas[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/](sigma|sigmahq)(-src|-main|-master)?[\\\\/]rules[\\\\/]",
+    "(?i)[\\\\/]PayloadsAllTheThings[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/]SecLists[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/]exploit-?db[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/]hacktricks[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/]nuclei-templates[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/](yara-rules|signature-base|detection-rules)[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/]threathunter[^\\\\/]*[\\\\/]",
+    "(?i)[\\\\/]mitre[-_]?attack[^\\\\/]*[\\\\/]"
+  ],
+
+  "devCacheMarkers": [
+    "(?i)[\\\\/]node_modules[\\\\/]", "(?i)[\\\\/]\\.vite[\\\\/]", "(?i)[\\\\/]\\.next[\\\\/]", "(?i)[\\\\/]\\.nuxt[\\\\/]",
+    "(?i)[\\\\/]\\.parcel-cache[\\\\/]", "(?i)[\\\\/]\\.turbo[\\\\/]", "(?i)[\\\\/]target[\\\\/](debug|release)[\\\\/]",
+    "(?i)[\\\\/]bin[\\\\/](Debug|Release)[\\\\/]", "(?i)[\\\\/]obj[\\\\/](Debug|Release)[\\\\/]", "(?i)[\\\\/]__pycache__[\\\\/]",
+    "(?i)[\\\\/]\\.?venv[\\\\/]", "(?i)[\\\\/]site-packages[\\\\/]", "(?i)[\\\\/]pip-(build-env|install)-[^\\\\/]+[\\\\/]",
+    "(?i)[\\\\/]go-build[\\\\/]", "(?i)[\\\\/]\\.cargo[\\\\/]", "(?i)[\\\\/]\\.gradle[\\\\/]", "(?i)[\\\\/]\\.m2[\\\\/]",
+    "(?i)[\\\\/]dist[\\\\/]", "(?i)[\\\\/]build[\\\\/]"
+  ],
+
+  "contentPlatformHosts": [ "github.com", "githubusercontent.com", "gitlab.com", "bitbucket.org", "claude.ai", "anthropic.com", "chatgpt.com", "openai.com", "gemini.google.com", "stackoverflow.com", "stackexchange.com", "attack.mitre.org", "learn.microsoft.com", "huggingface.co", "kaggle.com", "colab.research.google.com", "npmjs.com", "pypi.org" ],
+
+  "notableFamilies": [
+    { "pattern": "(?i)HelloTDS", "note": "HelloTDS is a malicious traffic-distribution system that Avast/Gen Digital researchers link to fake-CAPTCHA ('ClickFix'), fake-update and scam pages reached from streaming and file-sharing sites. The harmful step is the visitor pasting a command into Win+R or a terminal; a Web Shield block means the page was stopped.", "check": "Look for pasted commands in RunMRU, PowerShell PSReadLine history, and new Run keys or scheduled tasks around the listed dates." },
+    { "pattern": "(?i)ClickFix|Fake-?Captcha|CaptchaFake", "note": "Fake CAPTCHA / ClickFix lure that tells the visitor to paste a command.", "check": "Look for pasted commands in RunMRU and PowerShell history around the listed dates." },
+    { "pattern": "(?i)SocGholish|FakeUpdate", "note": "Fake browser-update JavaScript injected into compromised websites.", "check": "Look for downloaded .js/.zip 'update' files and wscript.exe executions around the listed dates." },
+    { "pattern": "(?i)Lumma|Stealc|Vidar|RedLine|AgentTesla|Rhadamanthys", "note": "Information-stealer family.", "check": "If any file was live, treat it as credential theft: rotate passwords and revoke sessions." }
+  ],
+
+  "avastActionPatterns": [
+    { "action": "failed", "pattern": "(?i)\\berror\\b|chyba|fehler|erreur|błąd|\\bfailed\\b|nepodařil|nelze" },
+    { "action": "quarantined", "pattern": "(?i)chest|truhl|quarant|kwarant|karant|cuarent|carant|Quarantäne" },
+    { "action": "deleted", "pattern": "(?i)delet|odstran|smazán|gelöscht|usunięt|supprim|elimin|cancellat" },
+    { "action": "repaired", "pattern": "(?i)repair|oprav|repar|napraw|réparé" },
+    { "action": "blocked", "pattern": "(?i)block|blokov|zablok|bloqu|gesperrt|blocc" },
+    { "action": "aborted", "pattern": "(?i)abort|přeruš|zrušen|abgebrochen|interromp|annul" }
+  ],
+
+  "userChoiceMap": { "close": "none", "chest": "quarantined", "move": "quarantined", "delete": "deleted", "repair": "repaired", "ignore": "allowed_by_user", "allow": "allowed_by_user", "exclude": "allowed_by_user", "nothing": "none", "abort": "blocked", "block": "blocked" },
+
+  "logKeywordPattern": "(?i)\\b(infect(?:ed|ion|ions)?|threats?|detect(?:ed|ion|ions)|block(?:ed)?|malware|virus(?:es)?|quarantin\\w*|rootkit|ransomware|exploit(?:ed)?|suspicious|phishing)\\b",
+
+  "logNoisePatterns": [
+    "asw\\.detections\\.changed", "Session change detected", "detected file .+ as deleted or renamed", "Executing hijack detection",
+    "Loaded 0 infected emails", "Scan request accepted", "Detections changed \\(vps=", "anti exploit feature", "IdpWrapper::",
+    "Detection NOT found", "Checking if detection with ID", "Going to remove detection", "Detection doesn't exist",
+    "Window is (newly opened|already open)", "dd_window_(displayed|closed)", "Initializing detection manager", "Not sandboxing",
+    "app\\.pap\\.", "MCP_REGISTRY", "inflate_failed", "Get scanner", "Burger record"
+  ],
+
+  "logSkipFiles": [ "detections.log", "autosandbox.log", "aswAr.log", "aswArStartup.log", "uefiscan.log", "scans.log" ],
+
+  "exclusionValueNamePattern": "(?i)^(exclu\\w*|excluded\\w*|exception\\w*|scanexclusions|whitelist\\w*|allowlist\\w*|trusted(apps|processes|urls|sites)|ignored?(urls|paths|files))$",
+
+  "broadExclusionPatterns": [
+    "^[A-Za-z]:\\\\?\\*?$",
+    "^\\*(\\.\\*)?$",
+    "^(?i)\\*\\.(exe|dll|ps1|bat|cmd|js|vbs|scr|msi|hta|lnk)$",
+    "(?i)%temp%|%tmp%|\\\\temp(\\\\\\*?)?$|\\\\AppData(\\\\\\*?)?$|\\\\AppData\\\\(Local|Roaming)(\\\\\\*?)?$|\\\\Downloads(\\\\\\*?)?$|\\\\Desktop(\\\\\\*?)?$|\\\\Users\\\\Public|\\\\ProgramData(\\\\\\*?)?$|^\\\\\\\\[^\\\\]+\\\\?$",
+    "(?i)^[A-Za-z]:\\\\Users(\\\\[^\\\\]+)?(\\\\\\*?)?$"
+  ],
+
+  "devLauncherPattern": "(?i)[\\\\/](\\.?venv|env|Scripts|pip-build-env-[^\\\\/]+|pip-install-[^\\\\/]+|Python\\d+[\\\\/]Scripts)[\\\\/][^\\\\/]+\\.exe$",
+
+  "msrtReturnCodes": {
+    "0": "No infection found",
+    "1": "OS environment error",
+    "2": "Not running as an administrator",
+    "3": "Not a supported OS",
+    "4": "Error initializing the scanner",
+    "5": "Not used",
+    "6": "At least one infection was detected; no errors",
+    "7": "At least one infection was detected, but errors were encountered",
+    "8": "Infection detected and removed; manual steps required for complete removal",
+    "9": "Infection detected and removed; manual steps required and errors were encountered",
+    "10": "Infection detected and removed; restart required",
+    "11": "Infection detected and removed; restart required and errors were encountered",
+    "12": "Infection detected and removed; manual steps and a restart required",
+    "13": "Infection detected and removed; restart required, no errors"
+  }
+}
