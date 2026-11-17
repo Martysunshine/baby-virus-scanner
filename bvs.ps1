@@ -218,6 +218,21 @@ function Write-ScanStatus([string]$ScanDir, [hashtable]$State) {
     [IO.File]::WriteAllText((Join-Path $ScanDir 'scan-status.json'), ($State | ConvertTo-Json -Depth 6), [Text.UTF8Encoding]::new($false))
 }
 
+# Asks GitHub CLI itself (with the scanner's own settings folder). Its settings file stays after a sign-out,
+# so the file's existence says nothing. Prints nothing; the token is never read.
+function Test-GhSignedIn {
+    $exe = Join-Path $Root 'vendor\gh\bin\gh.exe'
+    if (-not (Test-Path -LiteralPath $exe)) { return $false }
+    $saved = $env:GH_CONFIG_DIR
+    try {
+        $env:GH_CONFIG_DIR = Join-Path $Root 'vendor\gh-config'
+        $null = & $exe auth status --hostname github.com 2>&1
+        return ($LASTEXITCODE -eq 0)
+    }
+    catch { return $false }
+    finally { $env:GH_CONFIG_DIR = $saved }
+}
+
 function Get-GhExe {
     $exe = Join-Path $Root 'vendor\gh\bin\gh.exe'
     if (-not (Test-Path -LiteralPath $exe)) { throw "GitHub CLI is not installed for the scanner ($exe). After the user agrees, run: pwsh -NoProfile -File .\bvs.ps1 get-tools -Gh" }
@@ -263,7 +278,7 @@ switch ($Command) {
         }
         else { & $line 'info' 'Safety Scanner' 'not downloaded. Optional, only for the admin step: get-tools -Msert (ask the user first)' }
         $ghPath = Join-Path $Root 'vendor\gh\bin\gh.exe'
-        if (Test-Path -LiteralPath $ghPath) { & $line 'ok' 'GitHub CLI' ('present (optional, for the signed-in GitHub checks). Signed in: ' + $(if (Test-Path -LiteralPath (Join-Path $Root 'vendor\gh-config\hosts.yml')) { 'yes' } else { 'no' })) }
+        if (Test-Path -LiteralPath $ghPath) { & $line 'ok' 'GitHub CLI' ('present (optional, for the signed-in GitHub checks). Signed in: ' + $(if (Test-GhSignedIn) { 'yes' } else { 'no' })) }
         else { & $line 'info' 'GitHub CLI' 'not downloaded. Optional, only for signed-in GitHub checks: get-tools -Gh (ask the user first)' }
         if (Get-Command claude -ErrorAction SilentlyContinue) { & $line 'ok' 'Claude CLI' 'found (optional: AI answers in the dashboard, only after the user opts in)' } else { & $line 'info' 'Claude CLI' 'not found: the dashboard uses its built-in explanations' }
         $latest = Join-Path $Root 'data\latest.txt'
@@ -467,7 +482,7 @@ switch ($Command) {
     'github-logout' {
         $ghExe = Get-GhExe
         $env:GH_CONFIG_DIR = Join-Path $Root 'vendor\gh-config'
-        if (-not (Test-Path -LiteralPath (Join-Path $env:GH_CONFIG_DIR 'hosts.yml'))) { Write-Host 'The scanner is not signed in to GitHub.'; exit 0 }
+        if (-not (Test-GhSignedIn)) { Write-Host 'The scanner is not signed in to GitHub.'; exit 0 }
         & $ghExe auth logout --hostname github.com
         exit $LASTEXITCODE
     }
