@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(~/.claude/.credentials.json)",
+      "Read(~/.codex/auth.json)",
+      "Read(~/.git-credentials)",
+      "Read(~/.ssh/id_*)",
+      "Read(~/.config/gh/hosts.yml)",
+      "Read(~/AppData/Roaming/GitHub CLI/hosts.yml)",
+      "Read(./vendor/gh-config/**)",
+      "Read(~/AppData/Local/Google/Chrome/User Data/**/Login Data*)",
+      "Read(~/AppData/Local/Google/Chrome/User Data/**/Cookies*)",
+      "Read(~/AppData/Local/Microsoft/Edge/User Data/**/Login Data*)",
+      "Read(~/AppData/Local/Microsoft/Edge/User Data/**/Cookies*)",
+      "Read(~/AppData/Roaming/Microsoft/Credentials/**)",
+      "Read(~/AppData/Local/Microsoft/Credentials/**)",
+      "Read(~/AppData/Roaming/Microsoft/Protect/**)"
+    ]
+  }
+}
