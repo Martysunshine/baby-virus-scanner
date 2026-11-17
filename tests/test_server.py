@@ -29,12 +29,17 @@ CSP = ("default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' 
        "base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 
 
+def setUpModule():
+    # summary.json and js/ of the demo fixture are generated, not tracked. Build them once before any test
+    # class runs: unittest runs the classes in alphabetical order, and several of them read the findings.
+    if not ((FIXTURE / "js" / "manifest.js").is_file() and (FIXTURE / "summary.json").is_file()):
+        subprocess.run([sys.executable, "-I", "-B", str(ROOT / "core" / "build_datajs.py"), "--scan", str(FIXTURE),
+                        "--quiet"], check=True)
+
+
 class ServerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        if not (FIXTURE / "js" / "manifest.js").is_file():
-            subprocess.run([sys.executable, "-I", "-B", str(ROOT / "core" / "build_datajs.py"), "--scan", str(FIXTURE),
-                            "--quiet"], check=True)
         cls.state = tempfile.TemporaryDirectory(prefix="bvs-test-state-")
         cls.state_root = Path(cls.state.name)
         cls.proc = subprocess.Popen([sys.executable, "-I", "-B", str(ROOT / "server" / "serve.py"), "--scan", str(FIXTURE),
