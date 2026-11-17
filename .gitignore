@@ -1,0 +1,44 @@
+# Fail-closed allowlist.
+#
+# This folder holds private scan output next to the code (data/, intel/, logs/, ...).
+# Everything at the top level is therefore ignored unless it is named below, so a new file
+# or folder is private by default. To publish something new, add it to the list.
+/*
+
+!/.gitignore
+!/.gitattributes
+!/.claude/
+!/AGENTS.md
+!/CLAUDE.md
+!/CHANGELOG.md
+!/CONTRIBUTING.md
+!/LICENSE
+!/NOTICE
+!/README.md
+!/SECURITY.md
+!/THIRD-PARTY-NOTICES.md
+!/bvs.ps1
+!/start-dashboard.cmd
+!/admin/
+!/collectors/
+!/config/
+!/core/
+!/dashboard/
+!/docs/
+!/lib/
+!/server/
+!/tests/
+!/tools/
+
+# Inside the published folders: machine-specific or generated, never commit.
+/config/local/
+/.claude/settings.local.json
+/.claude/worktrees/
+/tests/ui/shots/
+/tests/ui/*-stub*
+/tests/fixtures/demo-scan/js/
+/tests/fixtures/demo-scan/summary.json
+/tests/fixtures/delete-sandbox/
+__pycache__/
+*.pyc
+*.tmp-*
